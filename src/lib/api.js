@@ -47,3 +47,12 @@ export async function getUserData() {
         return { success: false, error: error.response?.data || 'Failed to get user data' };
     }
 }
+
+export async function createCar(car) {
+    try {
+        const response = await axios.post(`${API_URL}/api/cars`, car);
+        return { success: true, data: response.data };
+    } catch (error) {
+        return { success: false, error: error.response?.data || 'Failed to create car' };
+    }
+}
