@@ -19,7 +19,7 @@
                 Ön be van jelentkezve. Használja a fenti menüt a navigációhoz.
             </p>
             <div class="buttons">
-                <a href="/dashboard" class="button primary">Irányítópult</a>
+                <a href="/dashboard" class="button primary">Parkolás kezelése</a>
                 <a href="/cars" class="button secondary">Autóim</a>
             </div>
         {/if}

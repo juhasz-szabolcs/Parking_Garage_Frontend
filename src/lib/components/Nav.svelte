@@ -17,7 +17,7 @@
     <div class="links">
         <a href="/">Főoldal</a>
         {#if $isAuthenticated}
-            <a href="/dashboard">Irányítópult</a>
+            <a href="/dashboard">Parkolás kezelése</a>
             <a href="/cars">Autóim</a>
             <button on:click={handleLogout}>Kijelentkezés</button>
         {:else}
