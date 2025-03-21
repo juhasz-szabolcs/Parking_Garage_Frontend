@@ -35,22 +35,28 @@
         lastName,
         phoneNumber,
         email,
-        passwordHash: password, // The backend will hash this
+        passwordHash: password,
+        isAdmin: false,
         cars: []
       };
       
-      const result = await register(userData);
-      
-      if (result.success) {
-        success = 'Sikeres regisztráció! Átirányítás a bejelentkezési oldalra...';
-        setTimeout(() => goto('/login'), 2000);
-      } else {
-        error = typeof result.error === 'string' 
-          ? result.error 
-          : 'Sikertelen regisztráció. Kérjük, próbálja újra.';
+      try {
+        const result = await register(userData);
+        
+        if (result.success) {
+          success = 'Sikeres regisztráció! Átirányítás a bejelentkezési oldalra...';
+          setTimeout(() => goto('/login'), 2000);
+        } else {
+          error = typeof result.error === 'string' 
+            ? result.error 
+            : 'Sikertelen regisztráció. Kérjük, próbálja újra.';
+        }
+      } catch (err) {
+        console.error('Registration error:', err);
+        error = 'Hiba történt a regisztráció során. Kérjük, próbálja újra.';
+      } finally {
+        loading = false;
       }
-      
-      loading = false;
     }
   </script>
   
