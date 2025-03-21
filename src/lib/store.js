@@ -6,6 +6,7 @@ export const isAuthenticated = writable(false);
 
 // Initialize from localStorage if available (for persistence)
 if (typeof window !== 'undefined') {
+  // Load user data from localStorage if available
   const storedUser = localStorage.getItem('user');
   if (storedUser) {
     user.set(JSON.parse(storedUser));

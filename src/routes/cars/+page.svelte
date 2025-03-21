@@ -115,50 +115,78 @@
     // +++++++++
     import { onMount } from "svelte";
 
-    onMount(() => {
-        loadCars();
+    onMount(async () => {
+        if (!$isAuthenticated) {
+            goto("/login");
+            return;
+        }
+        await loadCars();
     });
-
-    // onMount(async () => {
-    //     if (!$isAuthenticated) {
-    //         goto("/login");
-    //         return;
-    //     }
-
-    //     await loadCars();
-    // });
 
     async function loadCars() {
         loading = true;
         error = "";
 
-        // const result = await getUserData();
-        // loading = false;
-
-        // if (result.success) {
-        //     cars = result.data.cars || [];
-        // } else {
-        //     error =
-        //         typeof result.error === "string"
-        //             ? result.error
-        //             : "Nem sikerült betölteni az autókat.";
-        // }
-
-        // ++++++++++++++
-        loading = false;
         try {
-            // Comment out the API call
-            // const userData = await getUserData();
-            // cars = userData.cars || [];
-
-            // Use hardcoded data instead
-            cars = hardcodedCars;
-            ownedCars = cars.filter((car) => car.isOwn);
+            // Try to load cars from API
+            const result = await getUserData();
+            console.log("Full API response:", result); // Debug log for full response
+            
+            if (result.success) {
+                console.log("User data from backend:", result.data); // Debug log for user data
+                // If API call is successful, use the data from backend
+                cars = result.data.cars || [];
+                console.log("Cars array before mapping:", cars); // Debug log for cars array
+                // Add logos to the cars from backend
+                cars = cars.map(car => {
+                    const brand = car.brand || 'Unknown';
+                    return {
+                        ...car,
+                        brand: brand,
+                        model: car.model || 'Unknown',
+                        year: car.year || new Date().getFullYear(),
+                        licensePlate: car.licensePlate || 'N/A',
+                        isOwn: true,
+                        color: "N/A", // Default color since backend doesn't provide it
+                        isParking: car.isParked, // Default parking status since backend doesn't provide it
+                        logo: getCarLogo(brand)
+                    };
+                });
+                console.log("Cars array after mapping:", cars); // Debug log for mapped cars
+            } else {
+                // If API call fails, use hardcoded data
+                console.log("Using hardcoded data due to API error");
+                cars = hardcodedCars;
+            }
+            
+            // No need to filter ownedCars since backend already provides only owned cars
+            ownedCars = cars;
         } catch (error) {
             console.error("Error loading cars:", error);
+            // If there's an error, use hardcoded data
+            cars = hardcodedCars;
+            ownedCars = cars;
         } finally {
             loading = false;
         }
+    }
+
+    // Helper function to get car logo based on brand
+    function getCarLogo(brand) {
+        if (!brand) return 'https://www.carlogos.org/car-logos/default-car-logo.png';
+        
+        const brandLower = brand.toLowerCase();
+        const logoMap = {
+            'toyota': 'https://www.carlogos.org/car-logos/toyota-logo.png',
+            'honda': 'https://www.carlogos.org/car-logos/honda-logo.png',
+            'ford': 'https://www.carlogos.org/car-logos/ford-logo.png',
+            'bmw': 'https://www.carlogos.org/car-logos/bmw-logo.png',
+            'audi': 'https://www.carlogos.org/car-logos/audi-logo.png',
+            'volkswagen': 'https://www.carlogos.org/car-logos/volkswagen-logo.png',
+            'mercedes': 'https://www.carlogos.org/car-logos/mercedes-benz-logo.png',
+            'hyundai': 'https://www.carlogos.org/car-logos/hyundai-logo.png'
+        };
+        return logoMap[brandLower] || 'https://www.carlogos.org/car-logos/default-car-logo.png';
     }
     // ////////////
 

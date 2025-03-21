@@ -58,6 +58,7 @@
             id="email" 
             bind:value={email} 
             placeholder="pelda@email.com"
+            autocomplete="email"
             required
           />
         </div>
@@ -68,6 +69,7 @@
             type="password" 
             id="password" 
             bind:value={password}
+            autocomplete="current-password"
             required
           />
         </div>
