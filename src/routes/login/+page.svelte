@@ -1,15 +1,17 @@
 <script>
     import { login } from '$lib/api';
-    import { user } from '$lib/store';
+    import { user, isAuthenticated } from '$lib/store';
     import { goto } from '$app/navigation';
     
     let email = '';
     let password = '';
     let error = '';
+    let success = '';
     let loading = false;
     
     async function handleSubmit() {
       error = '';
+      success = '';
       loading = true;
       
       if (!email || !password) {
@@ -18,18 +20,25 @@
         return;
       }
       
-      const result = await login(email, password);
-      
-      if (result.success) {
-        $user = result.data;
-        goto('/dashboard');
-      } else {
-        error = typeof result.error === 'string' 
-          ? result.error 
-          : 'Sikertelen bejelentkezés. Kérjük, ellenőrizze az e-mail címet és a jelszót.';
+      try {
+        const result = await login(email, password);
+        
+        if (result.success) {
+          success = 'Sikeres bejelentkezés! Átirányítás...';
+          $user = result.data.user;
+          $isAuthenticated = true;
+          setTimeout(() => goto('/'), 1000);
+        } else {
+          error = typeof result.error === 'string' 
+            ? result.error 
+            : 'Sikertelen bejelentkezés. Kérjük, próbálja újra.';
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        error = 'Hiba történt a bejelentkezés során. Kérjük, próbálja újra.';
+      } finally {
+        loading = false;
       }
-      
-      loading = false;
     }
   </script>
   

@@ -4,9 +4,25 @@
     import { goto } from "$app/navigation";
 
     async function handleLogout() {
-        const result = await logout();
-        if (result.success) {
+        try {
+            const result = await logout();
+            if (result.success) {
+                // Clear user data from store
+                $user = null;
+                $isAuthenticated = false;
+                // Clear localStorage
+                localStorage.removeItem('user');
+                // Redirect to home page
+                goto("/");
+            } else {
+                console.error("Logout failed:", result.error);
+            }
+        } catch (error) {
+            console.error("Error during logout:", error);
+            // Even if the API call fails, we should still log out locally
             $user = null;
+            $isAuthenticated = false;
+            localStorage.removeItem('user');
             goto("/");
         }
     }

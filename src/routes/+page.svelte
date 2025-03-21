@@ -1,5 +1,16 @@
 <script>
-    import { isAuthenticated } from "$lib/store";
+    import { isAuthenticated, user } from "$lib/store";
+    import { onMount } from "svelte";
+    import { getUserData } from "$lib/api";
+
+    onMount(async () => {
+        if ($isAuthenticated) {
+            const result = await getUserData();
+            if (result.success) {
+                $user = result.data;
+            }
+        }
+    });
 </script>
 
 <div class="home-container">
@@ -16,7 +27,10 @@
             </div>
         {:else}
             <p>
-                Ön be van jelentkezve. Használja a fenti menüt a navigációhoz.
+                Üdvözöljük, {$user?.firstName} {$user?.lastName}!
+            </p>
+            <p>
+                Használja a fenti menüt a navigációhoz.
             </p>
             <div class="buttons">
                 <a href="/dashboard" class="button primary">Parkolás kezelése</a>
@@ -32,47 +46,32 @@
 <style>
     .home-container {
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
         align-items: center;
-        gap: 2rem;
-    }
-
-    @media (min-width: 768px) {
-        .home-container {
-            flex-direction: row;
-            justify-content: space-between;
-        }
-
-        .content {
-            flex: 1;
-        }
-
-        .image-container {
-            flex: 1;
-        }
+        padding: 2rem;
+        min-height: 70vh;
     }
 
     .content {
-        text-align: center;
+        flex: 1;
+        max-width: 600px;
+        padding-right: 2rem;
     }
 
     h1 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
         color: #2c3e50;
+        margin-bottom: 1rem;
     }
 
     p {
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
         color: #34495e;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
     }
 
     .buttons {
         display: flex;
-        justify-content: center;
         gap: 1rem;
-        margin-top: 2rem;
     }
 
     .button {
@@ -93,24 +92,23 @@
     }
 
     .secondary {
-        background-color: #2c3e50;
+        background-color: #2ecc71;
         color: white;
     }
 
     .secondary:hover {
-        background-color: #1a252f;
+        background-color: #27ae60;
     }
 
     .image-container {
-        max-width: 100%;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        flex: 1;
+        max-width: 500px;
     }
 
     img {
         width: 100%;
         height: auto;
-        display: block;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 </style>
