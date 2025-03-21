@@ -177,7 +177,7 @@
 
             <div class="dashboard-actions">
                 <a href="/cars" class="button primary">Autóim kezelése</a>
-                <a href="/parking" class="button secondary">Parkolás befejezése</a
+                <a href="/payment" class="button secondary">Parkolás befejezése</a
                 >
             </div>
         </div>
