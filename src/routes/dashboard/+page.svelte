@@ -146,7 +146,7 @@
     {:else if dashboardData}
         <div class="dashboard-card">
             <!-- <h2>Üdvözöljük, {$user?.name || "Felhasználó"}!</h2> -->
-            <h2>Üdvözöljük, {dashboardData.user.name || "Felhasználó"}!</h2>
+            <h2>Üdvözöljük, {$user?.firstName} {$user?.lastName || "Felhasználó"}!</h2>
             <p>
                 Az alábbiakban megtekintheti és kezelheti parkolóházi
                 adatait.
