@@ -20,17 +20,97 @@
     };
     let formLoading = false;
 
-	// Hardcoded car data
+    // Hardcoded car data
     const hardcodedCars = [
-    { id: 1, brand: "Toyota", model: "Corolla", year: 2022, licensePlate: "ABC-123", color: "Kék", isOwn: true, logo: "https://www.carlogos.org/car-logos/toyota-logo.png" },
-    { id: 2, brand: "Honda", model: "Civic", year: 2019, licensePlate: "DEF-456", color: "Red", isOwn: false, logo: "https://www.carlogos.org/car-logos/honda-logo.png" },
-    { id: 3, brand: "Ford", model: "Focus", year: 2020, licensePlate: "GHI-789", color: "Black", isOwn: false, logo: "https://www.carlogos.org/car-logos/ford-logo.png" },
-    { id: 4, brand: "BMW", model: "X5", year: 2021, licensePlate: "JKL-012", color: "Silver", isOwn: false, logo: "https://www.carlogos.org/car-logos/bmw-logo.png" },
-    { id: 5, brand: "Audi", model: "A4", year: 2001, licensePlate: "SU0-71J", color: "Szürke", isOwn: true, logo: "https://www.carlogos.org/car-logos/audi-logo.png" },
-    { id: 6, brand: "Volkswagen", model: "Golf", year: 2022, licensePlate: "PQR-678", color: "Green", isOwn: false, logo: "https://www.carlogos.org/car-logos/volkswagen-logo.png" },
-    { id: 7, brand: "Mercedes", model: "C-Class", year: 2020, licensePlate: "STU-901", color: "Gray", isOwn: false, logo: "https://www.carlogos.org/car-logos/mercedes-benz-logo.png" },
-    { id: 8, brand: "Hyundai", model: "Tucson", year: 2019, licensePlate: "VWX-234", color: "Orange", isOwn: false, logo: "https://www.carlogos.org/car-logos/hyundai-logo.png" }
-];
+        {
+            id: 1,
+            brand: "Toyota",
+            model: "Corolla",
+            year: 2022,
+            licensePlate: "ABC-123",
+            color: "Kék",
+            isOwn: true,
+            logo: "https://www.carlogos.org/car-logos/toyota-logo.png",
+            isParking: true,
+        },
+        {
+            id: 2,
+            brand: "Honda",
+            model: "Civic",
+            year: 2019,
+            licensePlate: "DEF-456",
+            color: "Red",
+            isOwn: false,
+            logo: "https://www.carlogos.org/car-logos/honda-logo.png",
+            isParking: false,
+        },
+        {
+            id: 3,
+            brand: "Ford",
+            model: "Focus",
+            year: 2020,
+            licensePlate: "GHI-789",
+            color: "Black",
+            isOwn: false,
+            logo: "https://www.carlogos.org/car-logos/ford-logo.png",
+            isParking: false,
+        },
+        {
+            id: 4,
+            brand: "BMW",
+            model: "X5",
+            year: 2021,
+            licensePlate: "JKL-012",
+            color: "Silver",
+            isOwn: false,
+            logo: "https://www.carlogos.org/car-logos/bmw-logo.png",
+            isParking: false,
+        },
+        {
+            id: 5,
+            brand: "Audi",
+            model: "A4",
+            year: 2001,
+            licensePlate: "SU0-71J",
+            color: "Szürke",
+            isOwn: true,
+            logo: "https://www.carlogos.org/car-logos/audi-logo.png",
+            isParking: false,
+        },
+        {
+            id: 6,
+            brand: "Volkswagen",
+            model: "Golf",
+            year: 2022,
+            licensePlate: "PQR-678",
+            color: "Green",
+            isOwn: false,
+            logo: "https://www.carlogos.org/car-logos/volkswagen-logo.png",
+            isParking: false,
+        },
+        {
+            id: 7,
+            brand: "Mercedes",
+            model: "C-Class",
+            year: 2020,
+            licensePlate: "STU-901",
+            color: "Gray",
+            isOwn: false,
+            logo: "https://www.carlogos.org/car-logos/mercedes-benz-logo.png",
+            isParking: false,
+        },
+        {
+            id: 8,
+            brand: "Hyundai",
+            model: "Tucson",
+            year: 2019,
+            licensePlate: "VWX-234",
+            color: "Orange",
+            isOwn: false,
+            logo: "https://www.carlogos.org/car-logos/hyundai-logo.png",
+            isParking: false,
+        },
+    ];
 
     // +++++++++
     import { onMount } from "svelte";
@@ -70,10 +150,10 @@
             // Comment out the API call
             // const userData = await getUserData();
             // cars = userData.cars || [];
-            
+
             // Use hardcoded data instead
             cars = hardcodedCars;
-            ownedCars = cars.filter(car => car.isOwn);
+            ownedCars = cars.filter((car) => car.isOwn);
         } catch (error) {
             console.error("Error loading cars:", error);
         } finally {
@@ -152,17 +232,28 @@
             {#each ownedCars as car}
                 <div class="car-card">
                     <div class="car-header">
-                        <h3>{car.brand} {car.model}</h3> <img src={car.logo} alt="{car.brand} logo" width="40" height="40" />
+                        <h3>{car.brand} {car.model}</h3>
+                        <img
+                            src={car.logo}
+                            alt="{car.brand} logo"
+                            width="40"
+                            height="40"
+                        />
                         <span class="license-plate">{car.licensePlate}</span>
                     </div>
                     <div class="car-info">
                         <p>Évjárat: {car.year}</p>
                         <p>Szín: {car.color}</p>
-                        
                     </div>
                     <div class="car-actions">
                         <button class="action-button edit">Szerkesztés</button>
-                        <button class="action-button park">Parkolás</button>
+                        {#if car.isParking}
+                            <button
+                                class="action-button park"
+                                on:click={() => goto("/dashboard")}>
+                                Parkolás leállítása
+                            </button>
+                        {/if}
                     </div>
                 </div>
             {/each}
