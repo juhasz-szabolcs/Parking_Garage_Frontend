@@ -1,14 +1,17 @@
 <script>
     // import { onMount } from "svelte";
-    import { getUserData, createCar } from "$lib/api";
-    import { isAuthenticated } from "$lib/store";
+    import { getUserData, createCar, startParking, stopParking } from "$lib/api";
+    import { isAuthenticated, user } from "$lib/store";
     import { goto } from "$app/navigation";
+    import ParkingMap from "$lib/components/ParkingMap.svelte";
 
     let cars = [];
     let ownedCars = [];
     let loading = true;
     let error = "";
     let success = "";
+    let parkingSpots = [];
+    // let activeParkings = new Map(); // Tárolja az aktív parkolásokat: carId -> parkingSpotId
 
     // New car form state
     let showModal = false;
@@ -19,6 +22,9 @@
         licensePlate: "",
     };
     let formLoading = false;
+
+    let showParkingMap = false;
+    let selectedCar = null;
 
     // Hardcoded car data
     const hardcodedCars = [
@@ -116,7 +122,7 @@
     import { onMount } from "svelte";
 
     onMount(async () => {
-        if (!$isAuthenticated) {
+        if (!$user) {
             goto("/login");
             return;
         }
@@ -128,42 +134,23 @@
         error = "";
 
         try {
-            // Try to load cars from API
             const result = await getUserData();
-            console.log("Full API response:", result); // Debug log for full response
+            console.log("API response:", result);
             
             if (result.success) {
-                console.log("User data from backend:", result.data); // Debug log for user data
-                // If API call is successful, use the data from backend
-                cars = result.data.cars || [];
-                console.log("Cars array before mapping:", cars); // Debug log for cars array
-                // Add logos to the cars from backend
-                cars = cars.map(car => {
-                    const brand = car.brand || 'Unknown';
-                    return {
-                        ...car,
-                        brand: brand,
-                        model: car.model || 'Unknown',
-                        year: car.year || new Date().getFullYear(),
-                        licensePlate: car.licensePlate || 'N/A',
-                        isOwn: true,
-                        color: "N/A", // Default color since backend doesn't provide it
-                        isParking: car.isParked, // Default parking status since backend doesn't provide it
-                        logo: getCarLogo(brand)
-                    };
+                cars = result.data.cars;
+                ownedCars = cars;
+                console.log("Loaded cars:", cars);
+                cars.forEach(car => {
+                    console.log(`Car ${car.brand} ${car.model} isParked:`, car.isParking);
                 });
-                console.log("Cars array after mapping:", cars); // Debug log for mapped cars
             } else {
-                // If API call fails, use hardcoded data
                 console.log("Using hardcoded data due to API error");
                 cars = hardcodedCars;
+                ownedCars = cars;
             }
-            
-            // No need to filter ownedCars since backend already provides only owned cars
-            ownedCars = cars;
         } catch (error) {
             console.error("Error loading cars:", error);
-            // If there's an error, use hardcoded data
             cars = hardcodedCars;
             ownedCars = cars;
         } finally {
@@ -237,6 +224,72 @@
 
         formLoading = false;
     }
+
+    async function handleStartParking(carId, parkingSpotId) {
+        if (!parkingSpotId) {
+            error = 'Nincs kiválasztva parkolóhely!';
+            return;
+        }
+        
+        try {
+            const result = await startParking(carId, parkingSpotId);
+            if (result.success) {
+                // Frissítjük az autók listáját
+                await loadCars();
+            } else {
+                error = result.error || 'Hiba történt a parkolás indítása során.';
+            }
+        } catch (err) {
+            console.error('Error starting parking:', err);
+            error = 'Hiba történt a parkolás indítása során.';
+        }
+    }
+
+    async function handleStopParking(carId) {
+        try {
+            const result = await stopParking(carId);
+            if (result.success) {
+                // Frissítjük az autók listáját
+                await loadCars();
+            } else {
+                error = result.error || 'Hiba történt a parkolás leállítása során.';
+            }
+        } catch (error) {
+            console.error('Error stopping parking:', error);
+            error = 'Hiba történt a parkolás leállítása során.';
+        }
+    }
+
+    function openParkingMap(car) {
+        console.log('Opening parking map for car:', car);
+        if (!car || !car.id || isNaN(car.id)) {
+            console.error('Invalid car or car ID:', car);
+            error = 'Érvénytelen autó kiválasztás!';
+            return;
+        }
+        console.log('Car ID:', car.id);
+        selectedCar = car;
+        console.log('Selected car after assignment:', selectedCar);
+        console.log('Selected car ID after assignment:', selectedCar?.id);
+        showParkingMap = true;
+    }
+
+    function closeParkingMap() {
+        showParkingMap = false;
+        selectedCar = null;
+    }
+
+    async function handleSpotSelect(spot) {
+        console.log('Selected car:', selectedCar);
+        console.log('Selected spot:', spot);
+        if (selectedCar && selectedCar.id) {
+            console.log('Starting parking with carId:', selectedCar.id, 'and parkingSpotId:', spot.id);
+            await handleStartParking(selectedCar.id, spot.id);
+            closeParkingMap();
+        } else {
+            error = 'Nincs kiválasztva autó!';
+        }
+    }
 </script>
 
 <div class="cars-container">
@@ -277,9 +330,15 @@
                         <button class="action-button edit">Szerkesztés</button>
                         {#if car.isParking}
                             <button
-                                class="action-button park"
-                                on:click={() => goto("/dashboard")}>
+                                class="action-button park stop"
+                                on:click={() => handleStopParking(car.id)}>
                                 Parkolás leállítása
+                            </button>
+                        {:else}
+                            <button
+                                class="action-button park start"
+                                on:click={() => openParkingMap(car)}>
+                                Parkolás indítása
                             </button>
                         {/if}
                     </div>
@@ -367,6 +426,21 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    {/if}
+
+    {#if showParkingMap}
+        <div class="modal-overlay" on:click={closeParkingMap}>
+            <div class="modal-content parking-map-modal" on:click|stopPropagation>
+                <div class="modal-header">
+                    <h2>Parkolóhely kiválasztása</h2>
+                    <button class="close-button" on:click={closeParkingMap}>&times;</button>
+                </div>
+                <ParkingMap 
+                    onSpotSelect={handleSpotSelect} 
+                    selectedCarId={selectedCar?.id} 
+                />
             </div>
         </div>
     {/if}
@@ -497,12 +571,25 @@
         background-color: #edf6fd;
     }
 
-    .action-button.park {
+    .action-button.park.start {
         color: #27ae60;
     }
-
-    .action-button.park:hover {
+    
+    .action-button.park.start:hover:not(:disabled) {
         background-color: #edfaf1;
+    }
+    
+    .action-button.park.start:disabled {
+        color: #95a5a6;
+        cursor: not-allowed;
+    }
+    
+    .action-button.park.stop {
+        color: #e74c3c;
+    }
+    
+    .action-button.park.stop:hover {
+        background-color: #fdf0f0;
     }
 
     /* Modal styles */
@@ -613,5 +700,10 @@
     .submit-button:disabled {
         background-color: #95a5a6;
         cursor: not-allowed;
+    }
+
+    .parking-map-modal {
+        max-width: 800px;
+        width: 90%;
     }
 </style>
