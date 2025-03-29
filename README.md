@@ -133,3 +133,4 @@ A projekt sikeresen telepítve van és működik a következő szolgáltatásoko
 - Backend (Render) -> Adatbázis (Aiven): SSL/TLS titkosítással védett kapcsolat
 - CORS beállítások megfelelően konfigurálva a Netlify és Render közötti kommunikációhoz
 - Cookie beállítások optimalizálva a cross-origin kérésekhez
+
