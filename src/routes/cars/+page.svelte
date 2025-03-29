@@ -26,99 +26,6 @@
     let showParkingMap = false;
     let selectedCar = null;
 
-    // Hardcoded car data
-    const hardcodedCars = [
-        {
-            id: 1,
-            brand: "Toyota",
-            model: "Corolla",
-            year: 2022,
-            licensePlate: "ABC-123",
-            color: "Kék",
-            isOwn: true,
-            logo: "https://www.carlogos.org/car-logos/toyota-logo.png",
-            isParking: true,
-        },
-        {
-            id: 2,
-            brand: "Honda",
-            model: "Civic",
-            year: 2019,
-            licensePlate: "DEF-456",
-            color: "Red",
-            isOwn: false,
-            logo: "https://www.carlogos.org/car-logos/honda-logo.png",
-            isParking: false,
-        },
-        {
-            id: 3,
-            brand: "Ford",
-            model: "Focus",
-            year: 2020,
-            licensePlate: "GHI-789",
-            color: "Black",
-            isOwn: false,
-            logo: "https://www.carlogos.org/car-logos/ford-logo.png",
-            isParking: false,
-        },
-        {
-            id: 4,
-            brand: "BMW",
-            model: "X5",
-            year: 2021,
-            licensePlate: "JKL-012",
-            color: "Silver",
-            isOwn: false,
-            logo: "https://www.carlogos.org/car-logos/bmw-logo.png",
-            isParking: false,
-        },
-        {
-            id: 5,
-            brand: "Audi",
-            model: "A4",
-            year: 2001,
-            licensePlate: "SU0-71J",
-            color: "Szürke",
-            isOwn: true,
-            logo: "https://www.carlogos.org/car-logos/audi-logo.png",
-            isParking: false,
-        },
-        {
-            id: 6,
-            brand: "Volkswagen",
-            model: "Golf",
-            year: 2022,
-            licensePlate: "PQR-678",
-            color: "Green",
-            isOwn: false,
-            logo: "https://www.carlogos.org/car-logos/volkswagen-logo.png",
-            isParking: false,
-        },
-        {
-            id: 7,
-            brand: "Mercedes",
-            model: "C-Class",
-            year: 2020,
-            licensePlate: "STU-901",
-            color: "Gray",
-            isOwn: false,
-            logo: "https://www.carlogos.org/car-logos/mercedes-benz-logo.png",
-            isParking: false,
-        },
-        {
-            id: 8,
-            brand: "Hyundai",
-            model: "Tucson",
-            year: 2019,
-            licensePlate: "VWX-234",
-            color: "Orange",
-            isOwn: false,
-            logo: "https://www.carlogos.org/car-logos/hyundai-logo.png",
-            isParking: false,
-        },
-    ];
-
-    // +++++++++
     import { onMount } from "svelte";
 
     onMount(async () => {
@@ -171,7 +78,40 @@
             'audi': 'https://www.carlogos.org/car-logos/audi-logo.png',
             'volkswagen': 'https://www.carlogos.org/car-logos/volkswagen-logo.png',
             'mercedes': 'https://www.carlogos.org/car-logos/mercedes-benz-logo.png',
-            'hyundai': 'https://www.carlogos.org/car-logos/hyundai-logo.png'
+            'hyundai': 'https://www.carlogos.org/car-logos/hyundai-logo.png',
+            'opel': 'https://www.carlogos.org/car-logos/opel-logo.png',
+            'peugeot': 'https://www.carlogos.org/car-logos/peugeot-logo.png',
+            'fiat': 'https://www.carlogos.org/car-logos/fiat-logo.png',
+            'skoda': 'https://www.carlogos.org/car-logos/skoda-logo.png',
+            'seat': 'https://www.carlogos.org/car-logos/seat-logo.png',
+            'renault': 'https://www.carlogos.org/car-logos/renault-logo.png',
+            'alfa-romeo': 'https://www.carlogos.org/car-logos/alfa-romeo-logo.png',
+            'alfa romeo': 'https://www.carlogos.org/car-logos/alfa-romeo-logo.png',
+            'kia': 'https://www.carlogos.org/car-logos/kia-logo.png',
+            'landrover': 'https://www.carlogos.org/car-logos/landrover-logo.png',
+            'jeep': 'https://www.carlogos.org/car-logos/jeep-logo.png',
+            'mazda': 'https://www.carlogos.org/car-logos/mazda-logo.png',
+            'mitsubishi': 'https://www.carlogos.org/car-logos/mitsubishi-logo.png',
+            'nissan': 'https://www.carlogos.org/car-logos/nissan-logo.png',
+            'subaru': 'https://www.carlogos.org/car-logos/subaru-logo.png',
+            'tesla': 'https://www.carlogos.org/car-logos/tesla-logo.png',
+            'porsche': 'https://www.carlogos.org/car-logos/porsche-logo.png',
+            'volvo': 'https://www.carlogos.org/car-logos/volvo-logo.png',
+            'lexus': 'https://www.carlogos.org/car-logos/lexus-logo.png',
+            'jaguar': 'https://www.carlogos.org/car-logos/jaguar-logo.png',
+            'infiniti': 'https://www.carlogos.org/car-logos/infiniti-logo.png',
+            'cadillac': 'https://www.carlogos.org/car-logos/cadillac-logo.png',
+            'gmc': 'https://www.carlogos.org/car-logos/gmc-logo.png',
+            'dodge': 'https://www.carlogos.org/car-logos/dodge-logo.png',
+            'chrysler': 'https://www.carlogos.org/car-logos/chrysler-logo.png',
+            'ferrari': 'https://www.carlogos.org/car-logos/ferrari-logo.png',
+            'lamborghini': 'https://www.carlogos.org/car-logos/lamborghini-logo.png',
+            'mclaren': 'https://www.carlogos.org/car-logos/mclaren-logo.png',
+            'bugatti': 'https://www.carlogos.org/car-logos/bugatti-logo.png',
+            'rolls-royce': 'https://www.carlogos.org/car-logos/rolls-royce-logo.png',
+            'maserati': 'https://www.carlogos.org/car-logos/maserati-logo.png',
+            'mini': 'https://www.carlogos.org/car-logos/mini-logo.png',
+            'hummer': 'https://www.carlogos.org/car-logos/hummer-logo.png'
         };
         return logoMap[brandLower] || 'https://www.carlogos.org/car-logos/default-car-logo.png';
     }
@@ -315,7 +255,7 @@
                     <div class="car-header">
                         <h3>{car.brand} {car.model}</h3>
                         <img
-                            src={car.logo}
+                            src={getCarLogo(car.brand)}
                             alt="{car.brand} logo"
                             width="40"
                             height="40"
