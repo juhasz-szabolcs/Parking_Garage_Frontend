@@ -159,9 +159,12 @@ export async function getUserData() {
 
 export async function createCar(car) {
     try {
-        const response = await axios.post(`${API_URL}/api/cars`, car);
-        console.log('Create car response:', response.data);
-        return { success: true, data: response.data };
+        const response = await apiCall('/api/cars', {
+            method: 'POST',
+            data: car
+        });
+        console.log('Create car response:', response);
+        return { success: true, data: response };
     } catch (error) {
         console.error('Create car error:', error.response?.data || error);
         return { success: false, error: error.response?.data || 'Failed to create car' };
@@ -199,19 +202,15 @@ export async function startParking(carId, parkingSpotId) {
         };
         
         console.log('Sending data to server:', data);
-        console.log('Request URL:', `${API_URL}/api/parking/start`);
-        
-        const response = await axios.post(`${API_URL}/api/parking/start`, data, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        const response = await apiCall('/api/parking/start', {
+            method: 'POST',
+            data: data
         });
         
-        console.log('Server response:', response.data);
+        console.log('Server response:', response);
         return {
             success: true,
-            data: response.data
+            data: response
         };
     } catch (error) {
         console.error('Error starting parking:', error);
@@ -229,16 +228,12 @@ export async function startParking(carId, parkingSpotId) {
 export async function stopParking(carId) {
     try {
         console.log('Stopping parking for car:', carId);
-        const response = await axios.post(`${API_URL}/api/parking/end`, {
-            carId: parseInt(carId)
-        }, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        const response = await apiCall('/api/parking/end', {
+            method: 'POST',
+            data: { carId: parseInt(carId) }
         });
-        console.log('Stop parking response:', response.data);
-        return { success: true, data: response.data };
+        console.log('Stop parking response:', response);
+        return { success: true, data: response };
     } catch (error) {
         console.error('Error stopping parking:', error);
         console.error('Error response:', error.response?.data);
@@ -254,14 +249,11 @@ export async function stopParking(carId) {
 export async function deleteCar(carId) {
     try {
         console.log('Deleting car:', carId);
-        const response = await axios.delete(`${API_URL}/api/cars/${carId}`, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json'
-            }
+        const response = await apiCall(`/api/cars/${carId}`, {
+            method: 'DELETE'
         });
-        console.log('Delete car response:', response.data);
-        return { success: true, data: response.data };
+        console.log('Delete car response:', response);
+        return { success: true, data: response };
     } catch (error) {
         console.error('Error deleting car:', error);
         console.error('Error response:', error.response?.data);
