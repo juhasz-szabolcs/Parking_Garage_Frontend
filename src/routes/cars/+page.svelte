@@ -275,7 +275,10 @@
                 <div class="car-card">
                     <div class="car-header">
                         <img src={getCarLogo(car.brand)} alt={car.brand} class="car-logo" />
-                        <h3>{car.brand} {car.model}</h3>
+                        <div class="car-title">
+                            <h3>{car.brand}</h3>
+                            <h4>{car.model}</h4>
+                        </div>
                     </div>
                     <div class="car-details">
                         <p><strong>Rendszám:</strong> {car.licensePlate}</p>
@@ -472,82 +475,124 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1.5rem;
+        padding: 1rem;
     }
 
     .car-card {
-        background-color: white;
+        background: white;
         border-radius: 8px;
+        padding: 1.5rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
 
     .car-header {
-        background-color: #f8f9fa;
-        padding: 1rem;
-        border-bottom: 1px solid #e9ecef;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        gap: 1rem;
     }
 
-    .car-header h3 {
+    .car-logo {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+    }
+
+    .car-title {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .car-title h3 {
         margin: 0;
-        color: #2c3e50;
+        font-size: 1.25rem;
+        color: #333;
+        font-weight: 600;
     }
 
-    .license-plate {
-        background-color: #e9ecef;
+    .car-title h4 {
+        margin: 0.25rem 0 0 0;
+        font-size: 1.1rem;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .car-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .car-details p {
+        margin: 0;
+        color: #444;
+    }
+
+    .parking-status {
+        font-weight: 500;
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
-        font-weight: bold;
+        display: inline-block;
     }
 
-    .car-info {
-        padding: 1rem;
+    .parked {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .not-parked {
+        background-color: #f8f9fa;
+        color: #6c757d;
     }
 
     .car-actions {
         display: flex;
-        border-top: 1px solid #e9ecef;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
     }
 
-    .action-button {
+    .park-button, .stop-button {
         flex: 1;
+        padding: 0.5rem 1rem;
         border: none;
-        background: none;
-        padding: 0.75rem;
+        border-radius: 4px;
+        font-weight: 500;
         cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.3s;
+        transition: background-color 0.2s;
     }
 
-    .action-button.edit {
-        color: #3498db;
+    .park-button {
+        background-color: #28a745;
+        color: white;
     }
 
-    .action-button.edit:hover {
-        background-color: #edf6fd;
+    .park-button:hover {
+        background-color: #218838;
     }
 
-    .action-button.park.start {
-        color: #27ae60;
+    .stop-button {
+        background-color: #ffc107;
+        color: #000;
     }
-    
-    .action-button.park.start:hover:not(:disabled) {
-        background-color: #edfaf1;
+
+    .stop-button:hover {
+        background-color: #e0a800;
     }
-    
-    .action-button.park.start:disabled {
-        color: #95a5a6;
-        cursor: not-allowed;
+
+    .delete-button {
+        padding: 0.5rem 1rem;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
     }
-    
-    .action-button.park.stop {
-        color: #e74c3c;
-    }
-    
-    .action-button.park.stop:hover {
-        background-color: #fdf0f0;
+
+    .delete-button:hover {
+        background-color: #c82333;
     }
 
     /* Modal styles */
@@ -663,25 +708,5 @@
     .parking-map-modal {
         max-width: 800px;
         width: 90%;
-    }
-
-    .delete-button {
-        background-color: #dc3545;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-
-    .delete-button:hover {
-        background-color: #c82333;
-    }
-
-    .car-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: 16px;
     }
 </style>
