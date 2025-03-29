@@ -1,6 +1,6 @@
 <script>
     // import { onMount } from "svelte";
-    import { getUserData, createCar, startParking, stopParking } from "$lib/api";
+    import { getUserData, createCar, startParking, stopParking, deleteCar } from "$lib/api";
     import { isAuthenticated, user } from "$lib/store";
     import { goto } from "$app/navigation";
     import ParkingMap from "$lib/components/ParkingMap.svelte";
@@ -230,6 +230,27 @@
             error = 'Nincs kiválasztva autó!';
         }
     }
+
+    async function handleDeleteCar(carId) {
+        if (confirm('Biztosan törölni szeretnéd ezt az autót?')) {
+            try {
+                const result = await deleteCar(carId);
+                if (result.success) {
+                    // Frissítjük az autók listáját
+                    await loadCars();
+                    success = "Autó sikeresen törölve!";
+                    setTimeout(() => {
+                        success = "";
+                    }, 1500);
+                } else {
+                    error = result.error || 'Hiba történt az autó törlése során.';
+                }
+            } catch (err) {
+                console.error('Error deleting car:', err);
+                error = 'Hiba történt az autó törlése során.';
+            }
+        }
+    }
 </script>
 
 <div class="cars-container">
@@ -250,37 +271,34 @@
         </div>
     {:else}
         <div class="cars-grid">
-            {#each ownedCars as car}
+            {#each cars as car (car.id)}
                 <div class="car-card">
                     <div class="car-header">
+                        <img src={getCarLogo(car.brand)} alt={car.brand} class="car-logo" />
                         <h3>{car.brand} {car.model}</h3>
-                        <img
-                            src={getCarLogo(car.brand)}
-                            alt="{car.brand} logo"
-                            width="40"
-                            height="40"
-                        />
-                        <span class="license-plate">{car.licensePlate}</span>
                     </div>
-                    <div class="car-info">
-                        <p>Évjárat: {car.year}</p>
-                        <p>Szín: {car.color}</p>
+                    <div class="car-details">
+                        <p><strong>Rendszám:</strong> {car.licensePlate}</p>
+                        <p><strong>Évjárat:</strong> {car.year}</p>
+                        {#if car.isParking}
+                            <p class="parking-status parked">Jelenleg parkol</p>
+                        {:else}
+                            <p class="parking-status not-parked">Nincs parkolva</p>
+                        {/if}
                     </div>
                     <div class="car-actions">
-                        <button class="action-button edit">Szerkesztés</button>
-                        {#if car.isParking}
-                            <button
-                                class="action-button park stop"
-                                on:click={() => handleStopParking(car.id)}>
-                                Parkolás leállítása
-                            </button>
-                        {:else}
-                            <button
-                                class="action-button park start"
-                                on:click={() => openParkingMap(car)}>
+                        {#if !car.isParking}
+                            <button class="park-button" on:click={() => openParkingMap(car)}>
                                 Parkolás indítása
                             </button>
+                        {:else}
+                            <button class="stop-button" on:click={() => handleStopParking(car.id)}>
+                                Parkolás leállítása
+                            </button>
                         {/if}
+                        <button class="delete-button" on:click={() => handleDeleteCar(car.id)}>
+                            Törlés
+                        </button>
                     </div>
                 </div>
             {/each}
@@ -645,5 +663,25 @@
     .parking-map-modal {
         max-width: 800px;
         width: 90%;
+    }
+
+    .delete-button {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .delete-button:hover {
+        background-color: #c82333;
+    }
+
+    .car-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
     }
 </style>
