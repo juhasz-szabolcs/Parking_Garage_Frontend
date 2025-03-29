@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API URL configuration
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5025';
+export const API_URL = import.meta.env.production.VITE_API_URL || 'http://localhost:5025';
 
 // Configure axios defaults
 axios.defaults.withCredentials = true;
