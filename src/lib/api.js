@@ -9,23 +9,15 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 // Helper function for API calls
 async function apiCall(endpoint, options = {}) {
-    const url = `${API_URL}${endpoint}`;
-    const defaultOptions = {
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    };
-
     try {
-        const response = await fetch(url, { ...defaultOptions, ...options });
-        const data = await response.json();
+        const response = await axios({
+            method: options.method || 'GET',
+            url: `${API_URL}${endpoint}`,
+            data: options.body,
+            ...options
+        });
         
-        if (!response.ok) {
-            throw new Error(data.message || 'Something went wrong');
-        }
-        
-        return data;
+        return response.data;
     } catch (error) {
         console.error('API call error:', error);
         throw error;
@@ -34,9 +26,12 @@ async function apiCall(endpoint, options = {}) {
 
 export async function register(user) {
     try {
-        const response = await axios.post(`${API_URL}/api/users/register`, user);
-        console.log('Registration response:', response.data);
-        return { success: true, data: response.data };
+        const response = await apiCall('/api/users/register', {
+            method: 'POST',
+            data: user
+        });
+        console.log('Registration response:', response);
+        return { success: true, data: response };
     } catch (error) {
         console.error('Registration error:', error.response?.data || error);
         return { success: false, error: error.response?.data || 'Registration failed' };
@@ -45,9 +40,12 @@ export async function register(user) {
 
 export async function login(email, password) {
     try {
-        const response = await axios.post(`${API_URL}/api/users/login`, { email, password });
-        console.log('Login response:', response.data);
-        return { success: true, data: response.data };
+        const response = await apiCall('/api/users/login', {
+            method: 'POST',
+            data: { email, password }
+        });
+        console.log('Login response:', response);
+        return { success: true, data: response };
     } catch (error) {
         console.error('Login error:', error.response?.data || error);
         return { success: false, error: error.response?.data || 'Login failed' };
@@ -56,9 +54,11 @@ export async function login(email, password) {
 
 export async function logout() {
     try {
-        const response = await axios.post(`${API_URL}/api/users/logout`);
-        console.log('Logout response:', response.data);
-        return { success: true, data: response.data };
+        const response = await apiCall('/api/users/logout', {
+            method: 'POST'
+        });
+        console.log('Logout response:', response);
+        return { success: true, data: response };
     } catch (error) {
         console.error('Logout error:', error.response?.data || error);
         return { success: false, error: error.response?.data || 'Logout failed' };
