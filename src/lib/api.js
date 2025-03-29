@@ -12,6 +12,16 @@ async function apiCall(endpoint, options = {}) {
     try {
         console.log('Making API call to:', `${API_URL}${endpoint}`);
         console.log('API URL from env:', API_URL);
+        console.log('Full request config:', {
+            method: options.method || 'GET',
+            url: `${API_URL}${endpoint}`,
+            data: options.data,
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
         
         const response = await axios({
             method: options.method || 'GET',
@@ -30,6 +40,14 @@ async function apiCall(endpoint, options = {}) {
         console.error('API call error:', error);
         console.error('Request URL:', `${API_URL}${endpoint}`);
         console.error('Request method:', options.method || 'GET');
+        console.error('Request data:', options.data);
+        console.error('Request headers:', options.headers);
+        console.error('Error details:', {
+            message: error.message,
+            code: error.code,
+            response: error.response?.data,
+            status: error.response?.status
+        });
         throw error;
     }
 }
@@ -50,14 +68,24 @@ export async function register(user) {
 
 export async function login(email, password) {
     try {
+        console.log('Login attempt with email:', email);
+        console.log('API URL:', API_URL);
+        
         const response = await apiCall('/api/users/login', {
             method: 'POST',
             data: { email, password }
         });
+        
         console.log('Login response:', response);
         return { success: true, data: response };
     } catch (error) {
         console.error('Login error:', error.response?.data || error);
+        console.error('Login error details:', {
+            message: error.message,
+            code: error.code,
+            response: error.response?.data,
+            status: error.response?.status
+        });
         return { success: false, error: error.response?.data || 'Login failed' };
     }
 }
