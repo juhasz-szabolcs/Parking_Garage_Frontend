@@ -10,16 +10,26 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 // Helper function for API calls
 async function apiCall(endpoint, options = {}) {
     try {
+        console.log('Making API call to:', `${API_URL}${endpoint}`);
+        console.log('API URL from env:', API_URL);
+        
         const response = await axios({
             method: options.method || 'GET',
             url: `${API_URL}${endpoint}`,
-            data: options.body,
+            data: options.data,
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
             ...options
         });
         
         return response.data;
     } catch (error) {
         console.error('API call error:', error);
+        console.error('Request URL:', `${API_URL}${endpoint}`);
+        console.error('Request method:', options.method || 'GET');
         throw error;
     }
 }
