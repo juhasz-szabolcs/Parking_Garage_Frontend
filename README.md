@@ -118,3 +118,18 @@ A projekthez való hozzájárulást szívesen fogadjuk! Kérjük, hogy a változ
 https://codecanyon.net/item/parkir-parking-booking-react-native-cli-app-ui-kit/56073916
 
 https://codecanyon.net/item/parking-spot-booking-app-car-parking-app-smart-parking-app-flutter-parkspot-multi-language/45709425
+
+## Deployment
+
+A projekt sikeresen telepítve van és működik a következő szolgáltatásokon:
+
+- **Frontend**: [Netlify](https://parking-garage-app.netlify.app)
+- **Backend**: [Render](https://parkinggarageapibackend.onrender.com)
+- **Adatbázis**: [Aiven MySQL](https://aiven.io)
+
+### Kapcsolatok
+
+- Frontend (Netlify) -> Backend (Render): HTTPS-en keresztül működik
+- Backend (Render) -> Adatbázis (Aiven): SSL/TLS titkosítással védett kapcsolat
+- CORS beállítások megfelelően konfigurálva a Netlify és Render közötti kommunikációhoz
+- Cookie beállítások optimalizálva a cross-origin kérésekhez
