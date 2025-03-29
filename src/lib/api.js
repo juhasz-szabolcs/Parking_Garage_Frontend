@@ -211,3 +211,26 @@ export async function stopParking(carId) {
         };
     }
 }
+
+// Autó törlése
+export async function deleteCar(carId) {
+    try {
+        console.log('Deleting car:', carId);
+        const response = await axios.delete(`${API_URL}/api/cars/${carId}`, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Delete car response:', response.data);
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.error('Error deleting car:', error);
+        console.error('Error response:', error.response?.data);
+        console.error('Error status:', error.response?.status);
+        return { 
+            success: false, 
+            error: error.response?.data || 'Hiba történt az autó törlése során.' 
+        };
+    }
+}
