@@ -86,11 +86,11 @@ function getCarLogo(brand) {
 
 export async function getUserData() {
     try {
-        const response = await axios.get(`${API_URL}/api/cars`);
-        console.log('Cars response:', response.data);
+        const response = await apiCall('/api/cars');
+        console.log('Cars response:', response);
         
         // Transform the car data to match our frontend structure
-        const cars = response.data.map(car => ({
+        const cars = response.map(car => ({
             id: car.id,
             brand: car.brand,
             model: car.model,
