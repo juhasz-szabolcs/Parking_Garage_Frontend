@@ -409,8 +409,9 @@
 
 <style>
     .cars-container {
-        max-width: 1000px;
+        max-width: 1200px;
         margin: 0 auto;
+        padding: 1rem;
     }
 
     .header {
@@ -418,10 +419,12 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
     h1 {
-        font-size: 2.5rem;
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
         color: #2c3e50;
         margin: 0;
     }
@@ -435,6 +438,7 @@
         font-weight: bold;
         cursor: pointer;
         transition: background-color 0.3s;
+        white-space: nowrap;
     }
 
     .add-button:hover {
@@ -473,15 +477,26 @@
 
     .cars-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
-        padding: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+        padding: 0.5rem;
+    }
+
+    @media (max-width: 640px) {
+        .cars-grid {
+            grid-template-columns: 1fr;
+            padding: 0;
+        }
+
+        .car-card {
+            margin: 0.5rem 0;
+        }
     }
 
     .car-card {
         background: white;
         border-radius: 8px;
-        padding: 1.5rem;
+        padding: 1.25rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
@@ -495,9 +510,10 @@
     }
 
     .car-logo {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         object-fit: contain;
+        flex-shrink: 0;
     }
 
     .car-title {
@@ -507,16 +523,18 @@
 
     .car-title h3 {
         margin: 0;
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         color: #333;
         font-weight: 600;
+        word-break: break-word;
     }
 
     .car-title h4 {
         margin: 0.25rem 0 0 0;
-        font-size: 1.1rem;
+        font-size: 1rem;
         color: #666;
         font-weight: 500;
+        word-break: break-word;
     }
 
     .car-details {
@@ -528,6 +546,7 @@
     .car-details p {
         margin: 0;
         color: #444;
+        font-size: 0.95rem;
     }
 
     .parking-status {
@@ -549,8 +568,19 @@
 
     .car-actions {
         display: flex;
-        gap: 0.75rem;
+        gap: 0.5rem;
         margin-top: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 400px) {
+        .car-actions {
+            flex-direction: column;
+        }
+
+        .car-actions button {
+            width: 100%;
+        }
     }
 
     .park-button, .stop-button {
@@ -561,6 +591,10 @@
         font-weight: 500;
         cursor: pointer;
         transition: background-color 0.2s;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .park-button {
@@ -589,6 +623,10 @@
         border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.2s;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .delete-button:hover {
@@ -607,19 +645,38 @@
         justify-content: center;
         align-items: center;
         z-index: 1000;
+        padding: 1rem;
     }
 
     .modal-content {
         background-color: white;
         border-radius: 8px;
-        width: 90%;
+        width: 100%;
         max-width: 500px;
         max-height: 90vh;
         overflow-y: auto;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 1rem;
+    }
+
+    @media (max-width: 640px) {
+        .modal-content {
+            margin: 0;
+            max-height: 100vh;
+            border-radius: 0;
+            width: 100%;
+        }
+
+        .modal-overlay {
+            padding: 0;
+        }
     }
 
     .modal-header {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 1;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -630,6 +687,7 @@
     .modal-header h2 {
         margin: 0;
         color: #2c3e50;
+        font-size: clamp(1.2rem, 4vw, 1.5rem);
     }
 
     .close-button {
@@ -638,6 +696,13 @@
         font-size: 1.5rem;
         cursor: pointer;
         color: #7f8c8d;
+        padding: 0.5rem;
+        margin: -0.5rem;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     form {
@@ -661,6 +726,8 @@
         border: 1px solid #ddd;
         border-radius: 4px;
         font-size: 1rem;
+        -webkit-appearance: none;
+        appearance: none;
     }
 
     input:focus {
@@ -674,6 +741,36 @@
         justify-content: flex-end;
         gap: 1rem;
         margin-top: 1rem;
+        padding: 1rem;
+        background: white;
+        position: sticky;
+        bottom: 0;
+        border-top: 1px solid #e9ecef;
+    }
+
+    @media (max-width: 640px) {
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .form-actions button {
+            width: 100%;
+            padding: 1rem;
+        }
+    }
+
+    .parking-map-modal {
+        max-width: 800px;
+        width: 100%;
+    }
+
+    @media (max-width: 640px) {
+        .parking-map-modal {
+            height: 100vh;
+            max-height: none;
+            display: flex;
+            flex-direction: column;
+        }
     }
 
     .cancel-button {
@@ -684,6 +781,7 @@
         border-radius: 4px;
         cursor: pointer;
         font-weight: bold;
+        min-height: 44px;
     }
 
     .submit-button {
@@ -694,6 +792,7 @@
         border-radius: 4px;
         cursor: pointer;
         font-weight: bold;
+        min-height: 44px;
     }
 
     .submit-button:hover:not(:disabled) {
@@ -703,10 +802,5 @@
     .submit-button:disabled {
         background-color: #95a5a6;
         cursor: not-allowed;
-    }
-
-    .parking-map-modal {
-        max-width: 800px;
-        width: 90%;
     }
 </style>

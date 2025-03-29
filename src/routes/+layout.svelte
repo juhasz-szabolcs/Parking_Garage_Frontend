@@ -6,6 +6,8 @@
     import 'bootstrap-icons/font/bootstrap-icons.css';
     import Nav from "$lib/components/Nav.svelte";
 
+    let isMenuOpen = false;
+
     async function handleLogout() {
         try {
             await logout();
@@ -16,6 +18,15 @@
             console.error('Logout error:', error);
         }
     }
+
+    function toggleMenu() {
+        isMenuOpen = !isMenuOpen;
+    }
+
+    // Bezárjuk a menüt, ha átnavigálunk
+    $: if ($page) {
+        isMenuOpen = false;
+    }
 </script>
 
 <nav class="navbar">
@@ -24,48 +35,54 @@
             <i class="bi bi-p-square-fill"></i>
             <span>Parking Garage</span>
         </a>
+        <button class="menu-toggle" on:click={toggleMenu} aria-label="Menü">
+            <i class="bi bi-list"></i>
+        </button>
     </div>
 
-    <div class="nav-links">
+    <div class="nav-content" class:open={isMenuOpen}>
         {#if $isAuthenticated}
-            <a href="/" class="nav-link {$page.url.pathname === '/' ? 'active' : ''}">
-                <i class="bi bi-house-door"></i>
-                <span>Főoldal</span>
-            </a>
-            <a href="/cars" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}">
-                <i class="bi bi-car-front"></i>
-                <span>Autók</span>
-            </a>
-            <a href="/parking" class="nav-link {$page.url.pathname === '/parking' ? 'active' : ''}">
-                <i class="bi bi-p-square"></i>
-                <span>Parkoló</span>
-            </a>
-            <a href="/profile" class="nav-link {$page.url.pathname === '/profile' ? 'active' : ''}">
-                <i class="bi bi-person-circle"></i>
-                <span>Profil</span>
-            </a>
+            <div class="nav-links">
+                <a href="/" class="nav-link {$page.url.pathname === '/' ? 'active' : ''}" on:click={toggleMenu}>
+                    <i class="bi bi-house-door"></i>
+                    <span>Főoldal</span>
+                </a>
+                <a href="/cars" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}" on:click={toggleMenu}>
+                    <i class="bi bi-car-front"></i>
+                    <span>Autók</span>
+                </a>
+                <a href="/parking" class="nav-link {$page.url.pathname === '/parking' ? 'active' : ''}" on:click={toggleMenu}>
+                    <i class="bi bi-p-square"></i>
+                    <span>Parkoló</span>
+                </a>
+                <a href="/profile" class="nav-link {$page.url.pathname === '/profile' ? 'active' : ''}" on:click={toggleMenu}>
+                    <i class="bi bi-person-circle"></i>
+                    <span>Profil</span>
+                </a>
+                <div class="nav-divider"></div>
+                <div class="user-info">
+                    <span class="user-name">
+                        {$user?.firstName} {$user?.lastName}
+                    </span>
+                </div>
+                <button class="nav-button logout-button" on:click={handleLogout}>
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Kijelentkezés</span>
+                </button>
+            </div>
         {:else}
-            <a href="/login" class="nav-link {$page.url.pathname === '/login' ? 'active' : ''}">
-                <i class="bi bi-box-arrow-in-right"></i>
-                <span>Bejelentkezés</span>
-            </a>
-            <a href="/register" class="nav-link {$page.url.pathname === '/register' ? 'active' : ''}">
-                <i class="bi bi-person-plus"></i>
-                <span>Regisztráció</span>
-            </a>
+            <div class="nav-links">
+                <a href="/login" class="nav-link {$page.url.pathname === '/login' ? 'active' : ''}" on:click={toggleMenu}>
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span>Bejelentkezés</span>
+                </a>
+                <a href="/register" class="nav-link {$page.url.pathname === '/register' ? 'active' : ''}" on:click={toggleMenu}>
+                    <i class="bi bi-person-plus"></i>
+                    <span>Regisztráció</span>
+                </a>
+            </div>
         {/if}
     </div>
-
-    {#if $isAuthenticated}
-        <div class="user-section">
-            <span class="user-name">
-                {$user?.firstName} {$user?.lastName}
-            </span>
-            <button class="logout-button" on:click={handleLogout}>
-                Kijelentkezés
-            </button>
-        </div>
-    {/if}
 </nav>
 
 <main>
@@ -82,20 +99,24 @@
         padding: 0;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         background-color: #f5f5f5;
+        min-height: 100vh;
     }
 
     .navbar {
         background-color: white;
-        padding: 1rem 2rem;
+        padding: 0;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
     }
 
     .nav-brand {
         display: flex;
         align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e9ecef;
     }
 
     .brand-link {
@@ -103,14 +124,36 @@
         align-items: center;
         text-decoration: none;
         color: #2c3e50;
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: bold;
+    }
+
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #2c3e50;
+        cursor: pointer;
+        padding: 0.5rem;
+        margin: -0.5rem;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-content {
+        display: flex;
+        align-items: center;
     }
 
     .nav-links {
         display: flex;
-        gap: 1.5rem;
         align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem;
     }
 
     .nav-link {
@@ -119,12 +162,30 @@
         text-decoration: none;
         color: #2c3e50;
         font-weight: 500;
-        padding: 0.5rem;
+        padding: 0.75rem 1rem;
         border-radius: 4px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .nav-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
         transition: all 0.3s ease;
     }
 
-    .nav-link:hover {
+    .nav-link:hover,
+    .nav-button:hover {
         color: #3498db;
         background-color: #f8f9fa;
     }
@@ -134,35 +195,34 @@
         background-color: #e3f2fd;
     }
 
-    .user-section {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+    .nav-divider {
+        height: 1px;
+        background-color: #e9ecef;
+        margin: 0.5rem 0;
+        width: 100%;
     }
 
-    .user-name {
+    .user-info {
+        padding: 0.75rem 1rem;
         color: #2c3e50;
         font-weight: 500;
     }
 
     .logout-button {
-        background-color: #e74c3c;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.3s;
+        color: #e74c3c;
     }
 
     .logout-button:hover {
-        background-color: #c0392b;
+        color: #c0392b;
+        background-color: #fee2e2;
     }
 
-    .nav-link i {
-        margin-right: 0.5rem;
+    .nav-link i,
+    .nav-button i {
+        margin-right: 0.75rem;
         font-size: 1.2rem;
+        width: 1.5rem;
+        text-align: center;
     }
 
     .brand-link i {
@@ -171,20 +231,99 @@
         color: #3498db;
     }
 
-    .nav-link:hover i,
-    .brand-link:hover i {
-        color: #3498db;
+    @media (max-width: 768px) {
+        .menu-toggle {
+            display: flex;
+        }
+
+        .nav-content {
+            display: none;
+            position: fixed;
+            top: 61px; /* A navbar magassága */
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            flex-direction: column;
+            align-items: stretch;
+            overflow-y: auto;
+        }
+
+        .nav-content.open {
+            display: flex;
+        }
+
+        .nav-links {
+            flex-direction: column;
+            padding: 1rem;
+            gap: 0.5rem;
+        }
+
+        .nav-link,
+        .nav-button {
+            padding: 0.875rem 1rem;
+        }
+
+        .user-info {
+            padding: 0.875rem 1rem;
+            background-color: #f8f9fa;
+            margin: 0 -1rem;
+            padding-left: 2rem;
+        }
     }
 
-    .nav-link.active i {
-        color: #3498db;
+    @media (min-width: 769px) {
+        .navbar {
+            padding: 0 1rem;
+        }
+
+        .nav-brand {
+            border-bottom: none;
+            padding: 0.75rem 0;
+        }
+
+        .nav-content {
+            margin-left: 2rem;
+        }
+
+        .nav-links {
+            gap: 0.5rem;
+        }
+
+        .nav-link,
+        .nav-button {
+            width: auto;
+        }
+
+        .nav-divider,
+        .user-info {
+            display: none;
+        }
+
+        .logout-button {
+            background-color: #e74c3c;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin-left: 1rem;
+        }
+
+        .logout-button:hover {
+            background-color: #c0392b;
+            color: white;
+        }
     }
 
     main {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 2rem;
+        padding: 1rem;
         min-height: calc(100vh - 150px);
+    }
+
+    @media (max-width: 768px) {
+        main {
+            padding: 1rem 0.5rem;
+        }
     }
 
     footer {
