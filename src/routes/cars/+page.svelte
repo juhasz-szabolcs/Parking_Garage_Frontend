@@ -52,14 +52,12 @@
                     console.log(`Car ${car.brand} ${car.model} isParked:`, car.isParking);
                 });
             } else {
-                console.log("Using hardcoded data due to API error");
-                cars = hardcodedCars;
-                ownedCars = cars;
+                console.log("Failed to load cars");
+                error = "Failed to load cars";
             }
         } catch (error) {
             console.error("Error loading cars:", error);
-            cars = hardcodedCars;
-            ownedCars = cars;
+            error = "Failed to load cars";
         } finally {
             loading = false;
         }
