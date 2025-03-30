@@ -4,13 +4,31 @@
     import { getUserData } from "$lib/api";
 
     onMount(async () => {
-        if ($isAuthenticated) {
-            const result = await getUserData();
+        if ($isAuthenticated && $user?.id) {
+            const result = await getUserData($user.id);
             if (result.success) {
-                $user = result.data;
+                $user = {
+                    ...$user,
+                    ...result.data
+                };
+                console.log('User data loaded:', $user);
             }
         }
     });
+
+    async function loadCars() {
+        try {
+            const result = await getUserData($user.id);
+            if (result.success) {
+                cars = result.data.cars;
+                console.log('Cars loaded:', cars);
+            } else {
+                console.error('Failed to load cars:', result.error);
+            }
+        } catch (error) {
+            console.error('Error loading cars:', error);
+        }
+    }
 </script>
 
 <div class="home-container">
@@ -27,7 +45,7 @@
             </div>
         {:else}
             <p>
-                Üdvözöljük, {$user?.firstName} {$user?.lastName}!
+                Üdvözöljük, {$user?.email?.split('@')[0]}!
             </p>
             <p>
                 Használja a fenti menüt a navigációhoz.

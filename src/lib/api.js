@@ -122,13 +122,22 @@ function getCarLogo(brand) {
     return logoMap[brandLower] || 'https://www.carlogos.org/car-logos/default-car-logo.png';
 }
 
-export async function getUserData() {
+export async function getUserData(userId) {
     try {
-        const response = await apiCall('/api/cars');
-        console.log('Cars response:', response);
+        let userResponse = null;
+        
+        // Get user details if userId is provided
+        if (userId) {
+            userResponse = await apiCall(`/api/users/${userId}`);
+            console.log('User details response:', userResponse);
+        }
+        
+        // Get cars data
+        const carsResponse = await apiCall('/api/cars');
+        console.log('Cars response:', carsResponse);
         
         // Transform the car data to match our frontend structure
-        const cars = response.map(car => ({
+        const cars = carsResponse.map(car => ({
             id: car.id,
             brand: car.brand,
             model: car.model,
@@ -146,6 +155,7 @@ export async function getUserData() {
         return { 
             success: true, 
             data: {
+                ...(userResponse || {}),
                 cars: cars,
                 activeParkings: [] // We'll handle this separately if needed
             }

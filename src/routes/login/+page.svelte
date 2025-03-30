@@ -25,7 +25,13 @@
         
         if (result.success) {
           success = 'Sikeres bejelentkezés! Átirányítás...';
-          $user = result.data.user;
+          $user = {
+            id: result.data.userId,
+            email: result.data.user,
+            isAdmin: result.data.isAdmin,
+            loginTime: result.data.loginTime,
+            expiresAt: result.data.expiresAt
+          };
           $isAuthenticated = true;
           setTimeout(() => goto('/'), 1000);
         } else {
