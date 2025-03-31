@@ -182,7 +182,7 @@
 
     .parking-header h3 {
         margin: 0;
-        font-size: 1rem;
+        font-size: 2rem;
         color: #2c3e50;
     }
 
@@ -200,7 +200,7 @@
         transition: all 0.3s;
         min-width: 40px;
         font-weight: 500;
-        font-size: 0.8rem;
+        font-size:1rem;
     }
 
     .floor-button.active {
@@ -226,7 +226,7 @@
     }
 
     .stat-label {
-        font-size: 0.7rem;
+        font-size: 0.8rem;
         color: #666;
         white-space: nowrap;
     }
@@ -304,7 +304,7 @@
     .spot {
         aspect-ratio: 1;
         border: 1px solid #e9ecef;
-        border-radius: 3px;
+        border-radius: 12px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -313,21 +313,26 @@
         text-align: center;
         font-size: 0.7rem;
         min-height: 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
     }
 
     .spot.available {
         background-color: #2ecc71;
         color: white;
+        border: none;
     }
 
     .spot.occupied {
         background-color: #e74c3c;
         color: white;
+        border: none;
     }
 
     .spot.reserved {
         background-color: #f39c12;
         color: white;
+        border: none;
     }
 
     .spot-label {

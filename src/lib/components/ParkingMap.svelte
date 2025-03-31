@@ -294,14 +294,14 @@
         padding: 0.25rem;
         background: #f8f9fa;
         border-radius: 3px;
-        gap: 0.25rem;
+        gap: 0.3rem;
     }
 
     .legend-item {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.25rem;
+        gap: 0.3rem;
         font-size: 0.7rem;
     }
 
@@ -344,7 +344,7 @@
     .spot {
         aspect-ratio: 1;
         border: 1px solid #e9ecef;
-        border-radius: 3px;
+        border-radius: 12px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -353,31 +353,36 @@
         text-align: center;
         font-size: 0.7rem;
         min-height: 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
     }
 
     .spot.available {
         background-color: #2ecc71;
         color: white;
+        border: none;
     }
 
     .spot.occupied {
         background-color: #e74c3c;
         color: white;
+        border: none;
         cursor: not-allowed;
     }
 
     .spot.reserved {
         background-color: #f39c12;
         color: white;
+        border: none;
         cursor: not-allowed;
     }
 
     .spot.selected {
-        background-color: #f39c12;
+        background-color: #f39c12;;
         color: white;
-        border-style: dashed;
-        transform: scale(1.05);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 2px dashed rgb(240, 28, 28);
+
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .spot.selectable {
@@ -387,11 +392,11 @@
 
     .spot.selectable:hover {
         transform: scale(1.05);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .spot-label {
-        font-size: 0.75rem;
+        font-size: 1rem;
         font-weight: bold;
         margin-bottom: 0.125rem;
     }
