@@ -3,19 +3,57 @@
     import { user, isAuthenticated } from '$lib/store';
     import { goto } from '$app/navigation';
     import { logout } from '$lib/api';
+    import { onMount } from 'svelte';
     import 'bootstrap-icons/font/bootstrap-icons.css';
     import Nav from "$lib/components/Nav.svelte";
 
     let isMenuOpen = false;
+    let isInitialized = false;
+
+    // List of public routes that don't require authentication
+    const publicRoutes = ['/login', '/register', '/'];
+
+    // Initialize authentication state
+    onMount(() => {
+        // Check if we have user data in localStorage
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                user.set(parsedUser);
+                isAuthenticated.set(true);
+            } catch (error) {
+                console.error('Error parsing stored user:', error);
+                localStorage.removeItem('user');
+                user.set(null);
+                isAuthenticated.set(false);
+            }
+        }
+        isInitialized = true;
+    });
+
+    // Watch for route changes and check authentication
+    $: if (isInitialized && $page) {
+        if (!publicRoutes.includes($page.url.pathname) && !$isAuthenticated) {
+            console.log('Unauthorized access, redirecting to home');
+            goto('/');
+        }
+    }
 
     async function handleLogout() {
         try {
             await logout();
             $user = null;
             $isAuthenticated = false;
-            goto('/login');
+            localStorage.removeItem('user');
+            goto('/');
         } catch (error) {
             console.error('Logout error:', error);
+            // Even if the API call fails, we should still log out locally
+            $user = null;
+            $isAuthenticated = false;
+            localStorage.removeItem('user');
+            goto('/');
         }
     }
 
@@ -29,69 +67,76 @@
     }
 </script>
 
-<nav class="navbar">
-    <div class="nav-brand">
-        <a href="/" class="brand-link">
-            <i class="bi bi-p-square-fill"></i>
-            <span>Parking Garage</span>
-        </a>
-        <button class="menu-toggle" on:click={toggleMenu} aria-label="Menü">
-            <i class="bi bi-list"></i>
-        </button>
-    </div>
+{#if isInitialized}
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="/" class="brand-link">
+                <i class="bi bi-p-square-fill"></i>
+                <span>Parking Garage</span>
+            </a>
+            <button class="menu-toggle" on:click={toggleMenu} aria-label="Menü">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
 
-    <div class="nav-content" class:open={isMenuOpen}>
-        {#if $isAuthenticated}
-            <div class="nav-links">
-                <a href="/" class="nav-link {$page.url.pathname === '/' ? 'active' : ''}" on:click={toggleMenu}>
-                    <i class="bi bi-house-door"></i>
-                    <span>Főoldal</span>
-                </a>
-                <a href="/cars" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}" on:click={toggleMenu}>
-                    <i class="bi bi-car-front"></i>
-                    <span>Autók</span>
-                </a>
-                <a href="/parking" class="nav-link {$page.url.pathname === '/parking' ? 'active' : ''}" on:click={toggleMenu}>
-                    <i class="bi bi-p-square"></i>
-                    <span>Parkoló</span>
-                </a>
-                <a href="/profile" class="nav-link {$page.url.pathname === '/profile' ? 'active' : ''}" on:click={toggleMenu}>
-                    <i class="bi bi-person-circle"></i>
-                    <span>Profil</span>
-                </a>
-                <div class="nav-divider"></div>
-                <div class="user-info">
-                    <span class="user-name">
-                        {$user?.firstName} {$user?.lastName}
-                    </span>
+        <div class="nav-content" class:open={isMenuOpen}>
+            {#if $isAuthenticated}
+                <div class="nav-links">
+                    <a href="/" class="nav-link {$page.url.pathname === '/' ? 'active' : ''}" on:click={toggleMenu}>
+                        <i class="bi bi-house-door"></i>
+                        <span>Főoldal</span>
+                    </a>
+                    <a href="/cars" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}" on:click={toggleMenu}>
+                        <i class="bi bi-car-front"></i>
+                        <span>Autók</span>
+                    </a>
+                    <a href="/parking" class="nav-link {$page.url.pathname === '/parking' ? 'active' : ''}" on:click={toggleMenu}>
+                        <i class="bi bi-p-square"></i>
+                        <span>Parkoló</span>
+                    </a>
+                    <a href="/profile" class="nav-link {$page.url.pathname === '/profile' ? 'active' : ''}" on:click={toggleMenu}>
+                        <i class="bi bi-person-circle"></i>
+                        <span>Profil</span>
+                    </a>
+                    <div class="nav-divider"></div>
+                    <div class="user-info">
+                        <span class="user-name">
+                            {$user?.firstName} {$user?.lastName}
+                        </span>
+                    </div>
+                    <button class="nav-button logout-button" on:click={handleLogout}>
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Kijelentkezés</span>
+                    </button>
                 </div>
-                <button class="nav-button logout-button" on:click={handleLogout}>
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Kijelentkezés</span>
-                </button>
-            </div>
-        {:else}
-            <div class="nav-links">
-                <a href="/login" class="nav-link {$page.url.pathname === '/login' ? 'active' : ''}" on:click={toggleMenu}>
-                    <i class="bi bi-box-arrow-in-right"></i>
-                    <span>Bejelentkezés</span>
-                </a>
-                <a href="/register" class="nav-link {$page.url.pathname === '/register' ? 'active' : ''}" on:click={toggleMenu}>
-                    <i class="bi bi-person-plus"></i>
-                    <span>Regisztráció</span>
-                </a>
-            </div>
-        {/if}
+            {:else}
+                <div class="nav-links">
+                    <a href="/login" class="nav-link {$page.url.pathname === '/login' ? 'active' : ''}" on:click={toggleMenu}>
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Bejelentkezés</span>
+                    </a>
+                    <a href="/register" class="nav-link {$page.url.pathname === '/register' ? 'active' : ''}" on:click={toggleMenu}>
+                        <i class="bi bi-person-plus"></i>
+                        <span>Regisztráció</span>
+                    </a>
+                </div>
+            {/if}
+        </div>
+    </nav>
+
+    <main>
+        <slot />
+    </main>
+
+    <footer>
+        <p>Parkolóház &copy; {new Date().getFullYear()}</p>
+    </footer>
+{:else}
+    <div class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Betöltés...</p>
     </div>
-</nav>
-
-<main>
-    <slot />
-</main>
-
-<footer>
-    <p>Parkolóház &copy; {new Date().getFullYear()}</p>
-</footer>
+{/if}
 
 <style>
     :global(body) {
@@ -331,5 +376,24 @@
         padding: 1rem;
         background-color: #2c3e50;
         color: white;
+    }
+
+    .loading {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        gap: 1rem;
+    }
+
+    .loading i {
+        font-size: 2rem;
+        color: #3498db;
+    }
+
+    .loading p {
+        color: #2c3e50;
+        font-size: 1.1rem;
     }
 </style>

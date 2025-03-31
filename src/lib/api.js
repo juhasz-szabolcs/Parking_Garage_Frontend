@@ -1,11 +1,8 @@
-import axios from 'axios';
-
-// API URL configuration
-export const API_URL = import.meta.env.VITE_API_URL;
+import apiClient, { API_URL } from './apiClient';
 
 // Configure axios defaults
-axios.defaults.withCredentials = true;
-axios.defaults.headers.common['Content-Type'] = 'application/json';
+apiClient.defaults.withCredentials = true;
+apiClient.defaults.headers.common['Content-Type'] = 'application/json';
 
 // Helper function for API calls
 async function apiCall(endpoint, options = {}) {
@@ -23,11 +20,10 @@ async function apiCall(endpoint, options = {}) {
             }
         });
         
-        const response = await axios({
+        const response = await apiClient({
             method: options.method || 'GET',
-            url: `${API_URL}${endpoint}`,
+            url: endpoint,
             data: options.data,
-            withCredentials: true,
             headers: {
                 'Content-Type': 'application/json',
                 ...options.headers
@@ -161,40 +157,52 @@ export async function getUserData(userId) {
         
         // Get user details if userId is provided
         if (userId) {
-            userResponse = await apiCall(`/api/users/${userId}`);
-            console.log('User details response:', userResponse);
+            try {
+                userResponse = await apiCall(`/api/users/${userId}`);
+                console.log('User details response:', userResponse);
+            } catch (error) {
+                console.error('Error getting user details:', error);
+                // If we can't get user details, return error
+                return { success: false, error: 'Failed to get user details' };
+            }
         }
         
         // Get cars data
-        const carsResponse = await apiCall('/api/cars');
-        console.log('Cars response:', carsResponse);
-        
-        // Transform the car data to match our frontend structure
-        const cars = carsResponse.map(car => ({
-            id: car.id,
-            brand: car.brand,
-            model: car.model,
-            year: car.year,
-            licensePlate: car.licensePlate,
-            isOwn: true,
-            color: "N/A",
-            isParking: car.isParked,
-            logo: getCarLogo(car.brand),
-            parkingSpot: null
-        }));
-        
-        console.log('Transformed cars:', cars);
-        
-        return { 
-            success: true, 
-            data: {
-                ...(userResponse || {}),
-                cars: cars,
-                activeParkings: [] // We'll handle this separately if needed
-            }
-        };
+        try {
+            const carsResponse = await apiCall('/api/cars');
+            // console.log('Cars response:', carsResponse);
+            
+            // Transform the car data to match our frontend structure
+            const cars = carsResponse.map(car => ({
+                id: car.id,
+                brand: car.brand,
+                model: car.model,
+                year: car.year,
+                licensePlate: car.licensePlate,
+                isOwn: true,
+                color: "N/A",
+                isParking: car.isParked,
+                logo: getCarLogo(car.brand),
+                parkingSpot: null
+            }));
+            
+            // console.log('Transformed cars:', cars);
+            
+            return { 
+                success: true, 
+                data: {
+                    ...(userResponse || {}),
+                    cars: cars,
+                    activeParkings: [] // We'll handle this separately if needed
+                }
+            };
+        } catch (error) {
+            console.error('Error getting cars data:', error);
+            // If we can't get cars data, return error
+            return { success: false, error: 'Failed to get cars data' };
+        }
     } catch (error) {
-        console.error('Error getting user data:', error);
+        console.error('Error in getUserData:', error);
         console.error('Error response:', error.response?.data);
         return { success: false, error: error.response?.data || 'Failed to get user data' };
     }
