@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { user, isAuthenticated } from './store';
+import { goto } from '$app/navigation';
 
 // API URL configuration
 export const API_URL = import.meta.env.VITE_API_URL;
@@ -17,6 +18,15 @@ const apiClient = axios.create({
     }
 });
 
+// Function to handle session expiration
+function handleSessionExpiration() {
+    console.log('Session expired, clearing user data and redirecting to home page');
+    user.set(null);
+    isAuthenticated.set(false);
+    localStorage.removeItem('user');
+    goto('/', { replaceState: true });
+}
+
 // Add response interceptor to handle session expiration
 apiClient.interceptors.response.use(
     (response) => {
@@ -25,13 +35,9 @@ apiClient.interceptors.response.use(
             const expiresAt = new Date(response.data.expiresAt);
             const now = new Date();
             
-            // If the session has expired, clear user data and redirect
+            // If the session has expired, handle it
             if (expiresAt < now) {
-                console.log('Session expired, clearing user data');
-                user.set(null);
-                isAuthenticated.set(false);
-                localStorage.removeItem('user');
-                window.location.href = '/';
+                handleSessionExpiration();
             }
         }
         return response;
@@ -41,11 +47,7 @@ apiClient.interceptors.response.use(
         
         // Handle 401 (Unauthorized) errors
         if (error.response?.status === 401) {
-            console.log('Session expired, clearing user data');
-            user.set(null);
-            isAuthenticated.set(false);
-            localStorage.removeItem('user');
-            window.location.href = '/';
+            handleSessionExpiration();
         }
         
         return Promise.reject(error);
