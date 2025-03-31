@@ -29,8 +29,9 @@
     import { onMount } from "svelte";
 
     onMount(async () => {
-        if (!$user) {
-            goto("/login");
+        if (!$isAuthenticated || !$user) {
+            console.log('User not authenticated, redirecting to home');
+            goto("/");
             return;
         }
         await loadCars();
@@ -41,7 +42,7 @@
         error = "";
 
         try {
-            const result = await getUserData();
+            const result = await getUserData($user.id);
             console.log("API response:", result);
             
             if (result.success) {
@@ -52,12 +53,16 @@
                     console.log(`Car ${car.brand} ${car.model} isParked:`, car.isParking);
                 });
             } else {
-                console.log("Failed to load cars");
-                error = "Failed to load cars";
+                console.log("Failed to load cars:", result.error);
+                error = result.error || "Nem sikerült betölteni az autókat";
+                // If we get an error, redirect to home
+                goto("/");
             }
         } catch (error) {
             console.error("Error loading cars:", error);
-            error = "Failed to load cars";
+            error = "Hiba történt az autók betöltése során";
+            // If we get an error, redirect to home
+            goto("/");
         } finally {
             loading = false;
         }

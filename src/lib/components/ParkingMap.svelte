@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import axios from 'axios';
-    import { API_URL } from '$lib/api';
+    import { API_URL } from '$lib/apiClient';
     
     export let onSpotSelect;
     export let selectedCarId;
