@@ -85,24 +85,18 @@
     let loading = true;
     let error = "";
 
-    // onMount(async () => {
-    //     if (!$isAuthenticated) {
-    //         goto("/login");
-    //         return;
-    //     }
-
-    //     const result = await getUserData();
-    //     loading = false;
-
-    //     if (result.success) {
-    //         userData = result.data;
-    //     } else {
-    //         error =
-    //             typeof result.error === "string"
-    //                 ? result.error
-    //                 : "Nem sikerült betölteni a felhasználói adatokat.";
-    //     }
-    // });
+    onMount(async () => {
+        if ($isAuthenticated && $user?.id) {
+            const result = await getUserData($user.id);
+            if (result.success) {
+                $user = {
+                    ...$user,
+                    ...result.data
+                };
+                console.log('User data loaded:', $user);
+            }
+        }
+    });
 
     onMount(() => {
         loadDashboard();
@@ -146,7 +140,7 @@
     {:else if dashboardData}
         <div class="dashboard-card">
             <!-- <h2>Üdvözöljük, {$user?.name || "Felhasználó"}!</h2> -->
-            <h2>Üdvözöljük, {$user?.firstName} {$user?.lastName || "Felhasználó"}!</h2>
+            <h2>Üdvözöljük, {$user?.lastName}!</h2>
             <p>
                 Az alábbiakban megtekintheti és kezelheti parkolóházi
                 adatait.
