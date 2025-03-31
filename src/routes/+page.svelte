@@ -1,7 +1,14 @@
 <script>
-    import { isAuthenticated, user } from "$lib/store";
+    import { isAuthenticated, user, isInitialized } from "$lib/store";
     import { onMount } from "svelte";
     import { getUserData } from "$lib/api";
+
+    let isStoreInitialized = false;
+
+    // Várjuk meg a store inicializálását
+    isInitialized.subscribe(value => {
+        isStoreInitialized = value;
+    });
 
     onMount(async () => {
         if ($isAuthenticated && $user?.id) {
@@ -31,35 +38,42 @@
     }
 </script>
 
-<div class="home-container">
-    <div class="content">
-        <h1>Parkolóház</h1>
-        <p>Üdvözöljük a Parkolóház Rendszerben!</p>
-        {#if !$isAuthenticated}
-            <p>
-                Kérjük, jelentkezzen be a parkolóház funkcióinak használatához.
-            </p>
-            <div class="buttons">
-                <a href="/login" class="button primary">Bejelentkezés</a>
-                <a href="/register" class="button secondary">Regisztráció</a>
-            </div>
-        {:else}
-            <p>
-                Üdvözöljük, {$user?.email?.split('@')[0]}!
-            </p>
-            <p>
-                Használja a fenti menüt a navigációhoz.
-            </p>
-            <div class="buttons">
-                <a href="/dashboard" class="button primary">Parkolás kezelése</a>
-                <a href="/cars" class="button secondary">Autóim</a>
-            </div>
-        {/if}
+{#if isStoreInitialized}
+    <div class="home-container">
+        <div class="content">
+            <h1>Parkolóház</h1>
+            <p>Üdvözöljük a Parkolóház Rendszerben!</p>
+            {#if !$isAuthenticated}
+                <p>
+                    Kérjük, jelentkezzen be a parkolóház funkcióinak használatához.
+                </p>
+                <div class="buttons">
+                    <a href="/login" class="button primary">Bejelentkezés</a>
+                    <a href="/register" class="button secondary">Regisztráció</a>
+                </div>
+            {:else}
+                <p>
+                    Üdvözöljük, {$user?.email?.split('@')[0]}!
+                </p>
+                <p>
+                    Használja a fenti menüt a navigációhoz.
+                </p>
+                <div class="buttons">
+                    <a href="/dashboard" class="button primary">Parkolás kezelése</a>
+                    <a href="/cars" class="button secondary">Autóim</a>
+                </div>
+            {/if}
+        </div>
+        <div class="image-container">
+            <img src="/images/parking_garage_main.jpg" alt="Parkolóház" />
+        </div>
     </div>
-    <div class="image-container">
-        <img src="/images/parking_garage_main.jpg" alt="Parkolóház" />
+{:else}
+    <div class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Betöltés...</p>
     </div>
-</div>
+{/if}
 
 <style>
     .home-container {
@@ -236,5 +250,20 @@
         p {
             font-size: 1.2rem;
         }
+    }
+
+    .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+        color: #666;
+    }
+
+    .loading i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #3498db;
     }
 </style>

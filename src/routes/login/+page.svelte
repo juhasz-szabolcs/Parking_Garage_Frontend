@@ -22,9 +22,13 @@
       
       try {
         const result = await login(email, password);
+        console.log('Login response:', result);
         
         if (result.success) {
           success = 'Sikeres bejelentkezés! Átirányítás...';
+          console.log('Login response data:', result.data);
+          
+          // Store the user data with all necessary fields
           $user = {
             id: result.data.userId,
             email: result.data.user,
@@ -32,6 +36,8 @@
             loginTime: result.data.loginTime,
             expiresAt: result.data.expiresAt
           };
+          
+          console.log('Stored user data:', $user);
           $isAuthenticated = true;
           setTimeout(() => goto('/'), 1000);
         } else {
