@@ -3,14 +3,10 @@
     import axios from 'axios';
     import { API_URL } from '$lib/api';
     
-    export let onSpotSelect;
-    export let selectedCarId;
-    
     let parkingSpots = [];
     let loading = true;
     let error = '';
     let activeFloor = '1';
-    let selectedSpot = null;
     
     onMount(async () => {
         await loadParkingSpots();
@@ -47,9 +43,6 @@
     
     function getSpotStatus(spot) {
         if (!spot) return '';
-        if (selectedSpot && spot.id === selectedSpot.id) {
-            return 'selected';
-        }
         if (spot.isOccupied) {
             return 'occupied';
         }
@@ -58,31 +51,12 @@
         }
         return 'available';
     }
-
-    function handleSpotClick(spot) {
-        if (spot && !spot.isOccupied && !spot.carId) {
-            selectedSpot = spot;
-        }
-    }
-
-    function handleConfirmSelection() {
-        if (!selectedCarId || !selectedSpot || !onSpotSelect) return;
-        
-        const spotToSend = {
-            id: parseInt(selectedSpot.id),
-            spotNumber: selectedSpot.spotNumber,
-            floorNumber: selectedSpot.floorNumber,
-            isOccupied: selectedSpot.isOccupied,
-            carId: selectedCarId
-        };
-        onSpotSelect(spotToSend);
-    }
 </script>
 
 <div class="parking-container">
     <div class="parking-map-container">
         <div class="parking-header">
-            <h3>Válassz parkolóhelyet</h3>
+            <h3>Parkolóhelyek térképe</h3>
             <div class="floor-selector">
                 <button 
                     class="floor-button {activeFloor === '1' ? 'active' : ''}"
@@ -133,8 +107,8 @@
                         <span>Foglalt</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-box selected"></div>
-                        <span>Kiválasztva</span>
+                        <div class="legend-box reserved"></div>
+                        <span>Foglalva</span>
                     </div>
                 </div>
                 
@@ -153,14 +127,10 @@
                                     isOccupied: false,
                                     carId: null
                                 }}
-                                <div 
-                                    class="spot {getSpotStatus(spot)} {!spot.isOccupied && !spot.carId ? 'selectable' : ''}"
-                                    on:click={() => handleSpotClick(spot)}>
+                                <div class="spot {getSpotStatus(spot)}">
                                     <div class="spot-label">{spotNumber}</div>
                                     <div class="spot-status">
-                                        {#if selectedSpot && spot.id === selectedSpot.id}
-                                            Kiválasztva
-                                        {:else if spot.isOccupied}
+                                        {#if spot.isOccupied}
                                             Foglalt
                                         {:else if spot.carId}
                                             Foglalva
@@ -173,15 +143,6 @@
                         </div>
                     {/each}
                 </div>
-
-                {#if selectedSpot}
-                    <div class="selection-panel">
-                        <p>Kiválasztott parkolóhely: {selectedSpot.spotNumber}</p>
-                        <button class="confirm-button" on:click={handleConfirmSelection}>
-                            Parkolás indítása
-                        </button>
-                    </div>
-                {/if}
             {/if}
         </div>
     </div>
@@ -221,7 +182,7 @@
 
     .parking-header h3 {
         margin: 0;
-        font-size: 1rem;
+        font-size: 2rem;
         color: #2c3e50;
     }
 
@@ -239,7 +200,7 @@
         transition: all 0.3s;
         min-width: 40px;
         font-weight: 500;
-        font-size: 0.8rem;
+        font-size:1rem;
     }
 
     .floor-button.active {
@@ -265,7 +226,7 @@
     }
 
     .stat-label {
-        font-size: 0.7rem;
+        font-size: 0.8rem;
         color: #666;
         white-space: nowrap;
     }
@@ -294,14 +255,14 @@
         padding: 0.25rem;
         background: #f8f9fa;
         border-radius: 3px;
-        gap: 0.3rem;
+        gap: 0.25rem;
     }
 
     .legend-item {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.3rem;
+        gap: 0.25rem;
         font-size: 0.7rem;
     }
 
@@ -320,9 +281,8 @@
         background-color: #e74c3c;
     }
 
-    .legend-box.selected {
+    .legend-box.reserved {
         background-color: #f39c12;
-        border: 2px dashed #e67e22;
     }
 
     .parking-grid {
@@ -367,36 +327,16 @@
         background-color: #e74c3c;
         color: white;
         border: none;
-        cursor: not-allowed;
     }
 
     .spot.reserved {
         background-color: #f39c12;
         color: white;
         border: none;
-        cursor: not-allowed;
-    }
-
-    .spot.selected {
-        background-color: #f39c12;;
-        color: white;
-        border: 2px dashed rgb(240, 28, 28);
-
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .spot.selectable {
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .spot.selectable:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .spot-label {
-        font-size: 1rem;
+        font-size: 0.75rem;
         font-weight: bold;
         margin-bottom: 0.125rem;
     }
@@ -404,37 +344,6 @@
     .spot-status {
         font-size: 0.6rem;
         opacity: 0.9;
-    }
-
-    .selection-panel {
-        background: #f8f9fa;
-        padding: 0.75rem;
-        border-radius: 4px;
-        margin-top: 0.75rem;
-        text-align: center;
-    }
-
-    .selection-panel p {
-        margin: 0 0 0.5rem 0;
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-
-    .confirm-button {
-        background: #2ecc71;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        font-weight: 500;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .confirm-button:hover {
-        background: #27ae60;
-        transform: translateY(-2px);
     }
 
     @media (max-width: 768px) {
@@ -475,19 +384,6 @@
         .spot-status {
             font-size: 0.55rem;
         }
-
-        .selection-panel {
-            padding: 0.5rem;
-        }
-
-        .selection-panel p {
-            font-size: 0.8rem;
-        }
-
-        .confirm-button {
-            font-size: 0.8rem;
-            padding: 0.4rem 0.8rem;
-        }
     }
 
     @media (max-width: 480px) {
@@ -501,15 +397,6 @@
 
         .spot-status {
             font-size: 0.5rem;
-        }
-
-        .selection-panel p {
-            font-size: 0.75rem;
-        }
-
-        .confirm-button {
-            font-size: 0.75rem;
-            padding: 0.3rem 0.6rem;
         }
     }
 </style> 
