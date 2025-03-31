@@ -143,10 +143,6 @@
                         <span>Szabad</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-box selected"></div>
-                        <span>Kiválasztva</span>
-                    </div>
-                    <div class="legend-item">
                         <div class="legend-box occupied"></div>
                         <span>Foglalt</span>
                     </div>
@@ -208,50 +204,56 @@
 <style>
     .parking-container {
         width: 100%;
-        min-height: calc(100vh - 64px);
+        height: calc(100vh - 64px);
         background-color: #f8f9fa;
-        padding: 2rem;
+        padding: 0.5rem;
+        display: flex;
+        flex-direction: column;
     }
 
     .parking-map-container {
         background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
-        max-width: 1200px;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 0.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        max-width: 800px;
         margin: 0 auto;
+        width: 100%;
     }
 
     .parking-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
+        margin-bottom: 0.5rem;
         flex-wrap: wrap;
-        gap: 1rem;
+        gap: 0.25rem;
     }
 
     .parking-header h3 {
         margin: 0;
-        font-size: 2rem;
+        font-size: 1.2rem;
         color: #2c3e50;
     }
 
     .floor-selector {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.25rem;
     }
 
     .floor-button {
-        padding: 0.75rem 1.5rem;
+        padding: 0.25rem 0.5rem;
         border: none;
-        border-radius: 6px;
+        border-radius: 3px;
         background: #f0f0f0;
         cursor: pointer;
         transition: all 0.3s;
-        min-width: 60px;
+        min-width: 40px;
         font-weight: 500;
-        font-size: 1.1rem;
+        font-size: 0.8rem;
     }
 
     .floor-button.active {
@@ -262,26 +264,27 @@
     .parking-stats {
         display: flex;
         justify-content: space-around;
-        margin-bottom: 2rem;
-        padding: 1rem;
+        margin-bottom: 0.5rem;
+        padding: 0.25rem;
         background: #f8f9fa;
-        border-radius: 8px;
+        border-radius: 3px;
     }
 
     .stat-item {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.25rem;
+        min-width: 80px;
     }
 
     .stat-label {
-        font-size: 0.9rem;
+        font-size: 0.7rem;
         color: #666;
     }
 
     .stat-value {
-        font-size: 1.5rem;
+        font-size: 1rem;
         font-weight: bold;
     }
 
@@ -301,24 +304,24 @@
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-        padding: 1rem;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.25rem;
         background: #f8f9fa;
-        border-radius: 8px;
+        border-radius: 3px;
     }
 
     .legend-item {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        font-size: 1rem;
+        gap: 0.25rem;
+        font-size: 0.7rem;
     }
 
     .legend-box {
-        width: 20px;
-        height: 20px;
-        border-radius: 4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
     }
 
     .legend-box.available {
@@ -340,29 +343,29 @@
 
     .parking-grid {
         display: grid;
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+        flex: 1;
+        min-height: 0;
     }
 
     .parking-row {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 1.5rem;
+        gap: 0.25rem;
     }
 
     .spot {
         aspect-ratio: 1;
-        border: 2px solid #e9ecef;
-        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        border-radius: 3px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s;
-        padding: 1rem;
+        padding: 0.25rem;
         text-align: center;
-        font-size: 1.1rem;
+        font-size: 0.7rem;
     }
 
     .spot.available {
@@ -390,13 +393,13 @@
     }
 
     .spot-label {
-        font-size: 1.5rem;
+        font-size: 0.8rem;
         font-weight: bold;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.125rem;
     }
 
     .spot-status {
-        font-size: 1rem;
+        font-size: 0.6rem;
         opacity: 0.9;
     }
 
@@ -433,11 +436,12 @@
 
     @media (max-width: 768px) {
         .parking-container {
-            padding: 1rem;
+            padding: 0.25rem;
+            height: calc(100vh - 48px);
         }
 
         .parking-map-container {
-            padding: 1rem;
+            padding: 0.25rem;
         }
 
         .parking-header {
@@ -447,7 +451,7 @@
         }
 
         .parking-header h3 {
-            font-size: 1.5rem;
+            font-size: 1rem;
         }
 
         .floor-selector {
@@ -455,64 +459,121 @@
         }
 
         .parking-stats {
-            flex-direction: column;
-            gap: 1rem;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            padding: 0.125rem;
         }
 
-        .parking-row {
-            gap: 0.75rem;
+        .stat-item {
+            flex: 1;
+            min-width: 80px;
         }
 
-        .spot {
-            padding: 0.5rem;
+        .stat-label {
+            font-size: 0.65rem;
         }
 
-        .spot-label {
-            font-size: 1.25rem;
-        }
-
-        .spot-status {
-            font-size: 0.875rem;
+        .stat-value {
+            font-size: 0.9rem;
         }
 
         .legend {
-            padding: 0.75rem;
-            justify-content: space-around;
+            padding: 0.125rem;
+            gap: 0.25rem;
         }
 
         .legend-item {
-            font-size: 0.875rem;
+            font-size: 0.65rem;
+        }
+
+        .parking-grid {
+            gap: 0.125rem;
+        }
+
+        .parking-row {
+            gap: 0.125rem;
+        }
+
+        .spot {
+            padding: 0.125rem;
+        }
+
+        .spot-label {
+            font-size: 0.7rem;
+        }
+
+        .spot-status {
+            font-size: 0.55rem;
         }
     }
 
     @media (max-width: 480px) {
         .parking-container {
-            padding: 0.5rem;
+            padding: 0.125rem;
         }
 
         .parking-map-container {
-            padding: 0.75rem;
+            padding: 0.125rem;
         }
 
-        .parking-grid {
-            gap: 0.75rem;
-        }
-
-        .parking-row {
-            gap: 0.5rem;
-        }
-
-        .spot {
+        .parking-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.25rem;
             padding: 0.25rem;
         }
 
+        .stat-item {
+            min-width: unset;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            white-space: nowrap;
+        }
+
+        .stat-value {
+            font-size: 0.8rem;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.25rem;
+            padding: 0.25rem;
+            align-items: center;
+        }
+
+        .legend-item {
+            justify-content: center;
+            font-size: 0.65rem;
+            white-space: nowrap;
+        }
+
+        .parking-grid {
+            gap: 0.125rem;
+        }
+
+        .parking-row {
+            gap: 0.125rem;
+        }
+
+        .spot {
+            padding: 0.125rem;
+        }
+
         .spot-label {
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
+            font-size: 0.65rem;
+            margin-bottom: 0.125rem;
         }
 
         .spot-status {
-            font-size: 0.75rem;
+            font-size: 0.5rem;
         }
     }
 </style> 
