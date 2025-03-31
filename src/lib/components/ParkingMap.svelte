@@ -1,7 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import axios from 'axios';
-    import { API_URL } from '$lib/apiClient';
+    import apiClient from '$lib/apiClient';
     
     export let onSpotSelect;
     export let selectedCarId;
@@ -18,9 +17,7 @@
     
     async function loadParkingSpots() {
         try {
-            const response = await axios.get(`${API_URL}/api/parking/spots`, {
-                withCredentials: true
-            });
+            const response = await apiClient.get('/api/parking/spots');
             parkingSpots = response.data;
             // Inicializáljuk az üres parkolóhelyeket
             if (!parkingSpots || parkingSpots.length === 0) {

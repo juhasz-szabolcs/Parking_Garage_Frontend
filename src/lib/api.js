@@ -170,7 +170,7 @@ export async function getUserData(userId) {
         // Get cars data
         try {
             const carsResponse = await apiCall('/api/cars');
-            console.log('Cars response:', carsResponse);
+            // console.log('Cars response:', carsResponse);
             
             // Transform the car data to match our frontend structure
             const cars = carsResponse.map(car => ({
@@ -186,7 +186,7 @@ export async function getUserData(userId) {
                 parkingSpot: null
             }));
             
-            console.log('Transformed cars:', cars);
+            // console.log('Transformed cars:', cars);
             
             return { 
                 success: true, 

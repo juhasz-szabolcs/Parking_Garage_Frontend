@@ -32,7 +32,7 @@ user.subscribe(value => {
             try {
                 localStorage.setItem('user', JSON.stringify(value));
                 isAuthenticated.set(true);
-                console.log('Updated localStorage with user:', value);
+                // console.log('Updated localStorage with user:', value);
             } catch (error) {
                 console.error('Error saving user to localStorage:', error);
                 localStorage.removeItem('user');
