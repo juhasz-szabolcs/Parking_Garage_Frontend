@@ -93,142 +93,147 @@
     }
 </script>
 
-<div class="modal-overlay">
-    <div class="modal-content">
-        <div class="parking-map-container">
-            <div class="parking-header">
-                <h3>Parkolóhelyek térképe</h3>
-                <div class="floor-selector">
-                    <button 
-                        class="floor-button {activeFloor === '1' ? 'active' : ''}"
-                        on:click={() => activeFloor = '1'}>
-                        P1
-                    </button>
-                    <button 
-                        class="floor-button {activeFloor === '2' ? 'active' : ''}"
-                        on:click={() => activeFloor = '2'}>
-                        P2
-                    </button>
-                    <button 
-                        class="floor-button {activeFloor === '3' ? 'active' : ''}"
-                        on:click={() => activeFloor = '3'}>
-                        P3
-                    </button>
+<div class="parking-container">
+    <div class="parking-map-container">
+        <div class="parking-header">
+            <h3>Parkolóhelyek térképe</h3>
+            <div class="floor-selector">
+                <button 
+                    class="floor-button {activeFloor === '1' ? 'active' : ''}"
+                    on:click={() => activeFloor = '1'}>
+                    P1
+                </button>
+                <button 
+                    class="floor-button {activeFloor === '2' ? 'active' : ''}"
+                    on:click={() => activeFloor = '2'}>
+                    P2
+                </button>
+                <button 
+                    class="floor-button {activeFloor === '3' ? 'active' : ''}"
+                    on:click={() => activeFloor = '3'}>
+                    P3
+                </button>
+            </div>
+        </div>
+        
+        <div class="parking-content">
+            {#if loading}
+                <div class="loading">Parkolóhelyek betöltése...</div>
+            {:else if error}
+                <div class="error">{error}</div>
+            {:else}
+                <div class="parking-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Szabad helyek:</span>
+                        <span class="stat-value available">{parkingSpots.filter(spot => !spot.isOccupied && !spot.carId).length}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Foglalt helyek:</span>
+                        <span class="stat-value occupied">{parkingSpots.filter(spot => spot.isOccupied).length}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Foglalva:</span>
+                        <span class="stat-value reserved">{parkingSpots.filter(spot => spot.carId && !spot.isOccupied).length}</span>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="parking-content">
-                {#if loading}
-                    <div class="loading">Parkolóhelyek betöltése...</div>
-                {:else if error}
-                    <div class="error">{error}</div>
-                {:else}
-                    <div class="legend">
-                        <div class="legend-item">
-                            <div class="legend-box available"></div>
-                            <span>Szabad</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-box selected"></div>
-                            <span>Kiválasztva</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-box occupied"></div>
-                            <span>Foglalt</span>
-                        </div>
-                    </div>
-                    
-                    <div class="parking-grid">
-                        {#each Array(4) as _, row}
-                            <div class="parking-row">
-                                {#each Array(5) as _, col}
-                                    {@const spotNumber = String.fromCharCode(65 + row) + (col + 1).toString().padStart(2, '0')}
-                                    {@const spot = parkingSpots.find(s => 
-                                        s.floorNumber === activeFloor && 
-                                        s.spotNumber === spotNumber
-                                    ) || {
-                                        id: ((parseInt(activeFloor) - 1) * 20) + (row * 5) + col + 1,
-                                        spotNumber: spotNumber,
-                                        floorNumber: activeFloor,
-                                        isOccupied: false,
-                                        carId: null
-                                    }}
-                                    <div 
-                                        class="spot {getSpotStatus(spot)}"
-                                        on:click={() => handleSpotClick(spot)}>
-                                        <div class="spot-label">{spotNumber}</div>
-                                        <div class="spot-status">
-                                            {#if selectedSpot && spot.id === selectedSpot.id}
-                                                Kiválasztva
-                                            {:else if spot.isOccupied}
-                                                Foglalt
-                                            {:else if spot.carId}
-                                                Foglalva
-                                            {:else}
-                                                Szabad
-                                            {/if}
-                                        </div>
-                                    </div>
-                                {/each}
-                            </div>
-                        {/each}
-                    </div>
 
-                    {#if selectedSpot}
-                        <div class="selection-panel">
-                            <p>Kiválasztott parkolóhely: {selectedSpot.spotNumber}</p>
-                            <button class="confirm-button" on:click={handleConfirmSelection}>
-                                Parkolás indítása
-                            </button>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-box available"></div>
+                        <span>Szabad</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box selected"></div>
+                        <span>Kiválasztva</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box occupied"></div>
+                        <span>Foglalt</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box reserved"></div>
+                        <span>Foglalva</span>
+                    </div>
+                </div>
+                
+                <div class="parking-grid">
+                    {#each Array(4) as _, row}
+                        <div class="parking-row">
+                            {#each Array(5) as _, col}
+                                {@const spotNumber = String.fromCharCode(65 + row) + (col + 1).toString().padStart(2, '0')}
+                                {@const spot = parkingSpots.find(s => 
+                                    s.floorNumber === activeFloor && 
+                                    s.spotNumber === spotNumber
+                                ) || {
+                                    id: ((parseInt(activeFloor) - 1) * 20) + (row * 5) + col + 1,
+                                    spotNumber: spotNumber,
+                                    floorNumber: activeFloor,
+                                    isOccupied: false,
+                                    carId: null
+                                }}
+                                <div 
+                                    class="spot {getSpotStatus(spot)}"
+                                    on:click={() => handleSpotClick(spot)}>
+                                    <div class="spot-label">{spotNumber}</div>
+                                    <div class="spot-status">
+                                        {#if selectedSpot && spot.id === selectedSpot.id}
+                                            Kiválasztva
+                                        {:else if spot.isOccupied}
+                                            Foglalt
+                                        {:else if spot.carId}
+                                            Foglalva
+                                        {:else}
+                                            Szabad
+                                        {/if}
+                                    </div>
+                                </div>
+                            {/each}
                         </div>
-                    {/if}
+                    {/each}
+                </div>
+
+                {#if selectedSpot}
+                    <div class="selection-panel">
+                        <p>Kiválasztott parkolóhely: {selectedSpot.spotNumber}</p>
+                        <button class="confirm-button" on:click={handleConfirmSelection}>
+                            Parkolás indítása
+                        </button>
+                    </div>
                 {/if}
-            </div>
+            {/if}
         </div>
     </div>
 </div>
 
 <style>
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        padding: 1rem;
-    }
-
-    .modal-content {
-        background: white;
-        border-radius: 8px;
+    .parking-container {
         width: 100%;
-        max-width: 900px;
-        max-height: 90vh;
-        overflow-y: auto;
-        position: relative;
+        min-height: calc(100vh - 64px);
+        background-color: #f8f9fa;
+        padding: 2rem;
     }
 
     .parking-map-container {
-        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
     }
 
     .parking-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
         flex-wrap: wrap;
         gap: 1rem;
     }
 
     .parking-header h3 {
         margin: 0;
-        font-size: 1.5rem;
+        font-size: 2rem;
         color: #2c3e50;
     }
 
@@ -238,14 +243,15 @@
     }
 
     .floor-button {
-        padding: 0.5rem 1rem;
+        padding: 0.75rem 1.5rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
         background: #f0f0f0;
         cursor: pointer;
         transition: all 0.3s;
-        min-width: 48px;
+        min-width: 60px;
         font-weight: 500;
+        font-size: 1.1rem;
     }
 
     .floor-button.active {
@@ -253,26 +259,65 @@
         color: white;
     }
 
+    .parking-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .stat-value.available {
+        color: #2ecc71;
+    }
+
+    .stat-value.occupied {
+        color: #e74c3c;
+    }
+
+    .stat-value.reserved {
+        color: #f39c12;
+    }
+
     .legend {
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        padding: 0.5rem;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding: 1rem;
         background: #f8f9fa;
-        border-radius: 4px;
+        border-radius: 8px;
     }
 
     .legend-item {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.75rem;
+        font-size: 1rem;
     }
 
     .legend-box {
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
         border-radius: 4px;
     }
 
@@ -288,16 +333,21 @@
         background-color: #e74c3c;
     }
 
+    .legend-box.reserved {
+        background-color: #f39c12;
+        border: 2px dashed #e67e22;
+    }
+
     .parking-grid {
         display: grid;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .parking-row {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 1rem;
+        gap: 1.5rem;
     }
 
     .spot {
@@ -310,8 +360,9 @@
         justify-content: center;
         cursor: pointer;
         transition: all 0.3s;
-        padding: 0.5rem;
+        padding: 1rem;
         text-align: center;
+        font-size: 1.1rem;
     }
 
     .spot.available {
@@ -323,6 +374,7 @@
         background-color: #f39c12;
         color: white;
         border-color: #e67e22;
+        transform: scale(1.05);
     }
 
     .spot.occupied {
@@ -331,53 +383,57 @@
         cursor: not-allowed;
     }
 
+    .spot.reserved {
+        background-color: #f39c12;
+        color: white;
+        border-style: dashed;
+    }
+
     .spot-label {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         font-weight: bold;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
     }
 
     .spot-status {
-        font-size: 0.875rem;
+        font-size: 1rem;
         opacity: 0.9;
     }
 
     .selection-panel {
         background: #f8f9fa;
-        padding: 1rem;
-        border-radius: 4px;
-        margin-top: 1rem;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
         text-align: center;
     }
 
     .selection-panel p {
         margin: 0 0 1rem 0;
         font-weight: 500;
+        font-size: 1.2rem;
     }
 
     .confirm-button {
         background: #2ecc71;
         color: white;
         border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 4px;
+        padding: 1rem 2rem;
+        border-radius: 6px;
         font-weight: 500;
+        font-size: 1.1rem;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: all 0.3s;
     }
 
     .confirm-button:hover {
         background: #27ae60;
+        transform: translateY(-2px);
     }
 
     @media (max-width: 768px) {
-        .modal-overlay {
-            padding: 0;
-        }
-
-        .modal-content {
-            max-height: 100vh;
-            border-radius: 0;
+        .parking-container {
+            padding: 1rem;
         }
 
         .parking-map-container {
@@ -390,24 +446,33 @@
             text-align: center;
         }
 
+        .parking-header h3 {
+            font-size: 1.5rem;
+        }
+
         .floor-selector {
             justify-content: center;
         }
 
+        .parking-stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
         .parking-row {
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .spot {
-            padding: 0.25rem;
+            padding: 0.5rem;
         }
 
         .spot-label {
-            font-size: 1rem;
+            font-size: 1.25rem;
         }
 
         .spot-status {
-            font-size: 0.75rem;
+            font-size: 0.875rem;
         }
 
         .legend {
@@ -421,40 +486,33 @@
     }
 
     @media (max-width: 480px) {
+        .parking-container {
+            padding: 0.5rem;
+        }
+
+        .parking-map-container {
+            padding: 0.75rem;
+        }
+
         .parking-grid {
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .parking-row {
-            gap: 0.25rem;
+            gap: 0.5rem;
         }
 
         .spot {
-            padding: 0.125rem;
+            padding: 0.25rem;
         }
 
         .spot-label {
-            font-size: 0.875rem;
-            margin-bottom: 0.125rem;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
         }
 
         .spot-status {
-            font-size: 0.675rem;
-        }
-    }
-
-    @media (min-width: 769px) {
-        .parking-grid {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .spot {
-            transition: transform 0.2s;
-        }
-
-        .spot:hover:not(.occupied) {
-            transform: scale(1.05);
+            font-size: 0.75rem;
         }
     }
 </style> 
