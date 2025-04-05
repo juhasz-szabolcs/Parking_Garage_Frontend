@@ -87,9 +87,73 @@
 
 <div class="statistics-container">
     <div class="content-wrapper bg-white shadow-lg rounded-lg p-8 mx-4 my-6">
-        <h1 class="text-3xl font-bold mb-8 px-4">Statisztikák</h1>
+        <!-- <h1 class="text-3xl font-bold mb-8 px-4">Statisztikák</h1> -->
 
         <div class="px-4">
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Aktuális parkolóhely statisztika</h2>
+                <div class="border-t border-gray-200 pt-4">
+                    <div class="flex justify-between items-center cursor-pointer mb-4 py-2" on:click={toggleParkingStatus}>
+                        <span class="text-sm text-gray-500">Kattintson az aktuális adatok {isParkingStatusExpanded ? 'elrejtéséhez' : 'megjelenítéséhez'}</span>
+                        <i class="bi {isParkingStatusExpanded ? 'bi-chevron-down' : 'bi-chevron-right'} text-gray-500 text-xl"></i>
+                    </div>
+
+                    {#if isParkingStatusExpanded}
+                        {#if parkingStatusLoading}
+                            <div class="d-flex justify-content-center align-items-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Betöltés...</span>
+                                </div>
+                            </div>
+                        {:else if parkingStatusError}
+                            <div class="alert alert-danger mt-4" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                {parkingStatusError}
+                            </div>
+                        {:else if parkingStatus}
+                            <div class="row g-4 mt-2">
+                                <div class="col-md-3">
+                                    <div class="card border-0 bg-primary bg-opacity-10">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-p-circle-fill text-primary fs-1 mb-2"></i>
+                                            <h5 class="card-title">Összes férőhely</h5>
+                                            <p class="card-text fs-2">{parkingStatus.totalSpots}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card border-0 bg-danger bg-opacity-10">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-car-front-fill text-danger fs-1 mb-2"></i>
+                                            <h5 class="card-title">Foglalt helyek</h5>
+                                            <p class="card-text fs-2">{parkingStatus.occupiedSpots}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card border-0 bg-success bg-opacity-10">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-check-circle-fill text-success fs-1 mb-2"></i>
+                                            <h5 class="card-title">Szabad helyek</h5>
+                                            <p class="card-text fs-2">{parkingStatus.availableSpots}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card border-0 bg-info bg-opacity-10">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-percent text-info fs-1 mb-2"></i>
+                                            <h5 class="card-title">Kihasználtság</h5>
+                                            <p class="card-text fs-2">{parkingStatus.occupancyPercentage}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {/if}
+                    {/if}
+                </div>
+            </div>
+
             <div class="mb-8">
                 <h2 class="text-xl font-semibold text-gray-900 mb-6">Havi bontás megtekintése</h2>
 
@@ -165,69 +229,6 @@
                 </div>
             </div>
 
-            <div class="mt-8">
-                <h2 class="text-xl font-semibold text-gray-900 mb-6">Aktuális parkolóhely statisztika</h2>
-                <div class="border-t border-gray-200 pt-4">
-                    <div class="flex justify-between items-center cursor-pointer mb-4 py-2" on:click={toggleParkingStatus}>
-                        <span class="text-sm text-gray-500">Kattintson az aktuális adatok {isParkingStatusExpanded ? 'elrejtéséhez' : 'megjelenítéséhez'}</span>
-                        <i class="bi {isParkingStatusExpanded ? 'bi-chevron-down' : 'bi-chevron-right'} text-gray-500 text-xl"></i>
-                    </div>
-
-                    {#if isParkingStatusExpanded}
-                        {#if parkingStatusLoading}
-                            <div class="d-flex justify-content-center align-items-center py-5">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Betöltés...</span>
-                                </div>
-                            </div>
-                        {:else if parkingStatusError}
-                            <div class="alert alert-danger mt-4" role="alert">
-                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                {parkingStatusError}
-                            </div>
-                        {:else if parkingStatus}
-                            <div class="row g-4 mt-2">
-                                <div class="col-md-3">
-                                    <div class="card border-0 bg-primary bg-opacity-10">
-                                        <div class="card-body text-center">
-                                            <i class="bi bi-p-circle-fill text-primary fs-1 mb-2"></i>
-                                            <h5 class="card-title">Összes férőhely</h5>
-                                            <p class="card-text fs-2">{parkingStatus.totalSpots}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card border-0 bg-danger bg-opacity-10">
-                                        <div class="card-body text-center">
-                                            <i class="bi bi-car-front-fill text-danger fs-1 mb-2"></i>
-                                            <h5 class="card-title">Foglalt helyek</h5>
-                                            <p class="card-text fs-2">{parkingStatus.occupiedSpots}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card border-0 bg-success bg-opacity-10">
-                                        <div class="card-body text-center">
-                                            <i class="bi bi-check-circle-fill text-success fs-1 mb-2"></i>
-                                            <h5 class="card-title">Szabad helyek</h5>
-                                            <p class="card-text fs-2">{parkingStatus.availableSpots}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card border-0 bg-info bg-opacity-10">
-                                        <div class="card-body text-center">
-                                            <i class="bi bi-percent text-info fs-1 mb-2"></i>
-                                            <h5 class="card-title">Kihasználtság</h5>
-                                            <p class="card-text fs-2">{parkingStatus.occupancyPercentage}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {/if}
-                    {/if}
-                </div>
-            </div>
         </div>
     </div>
 </div>
