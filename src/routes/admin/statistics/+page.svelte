@@ -5,14 +5,34 @@
 
     let monthlyRevenue = [];
     let selectedYear = new Date().getFullYear();
+    let selectedMonth = new Date().getMonth() + 1;
     let years = [];
     let loading = false;
     let error = null;
     let isMonthlyDataExpanded = false;
     let isParkingStatusExpanded = false;
+    let isDetailedRevenueExpanded = false;
     let parkingStatus = null;
     let parkingStatusLoading = false;
     let parkingStatusError = null;
+    let detailedRevenue = null;
+    let detailedRevenueLoading = false;
+    let detailedRevenueError = null;
+    let monthlyRevenueYear = null;
+    const months = [
+        { value: 1, name: 'Január' },
+        { value: 2, name: 'Február' },
+        { value: 3, name: 'Március' },
+        { value: 4, name: 'Április' },
+        { value: 5, name: 'Május' },
+        { value: 6, name: 'Június' },
+        { value: 7, name: 'Július' },
+        { value: 8, name: 'Augusztus' },
+        { value: 9, name: 'Szeptember' },
+        { value: 10, name: 'Október' },
+        { value: 11, name: 'November' },
+        { value: 12, name: 'December' }
+    ];
 
     // Generate years from current year to 5 years back
     $: {
@@ -27,6 +47,7 @@
             const result = await getMonthlyRevenue(selectedYear);
             if (result.success) {
                 monthlyRevenue = result.data.monthlyRevenue;
+                monthlyRevenueYear = result.data.year;
                 console.log('MONTHLY REVENUE', monthlyRevenue);
             } else {
                 error = result.error;
@@ -60,24 +81,54 @@
         }
     }
 
+    async function loadDetailedRevenue() {
+        detailedRevenueLoading = true;
+        detailedRevenueError = null;
+        try {
+            const response = await fetch(`${API_URL}/api/admin/statistics/revenue?year=${selectedYear}&month=${selectedMonth}`, {
+                credentials: 'include'
+            });
+            if (response.ok) {
+                detailedRevenue = await response.json();
+            } else {
+                detailedRevenueError = 'Hiba történt az adatok betöltése során.';
+                console.error('Error loading detailed revenue');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            detailedRevenueError = 'Hiba történt az adatok betöltése során.';
+        } finally {
+            detailedRevenueLoading = false;
+        }
+    }
+
     async function toggleMonthlyData() {
-        if (!isMonthlyDataExpanded) {
-            await loadMonthlyRevenue();
-        }
         isMonthlyDataExpanded = !isMonthlyDataExpanded;
-    }
-
-    async function toggleParkingStatus() {
-        if (!isParkingStatusExpanded) {
-            await loadParkingStatus();
-        }
-        isParkingStatusExpanded = !isParkingStatusExpanded;
-    }
-
-    async function handleYearSelection() {
         if (isMonthlyDataExpanded) {
             await loadMonthlyRevenue();
         }
+    }
+
+    async function toggleParkingStatus() {
+        isParkingStatusExpanded = !isParkingStatusExpanded;
+        if (isParkingStatusExpanded) {
+            await loadParkingStatus();
+        }
+    }
+
+    async function toggleDetailedRevenue() {
+        isDetailedRevenueExpanded = !isDetailedRevenueExpanded;
+        if (isDetailedRevenueExpanded) {
+            await loadDetailedRevenue();
+        }
+    }
+
+    async function handleYearSelection() {
+        await loadMonthlyRevenue();
+    }
+
+    async function handleDetailedRevenueSelection() {
+        await loadDetailedRevenue();
     }
 
     onMount(() => {
@@ -173,7 +224,6 @@
                         <button
                             on:click={handleYearSelection}
                             class="btn btn-primary"
-                            disabled={!isMonthlyDataExpanded}
                         >
                             Kiválasztás
                         </button>
@@ -198,8 +248,10 @@
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                                 {error}
                             </div>
-                        {:else}
+                        {:else if monthlyRevenue && monthlyRevenue.length > 0}
                             <div class="mt-4 px-2">
+                                <h3 class="card-title text-primary mb-4">{monthlyRevenueYear}</h3>
+
                                 {#each monthlyRevenue as revenue}
                                     <div class="card mb-3 border-0 bg-light">
                                         <div class="card-body p-4">
@@ -224,11 +276,126 @@
                                     </div>
                                 {/each}
                             </div>
+                        {:else}
+                            <div class="alert alert-info mt-4" role="alert">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                Nincs megjeleníthető adat a kiválasztott időszakra.
+                            </div>
                         {/if}
                     {/if}
                 </div>
             </div>
 
+            <!-- Detailed Monthly Revenue Section -->
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Részletes havi bevétel</h2>
+                <div class="mb-6">
+                    <div class="d-flex align-items-end gap-3">
+                        <div class="form-group">
+                            <label for="year-select-detailed" class="form-label">Év:</label>
+                            <select
+                                id="year-select-detailed"
+                                bind:value={selectedYear}
+                                class="form-select"
+                                style="width: auto;"
+                            >
+                                {#each years as year}
+                                    <option value={year}>{year}</option>
+                                {/each}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="month-select" class="form-label">Hónap:</label>
+                            <select
+                                id="month-select"
+                                bind:value={selectedMonth}
+                                class="form-select"
+                                style="width: auto;"
+                            >
+                                {#each months as month}
+                                    <option value={month.value}>{month.name}</option>
+                                {/each}
+                            </select>
+                        </div>
+                        <button
+                            on:click={handleDetailedRevenueSelection}
+                            class="btn btn-primary"
+                        >
+                            Kiválasztás
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4">
+                    <div class="flex justify-between items-center cursor-pointer mb-4 py-2" on:click={toggleDetailedRevenue}>
+                        <span class="text-sm text-gray-500">Kattintson a részletes adatok {isDetailedRevenueExpanded ? 'elrejtéséhez' : 'megjelenítéséhez'}</span>
+                        <i class="bi {isDetailedRevenueExpanded ? 'bi-chevron-down' : 'bi-chevron-right'} text-gray-500 text-xl"></i>
+                    </div>
+
+                    {#if isDetailedRevenueExpanded}
+                        {#if detailedRevenueLoading}
+                            <div class="d-flex justify-content-center align-items-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Betöltés...</span>
+                                </div>
+                            </div>
+                        {:else if detailedRevenueError}
+                            <div class="alert alert-danger mt-4" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                {detailedRevenueError}
+                            </div>
+                        {:else if detailedRevenue}
+                            <div class="row g-4 mt-2">
+                                <div class="col-12">
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body">
+                                            <h3 class="card-title text-primary mb-4">{detailedRevenue.period}</h3>
+                                            <div class="row g-4">
+                                                <div class="col-md-6 col-lg-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-car-front-fill text-primary fs-2 me-3"></i>
+                                                        <div>
+                                                            <div class="text-muted small">Parkolások száma</div>
+                                                            <div class="fs-4">{detailedRevenue.totalParkings} db</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-lg-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-currency-dollar text-success fs-2 me-3"></i>
+                                                        <div>
+                                                            <div class="text-muted small">Összes bevétel</div>
+                                                            <div class="fs-4">{detailedRevenue.totalRevenue}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-lg-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-clock-fill text-warning fs-2 me-3"></i>
+                                                        <div>
+                                                            <div class="text-muted small">Összes parkolási idő</div>
+                                                            <div class="fs-4">{detailedRevenue.totalParkingDuration}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-lg-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-cash-stack text-info fs-2 me-3"></i>
+                                                        <div>
+                                                            <div class="text-muted small">Átlagos parkolási díj</div>
+                                                            <div class="fs-4">{detailedRevenue.averageParkingFee}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {/if}
+                    {/if}
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -257,6 +424,10 @@
     :global(.form-select) {
         min-width: 120px;
         max-width: 200px;
+    }
+
+    :global(.form-group) {
+        margin-bottom: 0;
     }
 
     button:disabled {
