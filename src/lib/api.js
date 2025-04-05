@@ -5,7 +5,7 @@ apiClient.defaults.withCredentials = true;
 apiClient.defaults.headers.common['Content-Type'] = 'application/json';
 
 // Helper function for API calls
-async function apiCall(endpoint, options = {}) {
+export async function apiCall(endpoint, options = {}) {
     try {
         console.log('Making API call to:', `${API_URL}${endpoint}`);
         console.log('API URL from env:', API_URL);
@@ -301,7 +301,10 @@ export async function deleteCar(carId) {
     try {
         console.log('Deleting car:', carId);
         const response = await apiCall(`/api/cars/${carId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json'
+            }
         });
         console.log('Delete car response:', response);
         return { success: true, data: response };
@@ -309,9 +312,40 @@ export async function deleteCar(carId) {
         console.error('Error deleting car:', error);
         console.error('Error response:', error.response?.data);
         console.error('Error status:', error.response?.status);
+        
+        // Handle specific error cases
+        if (error.response?.status === 401 || error.response?.status === 403) {
+            return { 
+                success: false, 
+                error: 'Nincs jogosultsága az autó törléséhez. Kérjük, jelentkezzen be újra.' 
+            };
+        }
+        
         return { 
             success: false, 
             error: error.response?.data || 'Hiba történt az autó törlése során.' 
+        };
+    }
+}
+
+export async function getMonthlyRevenue(year) {
+    try {
+        console.log('Getting monthly revenue for year:', year);
+        const response = await apiCall(`/api/admin/statistics/monthly-revenue?year=${year}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        console.log('Monthly revenue response:', response);
+        return { success: true, data: response };
+    } catch (error) {
+        console.error('Error getting monthly revenue:', error);
+        console.error('Error response:', error.response?.data);
+        console.error('Error status:', error.response?.status);
+        return { 
+            success: false, 
+            error: error.response?.data || 'Hiba történt az adatok betöltése során.' 
         };
     }
 }

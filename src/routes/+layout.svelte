@@ -86,22 +86,42 @@
                         <i class="bi bi-house-door"></i>
                         <span>Főoldal</span>
                     </a>
-                    <a href="/cars" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}" on:click={toggleMenu}>
-                        <i class="bi bi-car-front"></i>
-                        <span>Autók</span>
-                    </a>
+                    {#if $user.isAdmin}
+                        <a href="/admin/cars" class="nav-link {$page.url.pathname === '/admin/cars' ? 'active' : ''}" on:click={toggleMenu}>
+                            <i class="bi bi-car-front"></i>
+                            <span>Össz autó</span>
+                        </a>
+                        <a href="/admin/profiles" class="nav-link {$page.url.pathname === '/admin/profiles' ? 'active' : ''}" on:click={toggleMenu}>
+                            <i class="bi bi-people"></i>
+                            <span>Profilok</span>
+                        </a>
+                        <a href="/admin/statistics" class="nav-link {$page.url.pathname === '/admin/statistics' ? 'active' : ''}" on:click={toggleMenu}>
+                            <i class="bi bi-graph-up"></i>
+                            <span>Statisztika</span>
+                        </a>
+                    {:else}
+                        <a href="/cars" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}" on:click={toggleMenu}>
+                            <i class="bi bi-car-front"></i>
+                            <span>Autók</span>
+                        </a>
+                    {/if}
                     <a href="/parking" class="nav-link {$page.url.pathname === '/parking' ? 'active' : ''}" on:click={toggleMenu}>
                         <i class="bi bi-p-square"></i>
                         <span>Parkoló</span>
                     </a>
-                    <a href="/profile" class="nav-link {$page.url.pathname === '/profile' ? 'active' : ''}" on:click={toggleMenu}>
-                        <i class="bi bi-person-circle"></i>
-                        <span>Profil</span>
-                    </a>
+                    {#if !$user.isAdmin}
+                        <a href="/profile" class="nav-link {$page.url.pathname === '/profile' ? 'active' : ''}" on:click={toggleMenu}>
+                            <i class="bi bi-person-circle"></i>
+                            <span>Profil</span>
+                        </a>
+                    {/if}
                     <div class="nav-divider"></div>
                     <div class="user-info">
                         <span class="user-name">
                             {$user?.firstName} {$user?.lastName}
+                            {#if $user.isAdmin}
+                                <span class="admin-badge">Admin</span>
+                            {/if}
                         </span>
                     </div>
                     <button class="nav-button logout-button" on:click={handleLogout}>
@@ -395,5 +415,14 @@
     .loading p {
         color: #2c3e50;
         font-size: 1.1rem;
+    }
+
+    .admin-badge {
+        background-color: #dc3545;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 0.5rem;
     }
 </style>
