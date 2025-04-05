@@ -8,6 +8,7 @@ export const API_URL = import.meta.env.VITE_API_URL;
 // Configure axios defaults
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Accept'] = 'application/json';
 
 // Create axios instance with interceptors
 const apiClient = axios.create({
@@ -32,6 +33,7 @@ function handleSessionExpiration() {
 apiClient.interceptors.request.use(
     (config) => {
         // Add any necessary authentication headers here
+        config.headers['X-Requested-With'] = 'XMLHttpRequest';
         return config;
     },
     (error) => {

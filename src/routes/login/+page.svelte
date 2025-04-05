@@ -21,6 +21,9 @@
       }
       
       try {
+        console.log('Starting login process...');
+        console.log('API URL:', import.meta.env.VITE_API_URL);
+        
         const result = await login(email, password);
         console.log('Login response:', result);
         
@@ -39,14 +42,29 @@
           
           console.log('Stored user data:', $user);
           $isAuthenticated = true;
+          
+          // Store in localStorage for persistence
+          try {
+            localStorage.setItem('user', JSON.stringify($user));
+            console.log('User data stored in localStorage');
+          } catch (storageError) {
+            console.error('Error storing user data in localStorage:', storageError);
+          }
+          
           setTimeout(() => goto('/'), 1000);
         } else {
+          console.error('Login failed:', result.error);
           error = typeof result.error === 'string' 
             ? result.error 
             : 'Sikertelen bejelentkezés. Kérjük, próbálja újra.';
         }
       } catch (err) {
         console.error('Login error:', err);
+        console.error('Error details:', {
+          message: err.message,
+          response: err.response?.data,
+          status: err.response?.status
+        });
         error = 'Hiba történt a bejelentkezés során. Kérjük, próbálja újra.';
       } finally {
         loading = false;
