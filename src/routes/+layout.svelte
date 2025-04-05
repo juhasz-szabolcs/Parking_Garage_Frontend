@@ -95,6 +95,10 @@
                             <i class="bi bi-people"></i>
                             <span>Profilok</span>
                         </a>
+                        <a href="/admin/statistics" class="nav-link {$page.url.pathname === '/admin/statistics' ? 'active' : ''}" on:click={toggleMenu}>
+                            <i class="bi bi-graph-up"></i>
+                            <span>Statisztika</span>
+                        </a>
                     {:else}
                         <a href="/cars" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}" on:click={toggleMenu}>
                             <i class="bi bi-car-front"></i>

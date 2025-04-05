@@ -35,6 +35,21 @@
         {#if $isAuthenticated}
             <a href="/dashboard">Parkolás kezelése</a>
             <a href="/cars">Autóim</a>
+            {#if $user?.isAdmin}
+                <div class="relative group">
+                    <button class="flex items-center space-x-2 text-white hover:text-indigo-300">
+                        <span>Admin</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block">
+                        <a href="/admin/profiles" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Felhasználók</a>
+                        <a href="/admin/cars" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Össz autó</a>
+                        <a href="/admin/statistics" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Statisztikák</a>
+                    </div>
+                </div>
+            {/if}
             <button on:click={handleLogout}>Kijelentkezés</button>
         {:else}
             <a href="/login">Bejelentkezés</a>
@@ -61,6 +76,7 @@
     .links {
         display: flex;
         gap: 1rem;
+        align-items: center;
     }
 
     a,
@@ -74,13 +90,18 @@
 
     a:hover,
     button:hover {
-        background-color: #34495e;
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
-    button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
+    .group {
+        position: relative;
+    }
+
+    .group:hover .hidden {
+        display: block;
+    }
+
+    .hidden {
+        display: none;
     }
 </style>
