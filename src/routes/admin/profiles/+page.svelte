@@ -7,6 +7,7 @@
     let loading = true;
     let error = "";
     let success = "";
+    let expandedUsers = new Set();
 
     onMount(async () => {
         if (!$isAuthenticated || !$user || !$user.isAdmin) {
@@ -39,6 +40,16 @@
         } finally {
             loading = false;
         }
+    }
+
+    //User cars toggle
+    function toggleUserCars(userId) {
+        if (expandedUsers.has(userId)) {
+            expandedUsers.delete(userId);
+        } else {
+            expandedUsers.add(userId);
+        }
+        expandedUsers = expandedUsers; // Trigger reactivity
     }
 </script>
 
@@ -74,9 +85,34 @@
                     </div>
                     <div class="user-details">
                         <p><strong>Email:</strong> {user.email}</p>
+                        <p><strong>Telefonszám:</strong> {user.phoneNumber}</p>
                         <p><strong>Autók száma:</strong> {user.cars?.length || 0}</p>
                         <p><strong>Regisztráció dátuma:</strong> {new Date(user.createdAt).toLocaleDateString('hu-HU')}</p>
                     </div>
+                    {#if user.cars && user.cars.length > 0}
+                        <div class="cars-toggle" on:click={() => toggleUserCars(user.id)}>
+                            <span>Autók megtekintése</span>
+                            <i class="bi {expandedUsers.has(user.id) ? 'bi-chevron-down' : 'bi-chevron-right'}"></i>
+                        </div>
+                        {#if expandedUsers.has(user.id)}
+                            <div class="cars-section">
+                                {#each user.cars as car}
+                                    <div class="car-item">
+                                        <div class="car-info">
+                                            <span class="car-name">{car.brand} {car.model}</span>
+                                            <span class="car-year">{car.year}</span>
+                                        </div>
+                                        <div class="car-details">
+                                            <span class="license-plate">{car.licensePlate}</span>
+                                            <span class="parking-status {car.isParked ? 'parked' : 'not-parked'}">
+                                                {car.isParked ? 'Parkolóban' : 'Nincs parkolóban'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                {/each}
+                            </div>
+                        {/if}
+                    {/if}
                 </div>
             {/each}
         </div>
@@ -130,10 +166,85 @@
 
     .user-details {
         color: #6c757d;
+        margin-bottom: 1rem;
     }
 
     .user-details p {
         margin: 0.5rem 0;
+    }
+
+    .cars-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem;
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: background-color 0.3s;
+    }
+
+    .cars-toggle:hover {
+        background-color: #e9ecef;
+    }
+
+    .cars-section {
+        margin-top: 1rem;
+        border-top: 1px solid #e9ecef;
+        padding-top: 1rem;
+    }
+
+    .car-item {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .car-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .car-name {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .car-year {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .car-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .license-plate {
+        font-family: monospace;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .parking-status {
+        font-size: 0.9rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+    }
+
+    .parking-status.parked {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .parking-status.not-parked {
+        background-color: #f8d7da;
+        color: #721c24;
     }
 
     .loading {
