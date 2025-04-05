@@ -42,6 +42,35 @@
         }
     }
 
+    async function handleDeleteUser(userId) {
+        if (confirm('Biztosan törölni szeretnéd ezt a felhasználót?')) {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${userId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    await loadUsers();
+                    success = "Felhasználó sikeresen törölve!";
+                    setTimeout(() => {
+                        success = "";
+                    }, 1500);
+                } else {
+                    error = result.error || 'Hiba történt a felhasználó törlése során.';
+                }
+            } catch (err) {
+                console.error('Error deleting user:', err);
+                error = 'Hiba történt a felhasználó törlése során.';
+            }
+        }
+    }
+
     //User cars toggle
     function toggleUserCars(userId) {
         if (expandedUsers.has(userId)) {
@@ -79,9 +108,16 @@
                 <div class="user-card">
                     <div class="user-header">
                         <h3>{user.firstName} {user.lastName}</h3>
-                        {#if user.isAdmin}
-                            <span class="admin-badge">Admin</span>
-                        {/if}
+                        <div class="header-actions">
+                            {#if user.isAdmin}
+                                <span class="admin-badge">Admin</span>
+                            {/if}
+
+                            <button class="delete-button svelte-1rr27ky" on:click={() => handleDeleteUser(user.id)}>
+                                <i class="bi bi-trash"></i>
+                                <span>Törlés</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="user-details">
                         <p><strong>Email:</strong> {user.email}</p>
@@ -284,5 +320,36 @@
         background-color: #d4edda;
         color: #155724;
         border: 1px solid #c3e6cb;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .delete-button {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        background: none;
+        border: none;
+        color: #dc3545;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    .delete-button:hover {
+        background-color: #f8f9fa;
+    }
+
+    .delete-button i {
+        font-size: 1rem;
+    }
+
+    .delete-button span {
+        font-size: 0.9rem;
     }
 </style> 
