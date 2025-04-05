@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import { user, isAuthenticated } from "$lib/store";
     import { goto } from "$app/navigation";
+    import { deleteCar } from "$lib/api";
 
     let users = [];
     let loading = true;
@@ -54,19 +55,38 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                const result = await response.json();
-                if (result.success) {
+                if (response.status === 200) {
                     await loadUsers();
                     success = "Felhasználó sikeresen törölve!";
                     setTimeout(() => {
                         success = "";
                     }, 1500);
                 } else {
-                    error = result.error || 'Hiba történt a felhasználó törlése során.';
+                    error = 'Hiba történt a felhasználó törlése során.';
                 }
             } catch (err) {
                 console.error('Error deleting user:', err);
                 error = 'Hiba történt a felhasználó törlése során.';
+            }
+        }
+    }
+
+    async function handleDeleteCar(carId) {
+        if (confirm('Biztosan törölni szeretnéd ezt az autót?')) {
+            try {
+                const result = await deleteCar(carId);
+                if (result.success) {
+                    await loadUsers();
+                    success = "Autó sikeresen törölve!";
+                    setTimeout(() => {
+                        success = "";
+                    }, 1500);
+                } else {
+                    error = result.error || 'Hiba történt az autó törlése során.';
+                }
+            } catch (err) {
+                console.error('Error deleting car:', err);
+                error = 'Hiba történt az autó törlése során.';
             }
         }
     }
@@ -140,9 +160,14 @@
                                         </div>
                                         <div class="car-details">
                                             <span class="license-plate">{car.licensePlate}</span>
-                                            <span class="parking-status {car.isParked ? 'parked' : 'not-parked'}">
-                                                {car.isParked ? 'Parkolóban' : 'Nincs parkolóban'}
-                                            </span>
+                                            <div class="car-actions">
+                                                <span class="parking-status {car.isParked ? 'parked' : 'not-parked'}">
+                                                    {car.isParked ? 'Parkolóban' : 'Nincs parkolóban'}
+                                                </span>
+                                                <button class="delete-button" on:click={() => handleDeleteCar(car.id)}>
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 {/each}
@@ -259,6 +284,20 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+
+    .car-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .car-actions .delete-button {
+        padding: 0.25rem;
+    }
+
+    .car-actions .delete-button i {
+        font-size: 0.9rem;
     }
 
     .license-plate {

@@ -301,7 +301,10 @@ export async function deleteCar(carId) {
     try {
         console.log('Deleting car:', carId);
         const response = await apiCall(`/api/cars/${carId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json'
+            }
         });
         console.log('Delete car response:', response);
         return { success: true, data: response };
@@ -309,6 +312,15 @@ export async function deleteCar(carId) {
         console.error('Error deleting car:', error);
         console.error('Error response:', error.response?.data);
         console.error('Error status:', error.response?.status);
+        
+        // Handle specific error cases
+        if (error.response?.status === 401 || error.response?.status === 403) {
+            return { 
+                success: false, 
+                error: 'Nincs jogosultsága az autó törléséhez. Kérjük, jelentkezzen be újra.' 
+            };
+        }
+        
         return { 
             success: false, 
             error: error.response?.data || 'Hiba történt az autó törlése során.' 

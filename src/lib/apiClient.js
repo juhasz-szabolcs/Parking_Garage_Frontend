@@ -14,7 +14,8 @@ const apiClient = axios.create({
     baseURL: API_URL,
     withCredentials: true,
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
     }
 });
 
@@ -26,6 +27,17 @@ function handleSessionExpiration() {
     localStorage.removeItem('user');
     goto('/', { replaceState: true });
 }
+
+// Add request interceptor to ensure authentication
+apiClient.interceptors.request.use(
+    (config) => {
+        // Add any necessary authentication headers here
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 // Add response interceptor to handle session expiration
 apiClient.interceptors.response.use(
@@ -45,8 +57,8 @@ apiClient.interceptors.response.use(
     (error) => {
         console.error('API Error:', error);
         
-        // Handle 401 (Unauthorized) errors
-        if (error.response?.status === 401) {
+        // Handle 401 (Unauthorized) and 403 (Forbidden) errors
+        if (error.response?.status === 401 || error.response?.status === 403) {
             handleSessionExpiration();
         }
         
