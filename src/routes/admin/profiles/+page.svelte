@@ -9,6 +9,15 @@
     let error = "";
     let success = "";
     let expandedUsers = new Set();
+    let searchTerm = "";
+
+    // Computed property for filtered users
+    $: filteredUsers = users.filter(user => {
+        if (!searchTerm) return true;
+        const searchLower = searchTerm.toLowerCase();
+        const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+        return fullName.includes(searchLower);
+    });
 
     onMount(async () => {
         if (!$isAuthenticated || !$user || !$user.isAdmin) {
@@ -105,6 +114,15 @@
 <div class="container">
     <h1>Felhasználók</h1>
 
+    <div class="search-container">
+        <input
+            type="text"
+            bind:value={searchTerm}
+            placeholder="Keresés név alapján..."
+            class="search-input"
+        />
+    </div>
+
     {#if error}
         <div class="alert alert-danger" role="alert">
             {error}
@@ -124,7 +142,7 @@
         </div>
     {:else}
         <div class="users-grid">
-            {#each users as user}
+            {#each filteredUsers as user}
                 <div class="user-card">
                     <div class="user-header">
                         <h3>{user.firstName} {user.lastName}</h3>
@@ -390,5 +408,24 @@
 
     .delete-button span {
         font-size: 0.9rem;
+    }
+
+    .search-container {
+        margin-bottom: 2rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
     }
 </style> 
