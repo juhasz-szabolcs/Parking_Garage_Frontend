@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { API_URL } from '$lib/apiClient';
+    import { getCarLogo } from '$lib/utils/carLogos';
 
     let parkingHistory = [];
     let summaryData = null;
@@ -236,34 +237,39 @@
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Autó</th>
-                                            <th>Rendszám</th>
-                                            <th>Parkolások száma</th>
-                                            <th>Összes díj</th>
-                                            <th>Összes időtartam</th>
+                                            <th style="width: 25%">Autó</th>
+                                            <th style="width: 15%">Rendszám</th>
+                                            <th style="width: 20%" class="text-center">Parkolások száma</th>
+                                            <th style="width: 20%" class="text-center">Összes díj</th>
+                                            <th style="width: 20%" class="text-center">Összes időtartam</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {#each carStats as car}
                                             <tr>
-                                                <td class="font-semibold">{car.brand} {car.model}</td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <img src={getCarLogo(car.brand)} alt={car.brand} class="car-logo" />
+                                                        <span class="font-semibold">{car.brand} {car.model}</span>
+                                                    </div>
+                                                </td>
                                                 <td><span class="badge bg-primary">{car.licensePlate}</span></td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="bi bi-car-front-fill text-primary me-2"></i>
-                                                        {car.totalParkings} db
+                                                <td class="text-center">
+                                                    <div class="stat-cell">
+                                                        <i class="bi bi-car-front-fill text-primary stat-icon"></i>
+                                                        <span>{car.totalParkings} db</span>
                                                     </div>
                                                 </td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="bi bi-currency-dollar text-success me-2"></i>
-                                                        {car.totalFee} Ft
+                                                <td class="text-center">
+                                                    <div class="stat-cell">
+                                                        <i class="bi bi-currency-dollar text-success stat-icon"></i>
+                                                        <span>{car.totalFee} Ft</span>
                                                     </div>
                                                 </td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="bi bi-clock-fill text-info me-2"></i>
-                                                        {car.totalDuration}
+                                                <td class="text-center">
+                                                    <div class="stat-cell">
+                                                        <i class="bi bi-clock-fill text-info stat-icon"></i>
+                                                        <span>{car.totalDuration}</span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -507,5 +513,51 @@
 
     .font-semibold {
         font-weight: 600;
+    }
+
+    .car-logo {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+    }
+
+    .gap-2 {
+        gap: 0.5rem;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .align-items-center {
+        align-items: center;
+    }
+
+    .justify-content-center {
+        justify-content: center;
+    }
+
+    .stat-cell {
+        position: relative;
+        padding-left: 1.5rem;
+        display: inline-block;
+    }
+
+    .stat-icon {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(13, 110, 253, 0.1);
+        white-space: nowrap;
     }
 </style> 
