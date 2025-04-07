@@ -100,9 +100,17 @@
                             <span>Statisztika</span>
                         </a>
                     {:else}
+                        <a href="/dashboard" class="nav-link {$page.url.pathname === '/dashboard' ? 'active' : ''}" on:click={toggleMenu}>
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Irányítópult</span>
+                        </a>
                         <a href="/cars" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}" on:click={toggleMenu}>
                             <i class="bi bi-car-front"></i>
-                            <span>Autók</span>
+                            <span>Autóim</span>
+                        </a>
+                        <a href="/statistics" class="nav-link {$page.url.pathname === '/statistics' ? 'active' : ''}" on:click={toggleMenu}>
+                            <i class="bi bi-clock-history"></i>
+                            <span>Előzmények</span>
                         </a>
                     {/if}
                     <a href="/parking" class="nav-link {$page.url.pathname === '/parking' ? 'active' : ''}" on:click={toggleMenu}>
