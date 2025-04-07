@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
-    import { API_URL } from '$lib/apiClient';
     import { getCarLogo } from '$lib/utils/carLogos';
+    import { getStatistics, getMonthlyStatistics } from '$lib/api';
 
     let parkingHistory = [];
     let summaryData = null;
@@ -45,25 +45,14 @@
         loading = true;
         error = null;
         try {
-            const [historyResponse, summaryResponse, carStatsResponse] = await Promise.all([
-                fetch(`${API_URL}/api/statistics/history`, {
-                    credentials: 'include'
-                }),
-                fetch(`${API_URL}/api/statistics/summary`, {
-                    credentials: 'include'
-                }),
-                fetch(`${API_URL}/api/statistics/by-car`, {
-                    credentials: 'include'
-                })
-            ]);
-
-            if (historyResponse.ok && summaryResponse.ok && carStatsResponse.ok) {
-                parkingHistory = await historyResponse.json();
-                summaryData = await summaryResponse.json();
-                carStats = await carStatsResponse.json();
+            const result = await getStatistics();
+            if (result.success) {
+                parkingHistory = result.data.history;
+                summaryData = result.data.summary;
+                carStats = result.data.carStats;
                 await loadMonthlyStats();
             } else {
-                error = 'Hiba történt az adatok betöltése során.';
+                error = result.error;
                 console.error('Error loading statistics data');
             }
         } catch (err) {
@@ -77,13 +66,12 @@
     async function loadMonthlyStats() {
         monthlyLoading = true;
         try {
-            const response = await fetch(`${API_URL}/api/statistics/monthly?year=${selectedYear}&month=${selectedMonth}`, {
-                credentials: 'include'
-            });
-            if (response.ok) {
-                monthlyStats = await response.json();
+            const result = await getMonthlyStatistics(selectedYear, selectedMonth);
+            if (result.success) {
+                monthlyStats = result.data;
             } else {
                 monthlyStats = null;
+                console.error('Error loading monthly stats:', result.error);
             }
         } catch (err) {
             console.error('Error loading monthly stats:', err);

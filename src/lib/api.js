@@ -297,3 +297,46 @@ export async function getMonthlyRevenue(year) {
         };
     }
 }
+
+// Statisztika adatok lekérdezése
+export async function getStatistics() {
+    try {
+        const [historyResponse, summaryResponse, carStatsResponse] = await Promise.all([
+            apiCall('/api/statistics/history'),
+            apiCall('/api/statistics/summary'),
+            apiCall('/api/statistics/by-car')
+        ]);
+
+        return {
+            success: true,
+            data: {
+                history: historyResponse,
+                summary: summaryResponse,
+                carStats: carStatsResponse
+            }
+        };
+    } catch (error) {
+        console.error('Error getting statistics:', error);
+        return {
+            success: false,
+            error: error.response?.data || 'Hiba történt a statisztika adatok betöltése során.'
+        };
+    }
+}
+
+// Havi statisztika lekérdezése
+export async function getMonthlyStatistics(year, month) {
+    try {
+        const response = await apiCall(`/api/statistics/monthly?year=${year}&month=${month}`);
+        return {
+            success: true,
+            data: response
+        };
+    } catch (error) {
+        console.error('Error getting monthly statistics:', error);
+        return {
+            success: false,
+            error: error.response?.data || 'Hiba történt a havi statisztika adatok betöltése során.'
+        };
+    }
+}
