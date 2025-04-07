@@ -150,14 +150,13 @@
                         </div>
                         <div class="monthly-stats">
                             <div class="month-selector mb-4">
-                                <div class="d-flex align-items-end gap-3">
+                                <div class="d-flex align-items-end">
                                     <div class="form-group">
                                         <label for="year-select" class="form-label">Év:</label>
                                         <select
                                             id="year-select"
                                             bind:value={selectedYear}
                                             class="form-select"
-                                            style="width: auto;"
                                         >
                                             {#each years as year}
                                                 <option value={year}>{year}</option>
@@ -170,7 +169,6 @@
                                             id="month-select"
                                             bind:value={selectedMonth}
                                             class="form-select"
-                                            style="width: auto;"
                                         >
                                             {#each months as month}
                                                 <option value={month.value}>{month.name}</option>
@@ -344,8 +342,9 @@
     .statistics-container {
         width: 100%;
         max-width: 100%;
-        margin: 0 auto;
+        margin: 0;
         padding: 0;
+        overflow-x: hidden;
     }
 
     .content-wrapper {
@@ -354,18 +353,24 @@
         margin: 0;
         padding: 2rem;
         border-radius: 0;
+        box-shadow: none;
+        overflow-x: hidden;
     }
 
     .statistics-section {
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         padding: 0;
+        width: 100%;
+        overflow: hidden;
     }
 
     .section-card {
         background: white;
         border-radius: 0.5rem;
-        padding: 2rem;
+        padding: 1.5rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        overflow: hidden;
     }
 
     .section-header {
@@ -393,22 +398,59 @@
     .card {
         padding: 2rem;
         border-radius: 0.5rem;
-        transition: transform 0.2s ease;
+        transition: all 0.3s ease;
         height: 100%;
+        background: linear-gradient(to bottom right, rgba(13, 110, 253, 0.2), rgba(13, 110, 253, 0.08));
+        border: 1px solid rgba(13, 110, 253, 0.3);
+        box-shadow: 0 8px 16px rgba(13, 110, 253, 0.12);
+    }
+
+    .card.bg-success {
+        background: linear-gradient(to bottom right, rgba(25, 135, 84, 0.2), rgba(25, 135, 84, 0.08));
+        border: 1px solid rgba(25, 135, 84, 0.3);
+        box-shadow: 0 8px 16px rgba(25, 135, 84, 0.12);
+    }
+
+    .card.bg-info {
+        background: linear-gradient(to bottom right, rgba(13, 202, 240, 0.2), rgba(13, 202, 240, 0.08));
+        border: 1px solid rgba(13, 202, 240, 0.3);
+        box-shadow: 0 8px 16px rgba(13, 202, 240, 0.12);
     }
 
     .card:hover {
         transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
     }
 
     .card-title {
         font-size: 1.1rem;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+        color: #495057;
     }
 
     .card-text {
         font-weight: 600;
         margin: 0;
+        color: #212529;
+    }
+
+    .card .fs-1 {
+        margin-bottom: 1rem;
+    }
+
+    .card.bg-primary .fs-1,
+    .card.bg-primary .card-text {
+        color: #0d6efd;
+    }
+
+    .card.bg-success .fs-1,
+    .card.bg-success .card-text {
+        color: #198754;
+    }
+
+    .card.bg-info .fs-1,
+    .card.bg-info .card-text {
+        color: #0dcaf0;
     }
 
     .monthly-stats {
@@ -442,19 +484,17 @@
         display: flex;
         align-items: center;
         padding: 1rem;
-        background: rgba(13, 110, 253, 0.1);
+        background: linear-gradient(to bottom right, rgba(13, 110, 253, 0.2), rgba(13, 110, 253, 0.08));
+        border: 1px solid rgba(13, 110, 253, 0.3);
         border-radius: 8px;
         min-height: 60px;
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.12);
     }
 
     .statistics-container .table {
         width: 100%;
-        margin-bottom: 1rem;
-        background-color: white;
-        border-radius: 10px;
-        overflow: hidden;
-        border-collapse: separate;
-        border-spacing: 0 0.5rem;
+        margin: 0;
+        border-spacing: 0;
     }
 
     .statistics-container .table th {
@@ -463,114 +503,49 @@
         padding: 1rem 0.75rem;
         border-bottom: none;
         white-space: nowrap;
+        text-align: left;
     }
 
     .statistics-container .table tbody tr {
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
         background: white;
-        border: 1px solid rgba(13, 110, 253, 0.3);
-        box-shadow: 0 3px 6px rgba(13, 110, 253, 0.15);
+        border: 1px solid rgba(13, 110, 253, 0.25);
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.12);
+        margin-bottom: 0.75rem;
         border-radius: 8px;
-        margin-bottom: 0.5rem;
     }
 
     .statistics-container .table tbody tr:hover {
-        background-color: rgba(13, 110, 253, 0.03);
-        transform: translateY(-1px);
-        border-color: rgba(13, 110, 253, 0.5);
-        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(13, 110, 253, 0.16);
+        border-color: rgba(13, 110, 253, 0.35);
     }
 
     .statistics-container .table td {
         padding: 1rem 0.75rem;
         vertical-align: middle;
-        white-space: nowrap;
-        border: none;
-        background: white;
-    }
-
-    .statistics-container .table td:first-child {
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
-    }
-
-    .statistics-container .table td:last-child {
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
-    }
-
-    .statistics-container .overflow-x-auto {
-        overflow-x: auto;
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .fs-1 {
-        font-size: 2.5rem !important;
-    }
-
-    .fs-2 {
-        font-size: 2rem !important;
-    }
-
-    .form-select {
-        width: 100% !important;
-        max-width: none !important;
-        padding: 0.75rem;
-        height: 45px;
-    }
-
-    .form-group {
-        margin-bottom: 0;
-    }
-
-    .btn-primary {
-        height: 45px;
-        padding: 0 2rem;
-        min-width: 150px;
-    }
-
-    .badge {
-        font-size: 0.875rem;
-        padding: 0.4em 0.8em;
-    }
-
-    .font-semibold {
-        font-weight: 600;
+        border-bottom: 1px solid rgba(13, 110, 253, 0.15);
     }
 
     .car-logo {
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
         object-fit: contain;
+        margin-right: 0.5rem;
     }
 
-    .gap-2 {
-        gap: 0.5rem;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-
-    .d-flex {
-        display: flex;
-    }
-
-    .align-items-center {
-        align-items: center;
-    }
-
-    .justify-content-center {
-        justify-content: center;
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.35em 0.65em;
+        white-space: nowrap;
     }
 
     .stat-cell {
         position: relative;
         padding-left: 1.5rem;
-        display: inline-block;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     .stat-icon {
@@ -587,31 +562,56 @@
     .month-selector .d-flex {
         display: flex;
         flex-wrap: wrap;
-        gap: 1.5rem;
+        gap: 0.75rem;
         align-items: flex-end;
     }
 
     .month-selector .form-group {
         flex: 1;
-        min-width: 200px;
+        min-width: 140px;
+        max-width: 200px;
         margin: 0;
+    }
+
+    .month-selector .form-label {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
     }
 
     .month-selector .form-select {
         width: 100%;
         padding: 0.5rem;
         border-radius: 0.375rem;
+        border: 1px solid rgba(13, 110, 253, 0.3);
+        background-color: white;
+        font-size: 0.95rem;
+        height: 38px;
+        line-height: 1.5;
     }
 
     .month-selector .btn-primary {
         min-width: 120px;
         height: 38px;
         align-self: flex-end;
+        margin-left: 0.5rem;
+        padding: 0 1.5rem;
+        font-size: 0.95rem;
+        border-radius: 0.375rem;
+        background: linear-gradient(to bottom right, #0d6efd, #0b5ed7);
+        border: none;
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+        transition: all 0.2s ease;
+    }
+
+    .month-selector .btn-primary:hover {
+        background: linear-gradient(to bottom right, #0b5ed7, #0a58ca);
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+        transform: translateY(-1px);
     }
 
     .table {
         width: 100%;
-        margin-bottom: 1rem;
+        margin: 0;
     }
 
     .table th {
@@ -625,35 +625,141 @@
         vertical-align: middle;
     }
 
+    .overflow-x-auto {
+        overflow-x: visible;
+        width: 100%;
+    }
+
+    .monthly-details {
+        width: 100%;
+    }
+
+    .monthly-details .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .monthly-details .detail-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background: linear-gradient(to bottom right, rgba(13, 110, 253, 0.2), rgba(13, 110, 253, 0.08));
+        border: 1px solid rgba(13, 110, 253, 0.3);
+        border-radius: 8px;
+        min-height: 60px;
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.12);
+        width: 100%;
+    }
+
+    .monthly-details .detail-item i {
+        margin-right: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .monthly-details .detail-item span {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     @media (max-width: 768px) {
+        .statistics-container {
+            width: 100vw;
+            max-width: 100vw;
+        }
+
         .content-wrapper {
-            padding: 1rem;
+            padding: 0.75rem;
+        }
+
+        .overflow-x-auto {
+            overflow-x: auto;
         }
 
         .section-card {
-            padding: 1.25rem;
-            margin: 0;
-            border-radius: 0.5rem;
-        }
-
-        .summary-cards {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .card {
-            padding: 1.5rem;
-            margin: 0;
-        }
-
-        .details-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
-
-        .detail-item {
             padding: 1rem;
+            margin: 0;
+        }
+
+        .table {
+            display: block;
+            width: 100%;
+            margin: 0;
+        }
+
+        .table thead {
+            display: none;
+        }
+
+        .table tbody {
+            display: block;
+            width: 100%;
+        }
+
+        .table tr {
+            display: block;
+            margin-bottom: 1rem;
+            background: white;
+            border: 1px solid rgba(13, 110, 253, 0.25);
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.12);
+        }
+
+        .table td {
+            display: flex;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(13, 110, 253, 0.15);
+            font-size: 0.9rem;
+            align-items: center;
+        }
+
+        .table td:last-child {
+            border-bottom: none;
+        }
+
+        .table td[data-label]::before {
+            content: attr(data-label);
+            font-weight: 600;
+            min-width: 120px;
+            margin-right: 1rem;
+        }
+
+        .stat-cell {
+            flex: 1;
+            justify-content: flex-start;
+            padding-left: 0;
+        }
+
+        .stat-icon {
+            position: static;
+            transform: none;
+            margin-right: 0.5rem;
+        }
+
+        .badge {
+            margin-left: auto;
+        }
+
+        .monthly-details .details-grid {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .monthly-details .detail-item {
+            padding: 0.75rem 1rem;
             min-height: 50px;
+        }
+
+        .monthly-details .detail-item i {
+            font-size: 1rem;
+        }
+
+        .monthly-details .detail-item span {
+            font-size: 0.9rem;
         }
 
         .month-selector .d-flex {
@@ -664,75 +770,62 @@
 
         .month-selector .form-group {
             width: 100%;
+            max-width: none;
         }
 
-        .form-select {
-            width: 100% !important;
-        }
-
-        .btn-primary {
+        .month-selector .btn-primary {
             width: 100%;
-            margin: 0;
+            margin-left: 0;
+            margin-top: 0.5rem;
         }
 
-        .table td {
-            padding: 0.75rem;
+        .month-selector .form-select {
             font-size: 0.9rem;
-        }
-
-        .table td::before {
-            min-width: 110px;
-            font-size: 0.9rem;
-        }
-
-        .badge {
-            font-size: 0.8rem;
-            padding: 0.35em 0.65em;
-        }
-
-        .stat-cell {
-            font-size: 0.9rem;
-        }
-
-        .statistics-container .overflow-x-auto {
-            margin: 0 -1.25rem;
-            padding: 1.25rem;
-            width: calc(100% + 2.5rem);
         }
     }
 
     @media (max-width: 480px) {
         .content-wrapper {
-            padding: 0.75rem;
+            padding: 0.5rem;
         }
 
         .section-card {
-            padding: 1rem;
-        }
-
-        .card {
-            padding: 1.25rem;
-        }
-
-        .detail-item {
             padding: 0.75rem;
-            font-size: 0.9rem;
+            border-radius: 0.375rem;
         }
 
-        h1 {
-            font-size: 1.5rem !important;
+        .table td {
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
         }
 
-        h2 {
-            font-size: 1.25rem !important;
+        .table td[data-label]::before {
+            min-width: 100px;
+            font-size: 0.85rem;
         }
 
-        .fs-1 {
-            font-size: 1.5rem !important;
+        .car-logo {
+            width: 16px;
+            height: 16px;
         }
 
-        .fs-2 {
-            font-size: 1.25rem !important;
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.25em 0.5em;
+        }
+
+        .monthly-details .detail-item {
+            padding: 0.5rem 0.75rem;
+        }
+
+        .monthly-details .detail-item span {
+            font-size: 0.85rem;
+        }
+
+        .month-selector .form-select,
+        .month-selector .btn-primary {
+            font-size: 0.85rem;
+            height: 36px;
         }
     }
 </style> 
