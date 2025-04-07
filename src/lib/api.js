@@ -8,18 +8,18 @@ apiClient.defaults.headers.common['Content-Type'] = 'application/json';
 // Helper function for API calls
 export async function apiCall(endpoint, options = {}) {
     try {
-        console.log('Making API call to:', `${API_URL}${endpoint}`);
-        console.log('API URL from env:', API_URL);
-        console.log('Full request config:', {
-            method: options.method || 'GET',
-            url: `${API_URL}${endpoint}`,
-            data: options.data,
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            }
-        });
+        // console.log('Making API call to:', `${API_URL}${endpoint}`);
+        // console.log('API URL from env:', API_URL);
+        // console.log('Full request config:', {
+        //     method: options.method || 'GET',
+        //     url: `${API_URL}${endpoint}`,
+        //     data: options.data,
+        //     withCredentials: true,
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         ...options.headers
+        //     }
+        // });
         
         const response = await apiClient({
             method: options.method || 'GET',
@@ -65,15 +65,15 @@ export async function register(user) {
 
 export async function login(email, password) {
     try {
-        console.log('Login attempt with email:', email);
-        console.log('API URL:', API_URL);
+        // console.log('Login attempt with email:', email);
+        // console.log('API URL:', API_URL);
         
         const response = await apiCall('/api/users/login', {
             method: 'POST',
             data: { email, password }
         });
         
-        console.log('Login response:', response);
+        // console.log('Login response:', response);
         return { success: true, data: response };
     } catch (error) {
         console.error('Login error:', error.response?.data || error);
@@ -108,7 +108,7 @@ export async function getUserData(userId) {
         if (userId) {
             try {
                 userResponse = await apiCall(`/api/users/${userId}`);
-                console.log('User details response:', userResponse);
+                // console.log('User details response:', userResponse);
             } catch (error) {
                 console.error('Error getting user details:', error);
                 // If we can't get user details, return error
@@ -162,7 +162,7 @@ export async function createCar(car) {
             method: 'POST',
             data: car
         });
-        console.log('Create car response:', response);
+        // console.log('Create car response:', response);
         return { success: true, data: response };
     } catch (error) {
         console.error('Create car error:', error.response?.data || error);
@@ -173,7 +173,7 @@ export async function createCar(car) {
 // Parkolás indítása
 export async function startParking(carId, parkingSpotId) {
     try {
-        console.log('Starting parking with raw data:', { carId, parkingSpotId });
+        // console.log('Starting parking with raw data:', { carId, parkingSpotId });
         
         // Ensure both values are valid numbers
         const parsedCarId = parseInt(carId);
@@ -200,13 +200,13 @@ export async function startParking(carId, parkingSpotId) {
             parkingSpotId: parsedSpotId
         };
         
-        console.log('Sending data to server:', data);
+        // console.log('Sending data to server:', data);
         const response = await apiCall('/api/parking/start', {
             method: 'POST',
             data: data
         });
         
-        console.log('Server response:', response);
+        // console.log('Server response:', response);
         return {
             success: true,
             data: response
@@ -226,12 +226,12 @@ export async function startParking(carId, parkingSpotId) {
 // Parkolás leállítása
 export async function stopParking(carId) {
     try {
-        console.log('Stopping parking for car:', carId);
+        // console.log('Stopping parking for car:', carId);
         const response = await apiCall('/api/parking/end', {
             method: 'POST',
             data: { carId: parseInt(carId) }
         });
-        console.log('Stop parking response:', response);
+        // console.log('Stop parking response:', response);
         return { success: true, data: response };
     } catch (error) {
         console.error('Error stopping parking:', error);
@@ -247,14 +247,14 @@ export async function stopParking(carId) {
 // Autó törlése
 export async function deleteCar(carId) {
     try {
-        console.log('Deleting car:', carId);
+        // console.log('Deleting car:', carId);
         const response = await apiCall(`/api/cars/${carId}`, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json'
             }
         });
-        console.log('Delete car response:', response);
+        // console.log('Delete car response:', response);
         return { success: true, data: response };
     } catch (error) {
         console.error('Error deleting car:', error);
@@ -278,14 +278,14 @@ export async function deleteCar(carId) {
 
 export async function getMonthlyRevenue(year) {
     try {
-        console.log('Getting monthly revenue for year:', year);
+        // console.log('Getting monthly revenue for year:', year);
         const response = await apiCall(`/api/admin/statistics/monthly-revenue?year=${year}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json'
             }
         });
-        console.log('Monthly revenue response:', response);
+        // console.log('Monthly revenue response:', response);
         return { success: true, data: response };
     } catch (error) {
         console.error('Error getting monthly revenue:', error);

@@ -48,7 +48,7 @@
             if (result.success) {
                 monthlyRevenue = result.data.monthlyRevenue;
                 monthlyRevenueYear = result.data.year;
-                console.log('MONTHLY REVENUE', monthlyRevenue);
+                // console.log('MONTHLY REVENUE', monthlyRevenue);
             } else {
                 error = result.error;
             }

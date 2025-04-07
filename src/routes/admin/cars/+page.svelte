@@ -33,7 +33,7 @@
             
             const result = await response.json();
             cars = result;
-            console.log("Loaded all cars:", cars);
+            // console.log("Loaded all cars:", cars);
         } catch (error) {
             console.error("Error loading cars:", error);
             error = "Hiba történt az autók betöltése során";

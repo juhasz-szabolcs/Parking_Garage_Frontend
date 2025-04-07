@@ -14,7 +14,7 @@ if (typeof window !== 'undefined') {
             const parsedUser = JSON.parse(storedUser);
             user.set(parsedUser);
             isAuthenticated.set(true);
-            console.log('Loaded user from localStorage:', parsedUser);
+            // console.log('Loaded user from localStorage:', parsedUser);
         } catch (error) {
             console.error('Error parsing stored user:', error);
             localStorage.removeItem('user');

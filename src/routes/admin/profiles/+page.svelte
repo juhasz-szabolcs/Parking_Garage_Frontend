@@ -43,7 +43,7 @@
             
             const result = await response.json();
             users = result;
-            console.log("Loaded users:", users);
+            // console.log("Loaded users:", users);
         } catch (error) {
             console.error("Error loading users:", error);
             error = "Hiba történt a felhasználók betöltése során";

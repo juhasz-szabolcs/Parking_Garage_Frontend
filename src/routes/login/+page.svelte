@@ -21,15 +21,15 @@
       }
       
       try {
-        console.log('Starting login process...');
-        console.log('API URL:', import.meta.env.VITE_API_URL);
+        // console.log('Starting login process...');
+        // console.log('API URL:', import.meta.env.VITE_API_URL);
         
         const result = await login(email, password);
-        console.log('Login response:', result);
+        // console.log('Login response:', result);
         
         if (result.success) {
           success = 'Sikeres bejelentkezés! Átirányítás...';
-          console.log('Login response data:', result.data);
+          // console.log('Login response data:', result.data);
           
           // Store the user data with all necessary fields
           $user = {
@@ -40,7 +40,7 @@
             expiresAt: result.data.expiresAt
           };
           
-          console.log('Stored user data:', $user);
+          // console.log('Stored user data:', $user);
           $isAuthenticated = true;
           
           // Store in localStorage for persistence

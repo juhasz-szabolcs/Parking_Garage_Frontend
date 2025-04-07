@@ -44,17 +44,17 @@
 
         try {
             const result = await getUserData($user.id);
-            console.log("API response:", result);
+            // console.log("API response:", result);
             
             if (result.success) {
                 cars = result.data.cars;
                 ownedCars = cars;
-                console.log("Loaded cars:", cars);
+                // console.log("Loaded cars:", cars);
                 cars.forEach(car => {
-                    console.log(`Car ${car.brand} ${car.model} isParked:`, car.isParking);
+                    // console.log(`Car ${car.brand} ${car.model} isParked:`, car.isParking);
                 });
             } else {
-                console.log("Failed to load cars:", result.error);
+                // console.log("Failed to load cars:", result.error);
                 error = result.error || "Nem sikerült betölteni az autókat";
                 // If we get an error, redirect to home
                 goto("/");
@@ -153,16 +153,16 @@
     }
 
     function openParkingMap(car) {
-        console.log('Opening parking map for car:', car);
+        // console.log('Opening parking map for car:', car);
         if (!car || !car.id || isNaN(car.id)) {
             console.error('Invalid car or car ID:', car);
             error = 'Érvénytelen autó kiválasztás!';
             return;
         }
-        console.log('Car ID:', car.id);
+        // console.log('Car ID:', car.id);
         selectedCar = car;
-        console.log('Selected car after assignment:', selectedCar);
-        console.log('Selected car ID after assignment:', selectedCar?.id);
+        // console.log('Selected car after assignment:', selectedCar);
+        // console.log('Selected car ID after assignment:', selectedCar?.id);
         showParkingMap = true;
     }
 
@@ -172,10 +172,10 @@
     }
 
     async function handleSpotSelect(spot) {
-        console.log('Selected car:', selectedCar);
-        console.log('Selected spot:', spot);
+        // console.log('Selected car:', selectedCar);
+        // console.log('Selected spot:', spot);
         if (selectedCar && selectedCar.id) {
-            console.log('Starting parking with carId:', selectedCar.id, 'and parkingSpotId:', spot.id);
+            // console.log('Starting parking with carId:', selectedCar.id, 'and parkingSpotId:', spot.id);
             await handleStartParking(selectedCar.id, spot.id);
             closeParkingMap();
         } else {

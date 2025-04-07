@@ -41,9 +41,9 @@
         }
 
         try {
-            console.log('Fetching user data for ID:', $user.id);
+            // console.log('Fetching user data for ID:', $user.id);
             const result = await getUserData($user.id);
-            console.log('User data result:', result);
+            // console.log('User data result:', result);
             
             if (result.success) {
                 userData = result.data;

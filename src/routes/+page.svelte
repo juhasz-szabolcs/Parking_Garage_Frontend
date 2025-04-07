@@ -18,7 +18,7 @@
                     ...$user,
                     ...result.data
                 };
-                console.log('User data loaded:', $user);
+                // console.log('User data loaded:', $user);
             }
         }
     });
