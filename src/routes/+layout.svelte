@@ -212,7 +212,6 @@
         margin: -0.5rem;
         width: 44px;
         height: 44px;
-        display: flex;
         align-items: center;
         justify-content: center;
     }
@@ -311,15 +310,14 @@
 
         .nav-content {
             display: none;
-            position: fixed;
-            top: 61px; /* A navbar magassága */
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
             left: 0;
             right: 0;
-            bottom: 0;
-            background-color: white;
-            flex-direction: column;
-            align-items: stretch;
-            overflow-y: auto;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .nav-content.open {
@@ -328,20 +326,12 @@
 
         .nav-links {
             flex-direction: column;
+            width: 100%;
+            padding: 0.5rem;
+        }
+
+        .nav-link {
             padding: 1rem;
-            gap: 0.5rem;
-        }
-
-        .nav-link,
-        .nav-button {
-            padding: 0.875rem 1rem;
-        }
-
-        .user-info {
-            padding: 0.875rem 1rem;
-            background-color: #f8f9fa;
-            margin: 0 -1rem;
-            padding-left: 2rem;
         }
     }
 
