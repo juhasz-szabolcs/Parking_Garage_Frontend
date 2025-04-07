@@ -1,15 +1,28 @@
 <script>
     import { onMount } from 'svelte';
     import apiClient from '$lib/apiClient';
+    import { user } from '$lib/store';
+    import { getCarLogo } from '$lib/utils/carLogos';
     
     let parkingSpots = [];
     let loading = true;
     let error = '';
     let activeFloor = '1';
+    let userCars = [];
     
     onMount(async () => {
+        await loadUserCars();
         await loadParkingSpots();
     });
+    
+    async function loadUserCars() {
+        try {
+            const response = await apiClient.get('/api/cars');
+            userCars = response.data;
+        } catch (err) {
+            console.error('Error loading user cars:', err);
+        }
+    }
     
     async function loadParkingSpots() {
         try {
@@ -47,6 +60,11 @@
             return 'reserved';
         }
         return 'available';
+    }
+
+    function isUserCar(spot) {
+        if (!spot || !spot.carId) return false;
+        return userCars.some(car => car.id === spot.carId && car.isParked);
     }
 </script>
 
@@ -124,10 +142,17 @@
                                     isOccupied: false,
                                     carId: null
                                 }}
-                                <div class="spot {getSpotStatus(spot)}">
+                                {@const isUserCarSpot = isUserCar(spot)}
+                                {@const userCar = isUserCarSpot ? userCars.find(car => car.id === spot.carId) : null}
+                                <div class="spot {getSpotStatus(spot)} {isUserCarSpot ? 'user-car' : ''}">
                                     <div class="spot-label">{spotNumber}</div>
                                     <div class="spot-status">
-                                        {#if spot.isOccupied}
+                                        {#if isUserCarSpot}
+                                            <div class="user-car-info">
+                                                <div class="license-plate">{userCar.licensePlate}</div>
+                                                <img src={getCarLogo(userCar.brand)} alt={userCar.brand} class="car-logo" />
+                                            </div>
+                                        {:else if spot.isOccupied}
                                             Foglalt
                                         {:else if spot.carId}
                                             Foglalva
@@ -159,11 +184,11 @@
         background: white;
         border-radius: 4px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        padding: 0.25rem;
+        padding: 1rem;
         flex: 1;
         display: flex;
         flex-direction: column;
-        max-width: 700px;
+        max-width: 900px;
         margin: 0 auto;
         width: 100%;
     }
@@ -306,9 +331,9 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 0.25rem;
+        padding: 0.5rem;
         text-align: center;
-        font-size: 0.7rem;
+        font-size: 0.9rem;
         min-height: 0;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         transition: all 0.2s ease;
@@ -332,15 +357,73 @@
         border: none;
     }
 
+    .spot.user-car {
+        background-color: #3498db;
+        color: white;
+        border: none;
+    }
+
     .spot-label {
-        font-size: 0.75rem;
+        font-size: 1.1rem;
         font-weight: bold;
-        margin-bottom: 0.125rem;
+        margin-bottom: 0.25rem;
     }
 
     .spot-status {
-        font-size: 0.6rem;
+        font-size: 0.9rem;
         opacity: 0.9;
+    }
+
+    .user-car-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .license-plate {
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    .car-logo {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        padding: 4px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 1024px) {
+        .parking-map-container {
+            max-width: 800px;
+            padding: 0.75rem;
+        }
+
+        .spot {
+            padding: 0.4rem;
+            font-size: 0.8rem;
+        }
+
+        .spot-label {
+            font-size: 1rem;
+        }
+
+        .spot-status {
+            font-size: 0.8rem;
+        }
+
+        .license-plate {
+            font-size: 0.9rem;
+        }
+
+        .car-logo {
+            width: 28px;
+            height: 28px;
+            padding: 3px;
+        }
     }
 
     @media (max-width: 768px) {
@@ -350,36 +433,41 @@
         }
 
         .parking-map-container {
-            padding: 0.125rem;
+            max-width: 600px;
+            padding: 0.5rem;
         }
 
         .parking-header h3 {
-            font-size: 0.9rem;
+            font-size: 1.2rem;
         }
 
         .floor-button {
-            padding: 0.125rem 0.25rem;
-            font-size: 0.7rem;
-        }
-
-        .stat-label {
-            font-size: 0.65rem;
-        }
-
-        .stat-value {
+            padding: 0.25rem 0.5rem;
             font-size: 0.8rem;
         }
 
-        .legend-item {
-            font-size: 0.65rem;
-        }
-
-        .spot-label {
+        .spot {
+            padding: 0.3rem;
             font-size: 0.7rem;
         }
 
+        .spot-label {
+            font-size: 0.85rem;
+            margin-bottom: 0.125rem;
+        }
+
         .spot-status {
-            font-size: 0.55rem;
+            font-size: 0.7rem;
+        }
+
+        .license-plate {
+            font-size: 0.8rem;
+        }
+
+        .car-logo {
+            width: 24px;
+            height: 24px;
+            padding: 2px;
         }
     }
 
@@ -388,12 +476,33 @@
             height: calc(100vh - 80px);
         }
 
+        .parking-map-container {
+            padding: 0.25rem;
+        }
+
+        .spot {
+            padding: 0.25rem;
+            font-size: 0.6rem;
+            border-radius: 8px;
+        }
+
         .spot-label {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
+            margin-bottom: 0.1rem;
         }
 
         .spot-status {
-            font-size: 0.5rem;
+            font-size: 0.6rem;
+        }
+
+        .license-plate {
+            font-size: 0.65rem;
+        }
+
+        .car-logo {
+            width: 20px;
+            height: 20px;
+            padding: 2px;
         }
     }
 </style> 
