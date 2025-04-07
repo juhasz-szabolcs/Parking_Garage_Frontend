@@ -92,10 +92,10 @@
                             <label>E-mail cím</label>
                             <span>{userData.email}</span>
                         </div>
-                        <div class="info-item">
+                        <!-- <div class="info-item">
                             <label>Regisztráció dátuma</label>
                             <span>{new Date(userData.registrationDate).toLocaleDateString('hu-HU')}</span>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
