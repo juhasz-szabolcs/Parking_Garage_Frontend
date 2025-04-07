@@ -35,6 +35,12 @@
         years = Array.from({ length: 6 }, (_, i) => currentYear - i);
     }
 
+    // Helper function to format numbers with thousand separator
+    function formatNumber(num) {
+        if (num === null || num === undefined) return '';
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
     async function loadParkingHistory() {
         loading = true;
         error = null;
@@ -126,14 +132,14 @@
                                     <div class="card-body text-center">
                                         <i class="bi bi-car-front-fill text-primary fs-1 mb-2"></i>
                                         <h5 class="card-title">Összes parkolás</h5>
-                                        <p class="card-text fs-2">{summaryData.totalParkings} db</p>
+                                        <p class="card-text fs-2">{formatNumber(summaryData.totalParkings)} db</p>
                                     </div>
                                 </div>
                                 <div class="card border-0 bg-success bg-opacity-10">
                                     <div class="card-body text-center">
                                         <i class="bi bi-currency-dollar text-success fs-1 mb-2"></i>
                                         <h5 class="card-title">Összes díj</h5>
-                                        <p class="card-text fs-2">{summaryData.totalFee}</p>
+                                        <p class="card-text fs-2">{formatNumber(summaryData.totalFee)}</p>
                                     </div>
                                 </div>
                                 <div class="card border-0 bg-info bg-opacity-10">
@@ -204,11 +210,11 @@
                                     <div class="details-grid">
                                         <div class="detail-item">
                                             <i class="bi bi-car-front-fill text-primary me-2"></i>
-                                            <span>Parkolások száma: {monthlyStats.totalParkings} db</span>
+                                            <span>Parkolások száma: {formatNumber(monthlyStats.totalParkings)} db</span>
                                         </div>
                                         <div class="detail-item">
                                             <i class="bi bi-currency-dollar text-success me-2"></i>
-                                            <span>Összes díj: {monthlyStats.totalFee}</span>
+                                            <span>Összes díj: {formatNumber(monthlyStats.totalFee)}</span>
                                         </div>
                                         <div class="detail-item">
                                             <i class="bi bi-clock-fill text-info me-2"></i>
@@ -247,26 +253,26 @@
                                     <tbody>
                                         {#each carStats as car}
                                             <tr>
-                                                <td>
+                                                <td data-label="Autó">
                                                     <div class="d-flex align-items-center gap-2">
                                                         <img src={getCarLogo(car.brand)} alt={car.brand} class="car-logo" />
                                                         <span class="font-semibold">{car.brand} {car.model}</span>
                                                     </div>
                                                 </td>
-                                                <td><span class="badge bg-primary">{car.licensePlate}</span></td>
-                                                <td class="text-center">
+                                                <td data-label="Rendszám"><span class="badge bg-primary">{car.licensePlate}</span></td>
+                                                <td data-label="Parkolások száma" class="text-center">
                                                     <div class="stat-cell">
                                                         <i class="bi bi-car-front-fill text-primary stat-icon"></i>
-                                                        <span>{car.totalParkings} db</span>
+                                                        <span>{formatNumber(car.totalParkings)} db</span>
                                                     </div>
                                                 </td>
-                                                <td class="text-center">
+                                                <td data-label="Összes díj" class="text-center">
                                                     <div class="stat-cell">
                                                         <i class="bi bi-currency-dollar text-success stat-icon"></i>
-                                                        <span>{car.totalFee} Ft</span>
+                                                        <span>{formatNumber(car.totalFee)} Ft</span>
                                                     </div>
                                                 </td>
-                                                <td class="text-center">
+                                                <td data-label="Összes időtartam" class="text-center">
                                                     <div class="stat-cell">
                                                         <i class="bi bi-clock-fill text-info stat-icon"></i>
                                                         <span>{car.totalDuration}</span>
@@ -309,27 +315,27 @@
                                         <tbody>
                                             {#each parkingHistory as history}
                                                 <tr>
-                                                    <td>{new Date(history.startTime).toLocaleDateString('hu-HU')}</td>
-                                                    <td>
+                                                    <td data-label="Dátum">{new Date(history.startTime).toLocaleDateString('hu-HU')}</td>
+                                                    <td data-label="Autó">
                                                         <div class="d-flex align-items-center gap-2">
                                                             <img src={getCarLogo(history.carBrand)} alt={history.carBrand} class="car-logo" />
                                                             <span>{history.carBrand} {history.carModel}</span>
                                                         </div>
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Rendszám">
                                                         <span class="badge bg-secondary">{history.licensePlate}</span>
                                                     </td>
-                                                    <td>{history.floorNumber}. emelet - {history.spotNumber}</td>
-                                                    <td>
+                                                    <td data-label="Hely">{history.floorNumber}. emelet - {history.spotNumber}</td>
+                                                    <td data-label="Időtartam">
                                                         <div class="stat-cell">
                                                             <i class="bi bi-clock-fill text-info stat-icon"></i>
                                                             <span>{history.durationFormatted}</span>
                                                         </div>
                                                     </td>
-                                                    <td>
+                                                    <td data-label="Díj">
                                                         <div class="stat-cell">
                                                             <i class="bi bi-currency-dollar text-success stat-icon"></i>
-                                                            <span>{history.fee} Ft</span>
+                                                            <span>{formatNumber(history.fee)} Ft</span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -446,36 +452,63 @@
         border-radius: 8px;
     }
 
-    .table {
+    .statistics-container .table {
         width: 100%;
         margin-bottom: 1rem;
         background-color: white;
         border-radius: 10px;
         overflow: hidden;
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
     }
 
-    .table th {
+    .statistics-container .table th {
         background-color: rgba(13, 110, 253, 0.1);
         font-weight: 600;
-        padding: 0.75rem;
-        border-bottom: 2px solid rgba(13, 110, 253, 0.1);
+        padding: 1rem 0.75rem;
+        border-bottom: none;
+        white-space: nowrap;
     }
 
-    .table td {
-        padding: 0.75rem;
-        vertical-align: middle;
-        border-bottom: 1px solid rgba(13, 110, 253, 0.1);
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: rgba(13, 110, 253, 0.05);
-    }
-
-    .overflow-x-auto {
-        overflow-x: auto;
+    .statistics-container .table tbody tr {
+        transition: all 0.2s ease;
         background: white;
+        border: 1px solid rgba(13, 110, 253, 0.3);
+        box-shadow: 0 3px 6px rgba(13, 110, 253, 0.15);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+
+    .statistics-container .table tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.03);
+        transform: translateY(-1px);
+        border-color: rgba(13, 110, 253, 0.5);
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
+    }
+
+    .statistics-container .table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+        white-space: nowrap;
+        border: none;
+        background: white;
+    }
+
+    .statistics-container .table td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    .statistics-container .table td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    .statistics-container .overflow-x-auto {
+        overflow-x: auto;
+        background: #f8f9fa;
         border-radius: 10px;
-        padding: 0.5rem;
+        padding: 1.5rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
@@ -514,20 +547,6 @@
     .badge {
         font-size: 0.875rem;
         padding: 0.4em 0.8em;
-    }
-
-    .table td {
-        padding: 1rem 0.75rem;
-        vertical-align: middle;
-        border-bottom: 1px solid rgba(13, 110, 253, 0.1);
-    }
-
-    .table th {
-        background-color: rgba(13, 110, 253, 0.1);
-        font-weight: 600;
-        padding: 1rem 0.75rem;
-        border-bottom: 2px solid rgba(13, 110, 253, 0.1);
-        white-space: nowrap;
     }
 
     .font-semibold {
@@ -573,10 +592,138 @@
         transform: translateY(-50%);
     }
 
-    .table td {
-        padding: 1rem 0.75rem;
-        vertical-align: middle;
-        border-bottom: 1px solid rgba(13, 110, 253, 0.1);
-        white-space: nowrap;
+    @media (max-width: 768px) {
+        .statistics-container {
+            padding: 0.5rem;
+        }
+
+        .content-wrapper {
+            padding: 1rem !important;
+            margin: 0.5rem !important;
+        }
+
+        .section-card {
+            padding: 1rem;
+        }
+
+        .summary-cards {
+            gap: 1rem;
+        }
+
+        .month-selector .d-flex {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .month-selector .form-group {
+            width: 100%;
+        }
+
+        .month-selector .form-select {
+            width: 100%;
+            max-width: none;
+        }
+
+        .month-selector .btn-primary {
+            width: 100%;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .table {
+            display: block;
+            width: 100%;
+        }
+
+        .table thead {
+            display: none;
+        }
+
+        .table tbody {
+            display: block;
+            width: 100%;
+        }
+
+        .table tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(13, 110, 253, 0.05);
+            border-radius: 8px;
+            padding: 0.5rem;
+            background: white;
+            box-shadow: 0 2px 4px rgba(13, 110, 253, 0.05);
+            transition: background-color 0.2s ease;
+        }
+
+        .table tr:hover {
+            background-color: rgba(13, 110, 253, 0.03);
+        }
+
+        .table td {
+            display: flex;
+            padding: 0.5rem;
+            border: none;
+            align-items: center;
+            white-space: normal;
+        }
+
+        .table td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            margin-right: 0.5rem;
+            min-width: 120px;
+        }
+
+        .stat-cell {
+            width: 100%;
+            padding-left: 2rem;
+        }
+
+        .badge {
+            display: inline-block;
+            margin: 0.25rem 0;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .section-header i {
+            font-size: 1.25rem;
+        }
+
+        h1 {
+            font-size: 1.5rem !important;
+        }
+
+        h2 {
+            font-size: 1.25rem !important;
+        }
+
+        .fs-1 {
+            font-size: 2rem !important;
+        }
+
+        .fs-2 {
+            font-size: 1.5rem !important;
+        }
+
+        .statistics-container .table tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border: 1px solid rgba(13, 110, 253, 0.2);
+            box-shadow: 0 2px 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .statistics-container .table td {
+            display: flex;
+            padding: 0.5rem;
+            background: transparent;
+        }
     }
 </style> 
