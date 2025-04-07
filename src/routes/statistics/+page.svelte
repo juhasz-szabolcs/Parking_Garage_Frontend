@@ -342,35 +342,37 @@
 
 <style>
     .statistics-container {
-        min-height: calc(100vh - 2rem);
-        background-color: #ffffff;
-        padding: 1rem;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0;
     }
 
     .content-wrapper {
-        min-height: calc(100vh - 4rem);
-        background: linear-gradient(to bottom, #ffffff, #e3f2fd, #ffffff);
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 2rem;
+        border-radius: 0;
     }
 
     .statistics-section {
         margin-bottom: 2rem;
-        padding: 0.5rem;
+        padding: 0;
     }
 
     .section-card {
-        background: #e3f2fd;
-        border-radius: 15px;
+        background: white;
+        border-radius: 0.5rem;
+        padding: 2rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
-        border: 1px solid rgba(13, 110, 253, 0.1);
     }
 
     .section-header {
         display: flex;
         align-items: center;
         margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid rgba(13, 110, 253, 0.1);
+        gap: 1rem;
     }
 
     .section-header i {
@@ -383,36 +385,40 @@
 
     .summary-cards {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
     }
 
     .card {
-        border-radius: 10px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        background: white !important;
+        padding: 2rem;
+        border-radius: 0.5rem;
+        transition: transform 0.2s ease;
+        height: 100%;
     }
 
     .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-text {
+        font-weight: 600;
+        margin: 0;
     }
 
     .monthly-stats {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .month-selector {
-        margin-bottom: 1.5rem;
+        margin-top: 1.5rem;
     }
 
     .details-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
     }
 
     .car-stats .card {
@@ -435,9 +441,10 @@
     .detail-item {
         display: flex;
         align-items: center;
-        padding: 0.5rem;
+        padding: 1rem;
         background: rgba(13, 110, 253, 0.1);
         border-radius: 8px;
+        min-height: 60px;
     }
 
     .statistics-container .table {
@@ -509,10 +516,10 @@
     }
 
     .form-select {
-        min-width: 120px;
-        max-width: 200px;
-        border: 1px solid rgba(13, 110, 253, 0.2);
-        border-radius: 8px;
+        width: 100% !important;
+        max-width: none !important;
+        padding: 0.75rem;
+        height: 45px;
     }
 
     .form-group {
@@ -520,16 +527,9 @@
     }
 
     .btn-primary {
-        background-color: #0d6efd;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-        background-color: #0b5ed7;
-        transform: translateY(-2px);
+        height: 45px;
+        padding: 0 2rem;
+        min-width: 150px;
     }
 
     .badge {
@@ -580,108 +580,143 @@
         transform: translateY(-50%);
     }
 
+    .month-selector {
+        margin-bottom: 2rem;
+    }
+
+    .month-selector .d-flex {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        align-items: flex-end;
+    }
+
+    .month-selector .form-group {
+        flex: 1;
+        min-width: 200px;
+        margin: 0;
+    }
+
+    .month-selector .form-select {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+    }
+
+    .month-selector .btn-primary {
+        min-width: 120px;
+        height: 38px;
+        align-self: flex-end;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .table th {
+        background-color: rgba(13, 110, 253, 0.1);
+        padding: 1rem;
+        font-weight: 600;
+    }
+
+    .table td {
+        padding: 1rem;
+        vertical-align: middle;
+    }
+
     @media (max-width: 768px) {
-        .statistics-container {
-            padding: 0.5rem;
-        }
-
         .content-wrapper {
-            padding: 1rem !important;
-            margin: 0.5rem !important;
-        }
-
-        .section-card {
             padding: 1rem;
         }
 
+        .section-card {
+            padding: 1.25rem;
+            margin: 0;
+            border-radius: 0.5rem;
+        }
+
         .summary-cards {
+            grid-template-columns: 1fr;
             gap: 1rem;
+        }
+
+        .card {
+            padding: 1.5rem;
+            margin: 0;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            padding: 1rem;
+            min-height: 50px;
         }
 
         .month-selector .d-flex {
             flex-direction: column;
             gap: 1rem;
+            width: 100%;
         }
 
         .month-selector .form-group {
             width: 100%;
         }
 
-        .month-selector .form-select {
+        .form-select {
+            width: 100% !important;
+        }
+
+        .btn-primary {
             width: 100%;
-            max-width: none;
-        }
-
-        .month-selector .btn-primary {
-            width: 100%;
-        }
-
-        .details-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .table {
-            display: block;
-            width: 100%;
-        }
-
-        .table thead {
-            display: none;
-        }
-
-        .table tbody {
-            display: block;
-            width: 100%;
-        }
-
-        .table tr {
-            display: block;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(13, 110, 253, 0.05);
-            border-radius: 8px;
-            padding: 0.5rem;
-            background: white;
-            box-shadow: 0 2px 4px rgba(13, 110, 253, 0.05);
-            transition: background-color 0.2s ease;
-        }
-
-        .table tr:hover {
-            background-color: rgba(13, 110, 253, 0.03);
+            margin: 0;
         }
 
         .table td {
-            display: flex;
-            padding: 0.5rem;
-            border: none;
-            align-items: center;
-            white-space: normal;
+            padding: 0.75rem;
+            font-size: 0.9rem;
         }
 
         .table td::before {
-            content: attr(data-label);
-            font-weight: 600;
-            margin-right: 0.5rem;
-            min-width: 120px;
-        }
-
-        .stat-cell {
-            width: 100%;
-            padding-left: 2rem;
+            min-width: 110px;
+            font-size: 0.9rem;
         }
 
         .badge {
-            display: inline-block;
-            margin: 0.25rem 0;
+            font-size: 0.8rem;
+            padding: 0.35em 0.65em;
         }
 
-        .section-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
+        .stat-cell {
+            font-size: 0.9rem;
         }
 
-        .section-header i {
-            font-size: 1.25rem;
+        .statistics-container .overflow-x-auto {
+            margin: 0 -1.25rem;
+            padding: 1.25rem;
+            width: calc(100% + 2.5rem);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .content-wrapper {
+            padding: 0.75rem;
+        }
+
+        .section-card {
+            padding: 1rem;
+        }
+
+        .card {
+            padding: 1.25rem;
+        }
+
+        .detail-item {
+            padding: 0.75rem;
+            font-size: 0.9rem;
         }
 
         h1 {
@@ -693,25 +728,11 @@
         }
 
         .fs-1 {
-            font-size: 2rem !important;
-        }
-
-        .fs-2 {
             font-size: 1.5rem !important;
         }
 
-        .statistics-container .table tbody tr {
-            display: block;
-            margin-bottom: 1rem;
-            padding: 0.75rem;
-            border: 1px solid rgba(13, 110, 253, 0.2);
-            box-shadow: 0 2px 4px rgba(13, 110, 253, 0.1);
-        }
-
-        .statistics-container .table td {
-            display: flex;
-            padding: 0.5rem;
-            background: transparent;
+        .fs-2 {
+            font-size: 1.25rem !important;
         }
     }
 </style> 
