@@ -232,31 +232,44 @@
                                 <i class="bi bi-car-front text-primary me-2"></i>
                                 <h2 class="text-2xl font-bold">Autónkénti statisztika</h2>
                             </div>
-                            <div class="car-stats">
-                                {#each carStats as car}
-                                    <div class="card border-0 bg-light mb-4">
-                                        <div class="card-body">
-                                            <div class="car-header mb-3">
-                                                <h3 class="text-xl font-semibold">{car.brand} {car.model}</h3>
-                                                <span class="badge bg-primary">{car.licensePlate}</span>
-                                            </div>
-                                            <div class="car-details">
-                                                <div class="detail-item">
-                                                    <i class="bi bi-car-front-fill text-primary me-2"></i>
-                                                    <span>Parkolások száma: {car.totalParkings} db</span>
-                                                </div>
-                                                <div class="detail-item">
-                                                    <i class="bi bi-currency-dollar text-success me-2"></i>
-                                                    <span>Összes díj: {car.totalFee} Ft</span>
-                                                </div>
-                                                <div class="detail-item">
-                                                    <i class="bi bi-clock-fill text-info me-2"></i>
-                                                    <span>Összes időtartam: {car.totalDuration}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {/each}
+                            <div class="overflow-x-auto">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Autó</th>
+                                            <th>Rendszám</th>
+                                            <th>Parkolások száma</th>
+                                            <th>Összes díj</th>
+                                            <th>Összes időtartam</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {#each carStats as car}
+                                            <tr>
+                                                <td class="font-semibold">{car.brand} {car.model}</td>
+                                                <td><span class="badge bg-primary">{car.licensePlate}</span></td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-car-front-fill text-primary me-2"></i>
+                                                        {car.totalParkings} db
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-currency-dollar text-success me-2"></i>
+                                                        {car.totalFee} Ft
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="bi bi-clock-fill text-info me-2"></i>
+                                                        {car.totalDuration}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {/each}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -471,5 +484,28 @@
     .btn-primary:hover {
         background-color: #0b5ed7;
         transform: translateY(-2px);
+    }
+
+    .badge {
+        font-size: 0.875rem;
+        padding: 0.4em 0.8em;
+    }
+
+    .table td {
+        padding: 1rem 0.75rem;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(13, 110, 253, 0.1);
+    }
+
+    .table th {
+        background-color: rgba(13, 110, 253, 0.1);
+        font-weight: 600;
+        padding: 1rem 0.75rem;
+        border-bottom: 2px solid rgba(13, 110, 253, 0.1);
+        white-space: nowrap;
+    }
+
+    .font-semibold {
+        font-weight: 600;
     }
 </style> 
