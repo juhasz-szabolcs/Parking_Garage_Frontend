@@ -4,6 +4,7 @@
 
     let parkingHistory = [];
     let summaryData = null;
+    let carStats = [];
     let loading = false;
     let error = null;
     let isHistoryExpanded = true;
@@ -12,18 +13,22 @@
         loading = true;
         error = null;
         try {
-            const [historyResponse, summaryResponse] = await Promise.all([
+            const [historyResponse, summaryResponse, carStatsResponse] = await Promise.all([
                 fetch(`${API_URL}/api/statistics/history`, {
                     credentials: 'include'
                 }),
                 fetch(`${API_URL}/api/statistics/summary`, {
                     credentials: 'include'
+                }),
+                fetch(`${API_URL}/api/statistics/by-car`, {
+                    credentials: 'include'
                 })
             ]);
 
-            if (historyResponse.ok && summaryResponse.ok) {
+            if (historyResponse.ok && summaryResponse.ok && carStatsResponse.ok) {
                 parkingHistory = await historyResponse.json();
                 summaryData = await summaryResponse.json();
+                carStats = await carStatsResponse.json();
             } else {
                 error = 'Hiba történt az adatok betöltése során.';
                 console.error('Error loading statistics data');
@@ -84,7 +89,37 @@
                     </div>
                 {/if}
 
-                <h1 class="text-3xl font-bold mb-8 px-4">Parkolási előzmények</h1>
+                {#if carStats && carStats.length > 0}
+                    <h2 class="text-2xl font-bold mb-6 px-4">Autónkénti statisztika</h2>
+                    <div class="car-stats mb-8">
+                        {#each carStats as car}
+                            <div class="card border-0 bg-light mb-4">
+                                <div class="card-body">
+                                    <div class="car-header mb-3">
+                                        <h3 class="text-xl font-semibold">{car.brand} {car.model}</h3>
+                                        <span class="badge bg-primary">{car.licensePlate}</span>
+                                    </div>
+                                    <div class="car-details">
+                                        <div class="detail-item">
+                                            <i class="bi bi-car-front-fill text-primary me-2"></i>
+                                            <span>Parkolások száma: {car.totalParkings} db</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="bi bi-currency-dollar text-success me-2"></i>
+                                            <span>Összes díj: {car.totalFee} Ft</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="bi bi-clock-fill text-info me-2"></i>
+                                            <span>Összes időtartam: {car.totalDuration}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
+
+                <h2 class="text-2xl font-bold mb-6 px-4">Parkolási előzmények</h2>
                 <div class="mt-8">
                     <div class="border-t border-gray-200 pt-4">
                         {#if parkingHistory.length === 0}
@@ -150,6 +185,28 @@
 
     .card:hover {
         transform: translateY(-5px);
+    }
+
+    .car-stats .card {
+        background-color: #f8f9fa;
+    }
+
+    .car-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .car-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
     }
 
     .table {
