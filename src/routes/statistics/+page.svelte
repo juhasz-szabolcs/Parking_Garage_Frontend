@@ -3,6 +3,7 @@
     import { API_URL } from '$lib/apiClient';
 
     let parkingHistory = [];
+    let summaryData = null;
     let loading = false;
     let error = null;
     let isHistoryExpanded = true;
@@ -11,14 +12,21 @@
         loading = true;
         error = null;
         try {
-            const response = await fetch(`${API_URL}/api/statistics/history`, {
-                credentials: 'include'
-            });
-            if (response.ok) {
-                parkingHistory = await response.json();
+            const [historyResponse, summaryResponse] = await Promise.all([
+                fetch(`${API_URL}/api/statistics/history`, {
+                    credentials: 'include'
+                }),
+                fetch(`${API_URL}/api/statistics/summary`, {
+                    credentials: 'include'
+                })
+            ]);
+
+            if (historyResponse.ok && summaryResponse.ok) {
+                parkingHistory = await historyResponse.json();
+                summaryData = await summaryResponse.json();
             } else {
                 error = 'Hiba történt az adatok betöltése során.';
-                console.error('Error loading parking history');
+                console.error('Error loading statistics data');
             }
         } catch (err) {
             console.error('Error:', err);
@@ -35,55 +43,84 @@
 
 <div class="statistics-container">
     <div class="content-wrapper bg-white shadow-lg rounded-lg p-8 mx-4 my-6">
-        <h1 class="text-3xl font-bold mb-8 px-4">Parkolási előzmények</h1>
+        <h1 class="text-3xl font-bold mb-8 px-4">Parkolás összesítő</h1>
 
         <div class="px-4">
-            <div class="mt-8">
-                <div class="border-t border-gray-200 pt-4">
-                    {#if loading}
-                        <div class="d-flex justify-content-center align-items-center py-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Betöltés...</span>
+            {#if loading}
+                <div class="d-flex justify-content-center align-items-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Betöltés...</span>
+                    </div>
+                </div>
+            {:else if error}
+                <div class="alert alert-danger mt-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {error}
+                </div>
+            {:else}
+                {#if summaryData}
+                    <div class="summary-cards mb-8">
+                        <div class="card border-0 bg-primary bg-opacity-10">
+                            <div class="card-body text-center">
+                                <i class="bi bi-car-front-fill text-primary fs-1 mb-2"></i>
+                                <h5 class="card-title">Összes parkolás</h5>
+                                <p class="card-text fs-2">{summaryData.totalParkings} db</p>
                             </div>
                         </div>
-                    {:else if error}
-                        <div class="alert alert-danger mt-4" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            {error}
+                        <div class="card border-0 bg-success bg-opacity-10">
+                            <div class="card-body text-center">
+                                <i class="bi bi-currency-dollar text-success fs-1 mb-2"></i>
+                                <h5 class="card-title">Összes díj</h5>
+                                <p class="card-text fs-2">{summaryData.totalFee}</p>
+                            </div>
                         </div>
-                    {:else if parkingHistory.length === 0}
-                        <div class="alert alert-info mt-4" role="alert">
-                            <i class="bi bi-info-circle-fill me-2"></i>
-                            Még nincs parkolási előzmény.
+                        <div class="card border-0 bg-info bg-opacity-10">
+                            <div class="card-body text-center">
+                                <i class="bi bi-clock-fill text-info fs-1 mb-2"></i>
+                                <h5 class="card-title">Átlagos időtartam</h5>
+                                <p class="card-text fs-2">{summaryData.averageDuration}</p>
+                            </div>
                         </div>
-                    {:else}
-                        <div class="overflow-x-auto">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Dátum</th>
-                                        <th>Autó</th>
-                                        <th>Hely</th>
-                                        <th>Időtartam</th>
-                                        <th>Díj</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {#each parkingHistory as history}
+                    </div>
+                {/if}
+
+                <h1 class="text-3xl font-bold mb-8 px-4">Parkolási előzmények</h1>
+                <div class="mt-8">
+                    <div class="border-t border-gray-200 pt-4">
+                        {#if parkingHistory.length === 0}
+                            <div class="alert alert-info mt-4" role="alert">
+                                <i class="bi bi-info-circle-fill me-2"></i>
+                                Még nincs parkolási előzmény.
+                            </div>
+                        {:else}
+                            <div class="overflow-x-auto">
+                                <table class="table table-hover">
+                                    <thead>
                                         <tr>
-                                            <td>{new Date(history.startTime).toLocaleDateString('hu-HU')}</td>
-                                            <td>{history.carBrand} {history.carModel} ({history.licensePlate})</td>
-                                            <td>{history.floorNumber}. emelet - {history.spotNumber}</td>
-                                            <td>{history.durationFormatted}</td>
-                                            <td>{history.fee} Ft</td>
+                                            <th>Dátum</th>
+                                            <th>Autó</th>
+                                            <th>Hely</th>
+                                            <th>Időtartam</th>
+                                            <th>Díj</th>
                                         </tr>
-                                    {/each}
-                                </tbody>
-                            </table>
-                        </div>
-                    {/if}
+                                    </thead>
+                                    <tbody>
+                                        {#each parkingHistory as history}
+                                            <tr>
+                                                <td>{new Date(history.startTime).toLocaleDateString('hu-HU')}</td>
+                                                <td>{history.carBrand} {history.carModel} ({history.licensePlate})</td>
+                                                <td>{history.floorNumber}. emelet - {history.spotNumber}</td>
+                                                <td>{history.durationFormatted}</td>
+                                                <td>{history.fee} Ft</td>
+                                            </tr>
+                                        {/each}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {/if}
+                    </div>
                 </div>
-            </div>
+            {/if}
         </div>
     </div>
 </div>
@@ -97,6 +134,22 @@
 
     .content-wrapper {
         min-height: calc(100vh - 4rem);
+    }
+
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
     }
 
     .table {
@@ -124,5 +177,13 @@
 
     .overflow-x-auto {
         overflow-x: auto;
+    }
+
+    .fs-1 {
+        font-size: 2.5rem !important;
+    }
+
+    .fs-2 {
+        font-size: 2rem !important;
     }
 </style> 
