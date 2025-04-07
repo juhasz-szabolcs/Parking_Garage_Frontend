@@ -300,6 +300,7 @@
                                             <tr>
                                                 <th>Dátum</th>
                                                 <th>Autó</th>
+                                                <th style="width: 100px">Rendszám</th>
                                                 <th>Hely</th>
                                                 <th>Időtartam</th>
                                                 <th>Díj</th>
@@ -309,10 +310,28 @@
                                             {#each parkingHistory as history}
                                                 <tr>
                                                     <td>{new Date(history.startTime).toLocaleDateString('hu-HU')}</td>
-                                                    <td>{history.carBrand} {history.carModel} ({history.licensePlate})</td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <img src={getCarLogo(history.carBrand)} alt={history.carBrand} class="car-logo" />
+                                                            <span>{history.carBrand} {history.carModel}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-secondary">{history.licensePlate}</span>
+                                                    </td>
                                                     <td>{history.floorNumber}. emelet - {history.spotNumber}</td>
-                                                    <td>{history.durationFormatted}</td>
-                                                    <td>{history.fee} Ft</td>
+                                                    <td>
+                                                        <div class="stat-cell">
+                                                            <i class="bi bi-clock-fill text-info stat-icon"></i>
+                                                            <span>{history.durationFormatted}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="stat-cell">
+                                                            <i class="bi bi-currency-dollar text-success stat-icon"></i>
+                                                            <span>{history.fee} Ft</span>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             {/each}
                                         </tbody>
