@@ -248,13 +248,13 @@
     }
 
     .stat-label {
-        font-size: 0.8rem;
+        font-size: 1rem;
         color: #666;
         white-space: nowrap;
     }
 
     .stat-value {
-        font-size: 0.9rem;
+        font-size: 1.2rem;
         font-weight: bold;
     }
 
@@ -424,6 +424,14 @@
             height: 28px;
             padding: 3px;
         }
+
+        .stat-label {
+            font-size: 0.9rem;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+        }
     }
 
     @media (max-width: 768px) {
@@ -469,6 +477,14 @@
             height: 24px;
             padding: 2px;
         }
+
+        .stat-label {
+            font-size: 0.85rem;
+        }
+
+        .stat-value {
+            font-size: 1rem;
+        }
     }
 
     @media (max-width: 480px) {
@@ -503,6 +519,14 @@
             width: 20px;
             height: 20px;
             padding: 2px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+        }
+
+        .stat-value {
+            font-size: 0.9rem;
         }
     }
 </style> 
