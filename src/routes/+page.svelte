@@ -65,7 +65,7 @@
             {/if}
         </div>
         <div class="image-container">
-            <img src="/images/parking_garage_main.jpg" alt="Parkolóház" />
+            <img src="/images/Parking_Garage_logo.jpg" alt="Parkolóház" />
         </div>
     </div>
 {:else}
@@ -265,5 +265,11 @@
         font-size: 2rem;
         margin-bottom: 1rem;
         color: #3498db;
+    }
+
+    .logo {
+        max-width: 100%;
+        height: auto;
+        max-height: 400px;
     }
 </style>
