@@ -139,11 +139,11 @@
                 </div>
             {:else}
                 <div class="nav-links">
-                    <a href="/login" class="nav-link {$page.url.pathname === '/login' ? 'active' : ''}" on:click={toggleMenu}>
+                    <a href="/login" id="login-link" class="nav-link {$page.url.pathname === '/login' ? 'active' : ''}" on:click={toggleMenu}>
                         <i class="bi bi-box-arrow-in-right"></i>
                         <span>Bejelentkezés</span>
                     </a>
-                    <a href="/register" class="nav-link {$page.url.pathname === '/register' ? 'active' : ''}" on:click={toggleMenu}>
+                    <a href="/register" id="register-link" class="nav-link {$page.url.pathname === '/register' ? 'active' : ''}" on:click={toggleMenu}>
                         <i class="bi bi-person-plus"></i>
                         <span>Regisztráció</span>
                     </a>
