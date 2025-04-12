@@ -61,7 +61,11 @@ apiClient.interceptors.response.use(
         
         // Handle 401 (Unauthorized) and 403 (Forbidden) errors
         if (error.response?.status === 401 || error.response?.status === 403) {
-            handleSessionExpiration();
+            // Don't redirect if we're on the login page
+            const isLoginPage = window.location.pathname === '/login';
+            if (!isLoginPage) {
+                handleSessionExpiration();
+            }
         }
         
         return Promise.reject(error);
