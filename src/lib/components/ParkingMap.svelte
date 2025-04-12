@@ -152,6 +152,7 @@
                                 }}
                                 <div 
                                     class="spot {getSpotStatus(spot)} {!spot.isOccupied && !spot.carId ? 'selectable' : ''}"
+                                    id="spot-{spot.id}"
                                     on:click={() => handleSpotClick(spot)}>
                                     <div class="spot-label">{spotNumber}</div>
                                     <div class="spot-status">
