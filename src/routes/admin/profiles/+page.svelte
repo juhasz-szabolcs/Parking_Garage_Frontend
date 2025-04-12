@@ -161,7 +161,7 @@
                         <p><strong>Email:</strong> {user.email}</p>
                         <p><strong>Telefonszám:</strong> {user.phoneNumber}</p>
                         <p><strong>Autók száma:</strong> {user.cars?.length || 0}</p>
-                        <p><strong>Regisztráció dátuma:</strong> {new Date(user.createdAt).toLocaleDateString('hu-HU')}</p>
+                        <!-- <p><strong>Regisztráció dátuma:</strong> {new Date(user.createdAt).toLocaleDateString('hu-HU')}</p> -->
                     </div>
                     {#if user.cars && user.cars.length > 0}
                         <div class="cars-toggle" on:click={() => toggleUserCars(user.id)}>

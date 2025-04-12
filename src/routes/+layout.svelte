@@ -104,7 +104,7 @@
                             <i class="bi bi-speedometer2"></i>
                             <span>Irányítópult</span>
                         </a> -->
-                        <a href="/cars" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}" on:click={toggleMenu}>
+                        <a href="/cars" id="cars-navbarlink" class="nav-link {$page.url.pathname === '/cars' ? 'active' : ''}" on:click={toggleMenu}>
                             <i class="bi bi-car-front"></i>
                             <span>Autóim</span>
                         </a>
