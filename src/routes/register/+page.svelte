@@ -141,7 +141,7 @@
           </div>
         </div>
         
-        <button type="submit" class="submit-button" disabled={loading}>
+        <button type="submit" id="register-button" class="submit-button" disabled={loading}>
           {loading ? 'Regisztráció...' : 'Regisztráció'}
         </button>
       </form>

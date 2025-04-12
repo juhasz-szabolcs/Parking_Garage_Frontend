@@ -104,7 +104,7 @@
           />
         </div>
         
-        <button type="submit" class="submit-button" disabled={loading}>
+        <button type="submit" id="login-button" class="submit-button" disabled={loading}>
           {loading ? 'Bejelentkezés...' : 'Bejelentkezés'}
         </button>
       </form>
