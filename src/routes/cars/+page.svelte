@@ -243,11 +243,11 @@
                     </div>
                     <div class="car-actions">
                         {#if !car.isParking}
-                            <button class="park-button" on:click={() => openParkingMap(car)}>
+                            <button class="park-button" id=car_{car.id} on:click={() => openParkingMap(car)}>
                                 Parkolás indítása
                             </button>
                         {:else}
-                            <button class="stop-button" on:click={() => handleStopParking(car.id)}>
+                            <button class="stop-button" id=car_{car.id} on:click={() => handleStopParking(car.id)}>
                                 Parkolás leállítása
                             </button>
                         {/if}
