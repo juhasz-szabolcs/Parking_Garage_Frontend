@@ -60,7 +60,7 @@
                 </p>
                 <div class="buttons">
                     <!-- <a href="/dashboard" class="button primary">Parkolás kezelése</a> -->
-                    <a href="/cars" class="button secondary">Autóim</a>
+                    <a href="/cars" class="button secondary" id="cars-link">Autóim</a>
                 </div>
             {/if}
         </div>
