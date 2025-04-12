@@ -175,7 +175,7 @@
                 {#if selectedSpot}
                     <div class="selection-panel">
                         <p>Kiválasztott parkolóhely: {selectedSpot.spotNumber}</p>
-                        <button class="confirm-button" on:click={handleConfirmSelection}>
+                        <button class="confirm-button" id="confirm-button" on:click={handleConfirmSelection}>
                             Parkolás indítása
                         </button>
                     </div>
