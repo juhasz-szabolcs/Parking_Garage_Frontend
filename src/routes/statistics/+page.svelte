@@ -127,7 +127,7 @@
                                     <div class="card-body text-center">
                                         <i class="bi bi-currency-dollar text-success fs-1 mb-2"></i>
                                         <h5 class="card-title">Összes díj</h5>
-                                        <p class="card-text fs-2">{formatNumber(summaryData.totalFee)}</p>
+                                        <p class="card-text fs-2">{formatNumber(summaryData.totalFee)} Ft</p>
                                     </div>
                                 </div>
                                 <div class="card border-0 bg-info bg-opacity-10">
@@ -200,7 +200,7 @@
                                         </div>
                                         <div class="detail-item">
                                             <i class="bi bi-currency-dollar text-success me-2"></i>
-                                            <span>Összes díj: {formatNumber(monthlyStats.totalFee)}</span>
+                                            <span>Összes díj: {formatNumber(monthlyStats.totalFee)} Ft</span>
                                         </div>
                                         <div class="detail-item">
                                             <i class="bi bi-clock-fill text-info me-2"></i>
