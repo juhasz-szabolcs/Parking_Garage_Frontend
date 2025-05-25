@@ -79,7 +79,7 @@
             <input 
               type="text" 
               id="firstName" 
-              bind:value={firstName} 
+              bind:value={lastName} 
               placeholder="Vezetéknév"
               required
             />
@@ -90,7 +90,7 @@
             <input 
               type="text" 
               id="lastName" 
-              bind:value={lastName} 
+              bind:value={firstName} 
               placeholder="Keresztnév"
               required
             />
