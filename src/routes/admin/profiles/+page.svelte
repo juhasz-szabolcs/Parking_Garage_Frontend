@@ -145,7 +145,7 @@
             {#each filteredUsers as user}
                 <div class="user-card">
                     <div class="user-header">
-                        <h3>{user.firstName} {user.lastName}</h3>
+                        <h3>{user.lastName} {user.firstName}</h3>
                         <div class="header-actions">
                             {#if user.isAdmin}
                                 <span class="admin-badge">Admin</span>
