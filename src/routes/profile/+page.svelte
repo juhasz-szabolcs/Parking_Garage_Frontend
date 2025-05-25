@@ -71,7 +71,7 @@
                     <i class="fas fa-user-circle"></i>
                 </div>
                 <div class="profile-info">
-                    <h1>{userData.firstName} {userData.lastName}</h1>
+                    <h1>{userData.lastName} {userData.firstName}</h1>
                     <p class="email">{userData.email}</p>
                 </div>
             </div>
