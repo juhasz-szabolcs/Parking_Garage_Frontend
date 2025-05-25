@@ -18,24 +18,9 @@
                     ...$user,
                     ...result.data
                 };
-                // console.log('User data loaded:', $user);
             }
         }
     });
-
-    async function loadCars() {
-        try {
-            const result = await getUserData($user.id);
-            if (result.success) {
-                cars = result.data.cars;
-                console.log('Cars loaded:', cars);
-            } else {
-                console.error('Failed to load cars:', result.error);
-            }
-        } catch (error) {
-            console.error('Error loading cars:', error);
-        }
-    }
 </script>
 
 {#if isStoreInitialized}
@@ -60,7 +45,9 @@
                 </p>
                 <div class="buttons">
                     <!-- <a href="/dashboard" class="button primary">Parkolás kezelése</a> -->
-                    <a href="/cars" class="button secondary" id="cars-link">Autóim</a>
+                    {#if !$user?.isAdmin}
+                        <a href="/cars" class="button secondary" id="cars-link">Autóim</a>
+                    {/if}
                 </div>
             {/if}
         </div>
