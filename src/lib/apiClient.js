@@ -3,7 +3,12 @@ import { user, isAuthenticated } from './store';
 import { goto } from '$app/navigation';
 
 // API URL configuration
-export const API_URL = import.meta.env.VITE_API_URL;
+const envApiUrl = import.meta.env.VITE_API_URL;
+export const API_URL = envApiUrl || 'http://localhost:5025';
+
+if (!envApiUrl) {
+    console.warn('VITE_API_URL is not set, using default API URL:', API_URL);
+}
 
 // Configure axios defaults
 axios.defaults.withCredentials = true;

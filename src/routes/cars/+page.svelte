@@ -23,6 +23,7 @@
         licensePlate: "",
     };
     let formLoading = false;
+    $: licensePlateLength = newCar.licensePlate?.length ?? 0;
 
     let showParkingMap = false;
     let selectedCar = null;
@@ -93,6 +94,11 @@
         // Validate form
         if (!newCar.brand || !newCar.model || !newCar.licensePlate) {
             error = "Kérjük, töltse ki az összes kötelező mezőt!";
+            formLoading = false;
+            return;
+        }
+        if (newCar.licensePlate.length > 7) {
+            error = "A rendszám legfeljebb 7 karakter lehet!";
             formLoading = false;
             return;
         }
@@ -320,8 +326,15 @@
                             id="licensePlate"
                             bind:value={newCar.licensePlate}
                             placeholder="pl. ABC-123"
+                            maxlength="7"
                             required
                         />
+                        <small class="field-hint {licensePlateLength === 7 ? 'limit' : ''}">
+                            {licensePlateLength}/7 karakter
+                            {#if licensePlateLength === 7}
+                                - elérted a maximum hosszúságot
+                            {/if}
+                        </small>
                     </div>
 
                     <div class="form-actions">
@@ -686,6 +699,18 @@
         outline: none;
         border-color: #3498db;
         box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    .field-hint {
+        display: block;
+        margin-top: 0.4rem;
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+
+    .field-hint.limit {
+        color: #dc3545;
+        font-weight: 600;
     }
 
     .form-actions {
