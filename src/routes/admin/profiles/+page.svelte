@@ -3,6 +3,7 @@
     import { user, isAuthenticated } from "$lib/store";
     import { goto } from "$app/navigation";
     import { deleteCar } from "$lib/api";
+    import { formatLicensePlate } from "$lib/utils/licensePlate";
 
     let users = [];
     let loading = true;
@@ -177,7 +178,7 @@
                                             <span class="car-year">{car.year}</span>
                                         </div>
                                         <div class="car-details">
-                                            <span class="license-plate">{car.licensePlate}</span>
+                                            <span class="license-plate">{formatLicensePlate(car.licensePlate)}</span>
                                             <div class="car-actions">
                                                 <span class="parking-status {car.isParked ? 'parked' : 'not-parked'}">
                                                     {car.isParked ? 'Parkolóban' : 'Nincs parkolóban'}

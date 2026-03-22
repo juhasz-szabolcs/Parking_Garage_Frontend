@@ -1,5 +1,6 @@
 <script>
     import { goto } from "$app/navigation";
+    import { formatLicensePlate } from "$lib/utils/licensePlate";
     
     // Hardcoded payment details
     let parkingDetails = {
@@ -51,7 +52,7 @@
         <div class="details-grid">
             <div class="detail-item">
                 <span class="label">Rendszám:</span>
-                <span class="value">{parkingDetails.licensePlate}</span>
+                <span class="value">{formatLicensePlate(parkingDetails.licensePlate)}</span>
             </div>
             <div class="detail-item">
                 <span class="label">Gépjármű:</span>

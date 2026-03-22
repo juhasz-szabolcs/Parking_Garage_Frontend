@@ -5,6 +5,7 @@
     import { goto } from "$app/navigation";
     import ParkingMap from "$lib/components/ParkingMap.svelte";
     import { getCarLogo } from "$lib/utils/carLogos";
+    import { formatLicensePlate } from "$lib/utils/licensePlate";
 
     let cars = [];
     let ownedCars = [];
@@ -239,7 +240,7 @@
                         </div>
                     </div>
                     <div class="car-details">
-                        <p><strong>Rendszám:</strong> {car.licensePlate}</p>
+                        <p><strong>Rendszám:</strong> {formatLicensePlate(car.licensePlate)}</p>
                         <p><strong>Évjárat:</strong> {car.year}</p>
                         {#if car.isParking}
                             <p class="parking-status parked">Jelenleg parkol</p>

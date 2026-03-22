@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { getCarLogo } from '$lib/utils/carLogos';
+    import { formatLicensePlate } from '$lib/utils/licensePlate';
     import { getStatistics, getMonthlyStatistics } from '$lib/api';
 
     let parkingHistory = [];
@@ -245,7 +246,7 @@
                                                         <span class="font-semibold">{car.brand} {car.model}</span>
                                                     </div>
                                                 </td>
-                                                <td data-label="Rendszám"><span class="badge bg-primary">{car.licensePlate}</span></td>
+                                                <td data-label="Rendszám"><span class="badge bg-primary">{formatLicensePlate(car.licensePlate)}</span></td>
                                                 <td data-label="Parkolások száma" class="text-center">
                                                     <div class="stat-cell">
                                                         <i class="bi bi-car-front-fill text-primary stat-icon"></i>
@@ -309,7 +310,7 @@
                                                         </div>
                                                     </td>
                                                     <td data-label="Rendszám">
-                                                        <span class="badge bg-secondary">{history.licensePlate}</span>
+                                                        <span class="badge bg-secondary">{formatLicensePlate(history.licensePlate)}</span>
                                                     </td>
                                                     <td data-label="Hely">{history.floorNumber}. emelet - {history.spotNumber}</td>
                                                     <td data-label="Időtartam">

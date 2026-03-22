@@ -3,6 +3,7 @@
     import { user, isAuthenticated } from '$lib/store';
     import { getUserData } from '$lib/api';
     import { goto } from '$app/navigation';
+    import { formatLicensePlate } from '$lib/utils/licensePlate';
 
     let userData = null;
     let loading = true;
@@ -107,7 +108,7 @@
                                 <img src={car.logo} alt={car.brand} class="car-logo" />
                                 <div class="car-info">
                                     <h3>{car.brand} {car.model}</h3>
-                                    <p>Rendszám: {car.licensePlate}</p>
+                                    <p>Rendszám: {formatLicensePlate(car.licensePlate)}</p>
                                     <p>Évjárat: {car.year}</p>
                                     <p class="status {car.isParking ? 'parking' : 'not-parking'}">
                                         {car.isParking ? 'Parkolás alatt' : 'Nincs parkolás alatt'}

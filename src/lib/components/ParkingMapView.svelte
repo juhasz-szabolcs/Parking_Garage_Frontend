@@ -3,6 +3,7 @@
     import apiClient from '$lib/apiClient';
     import { user } from '$lib/store';
     import { getCarLogo } from '$lib/utils/carLogos';
+    import { formatLicensePlate } from '$lib/utils/licensePlate';
     
     let parkingSpots = [];
     let loading = true;
@@ -149,7 +150,7 @@
                                     <div class="spot-status">
                                         {#if isUserCarSpot}
                                             <div class="user-car-info">
-                                                <div class="license-plate">{userCar.licensePlate}</div>
+                                                <div class="license-plate">{formatLicensePlate(userCar.licensePlate)}</div>
                                                 <img src={getCarLogo(userCar.brand)} alt={userCar.brand} class="car-logo" />
                                             </div>
                                         {:else if spot.isOccupied}

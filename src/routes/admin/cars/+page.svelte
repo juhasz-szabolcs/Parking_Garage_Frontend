@@ -3,6 +3,7 @@
     import { user, isAuthenticated } from "$lib/store";
     import { goto } from "$app/navigation";
     import { deleteCar } from "$lib/api";
+    import { formatLicensePlate } from "$lib/utils/licensePlate";
 
     let cars = [];
     let loading = true;
@@ -94,7 +95,7 @@
                         </button>
                     </div>
                     <div class="car-details">
-                        <p><strong>Rendszám:</strong> {car.licensePlate}</p>
+                        <p><strong>Rendszám:</strong> {formatLicensePlate(car.licensePlate)}</p>
                         <p><strong>Évjárat:</strong> {car.year}</p>
                         <p><strong>Tulajdonos:</strong> {car.userName}</p>
                         <p><strong>Email:</strong> {car.userEmail}</p>
