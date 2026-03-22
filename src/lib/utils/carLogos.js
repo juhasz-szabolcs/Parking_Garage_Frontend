@@ -17,7 +17,7 @@ const logoMap = {
     'alfa-romeo': 'https://www.carlogos.org/car-logos/alfa-romeo-logo.png',
     'alfa romeo': 'https://www.carlogos.org/car-logos/alfa-romeo-logo.png',
     'kia': 'https://www.carlogos.org/car-logos/kia-logo.png',
-    'landrover': 'https://www.carlogos.org/car-logos/landrover-logo.png',
+    'landrover': 'https://www.carlogos.org/logo/Land-Rover-logo-2011-1920x1080.png',
     'jeep': 'https://www.carlogos.org/car-logos/jeep-logo.png',
     'mazda': 'https://www.carlogos.org/car-logos/mazda-logo.png',
     'mitsubishi': 'https://www.carlogos.org/car-logos/mitsubishi-logo.png',
@@ -43,6 +43,25 @@ const logoMap = {
     'hummer': 'https://www.carlogos.org/car-logos/hummer-logo.png'
 };
 
+function toDisplayBrand(brandKey) {
+    return brandKey
+        .split(/[- ]+/)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+}
+
+export const carBrandOptions = Array.from(
+    new Set(Object.keys(logoMap).map(toDisplayBrand))
+).sort((a, b) => a.localeCompare(b, 'hu'));
+
+function normalizeBrandKey(brand) {
+    return String(brand || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[_-]+/g, ' ')
+        .replace(/\s+/g, ' ');
+}
+
 /**
  * Returns the logo URL for a given car brand
  * @param {string} brand - The car brand name
@@ -51,6 +70,12 @@ const logoMap = {
 export function getCarLogo(brand) {
     if (!brand) return 'https://www.carlogos.org/car-logos/default-car-logo.png';
     
-    const brandLower = brand.toLowerCase();
-    return logoMap[brandLower] || 'https://www.carlogos.org/car-logos/default-car-logo.png';
+    const normalized = normalizeBrandKey(brand);
+
+    return (
+        logoMap[normalized] ||
+        logoMap[normalized.replace(/\s+/g, '-')] ||
+        logoMap[normalized.replace(/\s+/g, '')] ||
+        'https://www.carlogos.org/car-logos/default-car-logo.png'
+    );
 } 

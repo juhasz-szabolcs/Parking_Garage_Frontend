@@ -4,7 +4,7 @@
     import { isAuthenticated, user } from "$lib/store";
     import { goto } from "$app/navigation";
     import ParkingMap from "$lib/components/ParkingMap.svelte";
-    import { getCarLogo } from "$lib/utils/carLogos";
+    import { getCarLogo, carBrandOptions } from "$lib/utils/carLogos";
     import { formatLicensePlate } from "$lib/utils/licensePlate";
 
     let cars = [];
@@ -31,6 +31,48 @@
 
     import { onMount } from "svelte";
 
+    // Brand autocomplete state
+    let showBrandSuggestions = false;
+    let highlightedBrandIndex = -1;
+    $: filteredBrandOptions = (() => {
+        const query = (newCar.brand || "").toLowerCase().trim();
+        return query
+            ? carBrandOptions.filter((b) => b.toLowerCase().includes(query))
+            : carBrandOptions;
+    })();
+
+    function handleBrandFocus() {
+        showBrandSuggestions = true;
+        highlightedBrandIndex = -1;
+    }
+
+    function selectBrand(brand) {
+        newCar.brand = brand;
+        showBrandSuggestions = false;
+        highlightedBrandIndex = -1;
+    }
+
+    function handleBrandKeydown(event) {
+        if (!showBrandSuggestions && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+            showBrandSuggestions = true;
+        }
+        if (!filteredBrandOptions.length) return;
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            highlightedBrandIndex = Math.min(highlightedBrandIndex + 1, filteredBrandOptions.length - 1);
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            highlightedBrandIndex = Math.max(highlightedBrandIndex - 1, 0);
+        } else if (event.key === 'Enter') {
+            if (highlightedBrandIndex >= 0) {
+                event.preventDefault();
+                selectBrand(filteredBrandOptions[highlightedBrandIndex]);
+            }
+        } else if (event.key === 'Escape') {
+            showBrandSuggestions = false;
+            highlightedBrandIndex = -1;
+        }
+    }
     onMount(async () => {
         if (!$isAuthenticated || !$user) {
             console.log('User not authenticated, redirecting to home');
@@ -289,13 +331,36 @@
                 <form on:submit|preventDefault={submitCarForm}>
                     <div class="form-group">
                         <label for="brand">Márka*</label>
-                        <input
-                            type="text"
-                            id="brand"
-                            bind:value={newCar.brand}
-                            placeholder="pl. Toyota"
-                            required
-                        />
+                        <div class="brand-autocomplete">
+                            <input
+                                type="text"
+                                id="brand"
+                                bind:value={newCar.brand}
+                                placeholder="pl. Toyota"
+                                required
+                                on:focus={handleBrandFocus}
+                                on:keydown={handleBrandKeydown}
+                                on:blur={() => setTimeout(() => showBrandSuggestions = false, 100)}
+                                autocomplete="off"
+                                style={newCar.brand?.trim()
+                                    ? `background-image: url('${getCarLogo(newCar.brand)}'); background-repeat: no-repeat; background-position: right 0.6rem center; background-size: 24px 24px; padding-right: 2.4rem;`
+                                    : ''}
+                            />
+                            {#if showBrandSuggestions && filteredBrandOptions.length > 0}
+                                <div class="brand-suggestions">
+                                    {#each filteredBrandOptions as brand, i}
+                                        <div
+                                            class="brand-option {i === highlightedBrandIndex ? 'highlighted' : ''}"
+                                            on:mousedown|preventDefault={() => selectBrand(brand)}
+                                            on:mouseover={() => highlightedBrandIndex = i}
+                                        >
+                                            <img class="brand-logo" src={getCarLogo(brand)} alt={brand} />
+                                            <span class="brand-name">{brand}</span>
+                                        </div>
+                                    {/each}
+                                </div>
+                            {/if}
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -700,6 +765,49 @@
         outline: none;
         border-color: #3498db;
         box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    .brand-autocomplete {
+        position: relative;
+    }
+
+    .brand-suggestions {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        z-index: 1001;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        max-height: 260px;
+        overflow-y: auto;
+    }
+
+    .brand-option {
+        display: flex;
+        align-items: center;
+        gap: 0.15rem;
+        padding: 0.45rem 0.7rem;
+        cursor: pointer;
+    }
+
+    .brand-option:hover,
+    .brand-option.highlighted {
+        background: #f6f8fa;
+    }
+
+    .brand-logo {
+        width: 30px;
+        height: 30px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    .brand-name {
+        color: #2c3e50;
+        font-size: 1.05rem;
     }
 
     .field-hint {
