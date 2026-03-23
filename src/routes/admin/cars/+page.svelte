@@ -21,8 +21,10 @@
         await loadAllCars();
     });
 
-    async function loadAllCars() {
-        loading = true;
+    async function loadAllCars(showLoader = true) {
+        if (showLoader) {
+            loading = true;
+        }
         error = "";
 
         try {
@@ -37,11 +39,13 @@
             const result = await response.json();
             cars = result;
             // console.log("Loaded all cars:", cars);
-        } catch (error) {
-            console.error("Error loading cars:", error);
+        } catch (err) {
+            console.error("Error loading cars:", err);
             error = "Hiba történt az autók betöltése során";
         } finally {
-            loading = false;
+            if (showLoader) {
+                loading = false;
+            }
         }
     }
 
@@ -54,7 +58,7 @@
         try {
             const result = await stopParking(carId);
             if (result.success) {
-                await loadAllCars();
+                await loadAllCars(false);
                 success = "Parkolás sikeresen leállítva!";
                 if (result.data?.invoiceWarning) {
                     warning = result.data.invoiceWarning;
@@ -99,7 +103,7 @@
 
                 const result = await deleteCar(car.id);
                 if (result.success) {
-                    await loadAllCars();
+                    await loadAllCars(false);
                     success = "Autó sikeresen törölve!";
                     setTimeout(() => {
                         success = "";
