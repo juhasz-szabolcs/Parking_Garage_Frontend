@@ -118,6 +118,7 @@
 
     function openAddCarModal() {
         // Reset form
+        formLoading = false;
         editingCarId = null;
         newCar = {
             brand: "",
@@ -130,6 +131,7 @@
     }
 
     function openEditCarModal(car) {
+        formLoading = false;
         editingCarId = car.id;
         newCar = {
             brand: car.brand || "",
@@ -145,6 +147,7 @@
     function closeModal() {
         showModal = false;
         editingCarId = null;
+        formLoading = false;
     }
 
     async function submitCarForm() {
@@ -186,9 +189,8 @@
                 typeof result.error === "string"
                     ? result.error
                     : "Nem sikerült létrehozni az autót.";
+            formLoading = false;
         }
-
-        formLoading = false;
     }
 
     async function handleStartParking(carId, parkingSpotId) {
