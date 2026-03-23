@@ -43,10 +43,15 @@
         }
     }
 
-    async function handleDeleteCar(carId) {
+    async function handleDeleteCar(car) {
+        if (car.isParked) {
+            error = "Parkoló autó nem törölhető.";
+            return;
+        }
+
         if (confirm('Biztosan törölni szeretnéd ezt az autót?')) {
             try {
-                const result = await deleteCar(carId);
+                const result = await deleteCar(car.id);
                 if (result.success) {
                     await loadAllCars();
                     success = "Autó sikeresen törölve!";
@@ -90,7 +95,12 @@
                 <div class="car-card">
                     <div class="car-header">
                         <h3>{car.brand} {car.model}</h3>
-                        <button class="delete-button" on:click={() => handleDeleteCar(car.id)}>
+                        <button
+                            class="delete-button"
+                            on:click={() => handleDeleteCar(car)}
+                            disabled={car.isParked}
+                            title={car.isParked ? 'Parkoló autó nem törölhető' : 'Autó törlése'}
+                        >
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -156,6 +166,11 @@
 
     .delete-button:hover {
         background-color: #f8f9fa;
+    }
+
+    .delete-button:disabled {
+        color: #adb5bd;
+        cursor: not-allowed;
     }
 
     .car-details {
