@@ -63,6 +63,21 @@
 {/if}
 
 <style>
+    :global(body.dark-mode) .content {
+        background: linear-gradient(to left, #3f3f3f 0%, #2f2f2f 100%);
+        border: 1px solid #4f4f4f;
+        border-radius: 12px;
+        padding: 1.25rem;
+    }
+
+    :global(body.dark-mode) h1 {
+        color: #f3f4f6;
+    }
+
+    :global(body.dark-mode) p {
+        color: #e5e7eb;
+    }
+
     .home-container {
         display: flex;
         justify-content: center;

@@ -340,6 +340,113 @@
 </div>
 
 <style>
+    :global(body.dark-mode) .statistics-container {
+        background-color: #232323;
+    }
+
+    :global(body.dark-mode) .content-wrapper {
+        background: #2b2b2b !important;
+        color: #f3f4f6;
+    }
+
+    :global(body.dark-mode) .section-card {
+        background: #2f2f2f;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    :global(body.dark-mode) .section-header h2,
+    :global(body.dark-mode) h1,
+    :global(body.dark-mode) h3,
+    :global(body.dark-mode) .card-title,
+    :global(body.dark-mode) .card-text,
+    :global(body.dark-mode) .detail-item span,
+    :global(body.dark-mode) .table td,
+    :global(body.dark-mode) .table th {
+        color: #f3f4f6 !important;
+    }
+
+    :global(body.dark-mode) .detail-item,
+    :global(body.dark-mode) .monthly-details .detail-item,
+    :global(body.dark-mode) .card {
+        background: #3a3a3a !important;
+        border-color: #525252 !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    :global(body.dark-mode) .statistics-container .table th,
+    :global(body.dark-mode) .table th {
+        background-color: #3d3d3d !important;
+    }
+
+    :global(body.dark-mode) .statistics-container .table tbody tr,
+    :global(body.dark-mode) .table tr {
+        background: #323232 !important;
+        border-color: #525252 !important;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Target both statistics tables explicitly (car stats + parking history) */
+    :global(body.dark-mode) .statistics-section .overflow-x-auto .table,
+    :global(body.dark-mode) .statistics-section .overflow-x-auto .table thead,
+    :global(body.dark-mode) .statistics-section .overflow-x-auto .table tbody {
+        background-color: #2f2f2f !important;
+        color: #f3f4f6 !important;
+    }
+
+    :global(body.dark-mode) .statistics-section .overflow-x-auto .table thead tr th {
+        background-color: #3f3f3f !important;
+        color: #f3f4f6 !important;
+        border-color: #5a5a5a !important;
+    }
+
+    :global(body.dark-mode) .statistics-section .overflow-x-auto .table tbody tr td {
+        background-color: #323232 !important;
+        color: #f3f4f6 !important;
+        border-color: #4a4a4a !important;
+    }
+
+    :global(body.dark-mode) .statistics-section .overflow-x-auto .table.table-hover tbody tr:hover td,
+    :global(body.dark-mode) .statistics-section .overflow-x-auto .table tbody tr:hover td {
+        background-color: #3a3a3a !important;
+    }
+
+    :global(body.dark-mode) .statistics-container .table td,
+    :global(body.dark-mode) .table td {
+        border-bottom-color: #4a4a4a !important;
+    }
+
+    :global(body.dark-mode) .month-selector .form-label {
+        color: #e5e7eb;
+    }
+
+    :global(body.dark-mode) .month-selector .form-select {
+        background-color: #2f2f2f;
+        color: #f3f4f6;
+        border-color: #565656;
+    }
+
+    :global(body.dark-mode) .month-selector .btn-primary {
+        background: #4b5563;
+        box-shadow: none;
+    }
+
+    :global(body.dark-mode) .month-selector .btn-primary:hover {
+        background: #5b5b5b;
+        box-shadow: none;
+    }
+
+    :global(body.dark-mode) .badge.bg-primary,
+    :global(body.dark-mode) .badge.bg-secondary {
+        background-color: #595959 !important;
+        color: #f3f4f6;
+    }
+
+    :global(body.dark-mode) .alert-info {
+        background-color: #3b3b3b;
+        border-color: #565656;
+        color: #f3f4f6;
+    }
+
     .statistics-container {
         width: 100%;
         max-width: 100%;

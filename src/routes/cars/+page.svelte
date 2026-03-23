@@ -588,6 +588,81 @@
 </div>
 
 <style>
+    :global(body.dark-mode) .car-card {
+        background: #2f2f2f;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+        border: 1px solid #4a4a4a;
+    }
+
+    :global(body.dark-mode) .car-title h3 {
+        color: #f3f4f6;
+    }
+
+    :global(body.dark-mode) .car-title h4 {
+        color: #d1d5db;
+    }
+
+    :global(body.dark-mode) .car-details p {
+        color: #e5e7eb;
+    }
+
+    :global(body.dark-mode) .car-details p strong {
+        color: #f9fafb;
+    }
+
+    :global(body.dark-mode) .not-parked {
+        background-color: #474747;
+        color: #f3f4f6;
+        border: 1px solid #5a5a5a;
+    }
+
+    :global(body.dark-mode) .parked {
+        background-color: #6a4a24;
+        color: #fff4e6;
+        border: 1px solid #8a6230;
+    }
+
+    :global(body.dark-mode) .car-logo {
+        filter: brightness(1.08) contrast(1.04);
+    }
+
+    :global(body.dark-mode) .car-logo-wrap {
+        background-color: #454545;
+        border: 1px solid #5a5a5a;
+        border-radius: 10px;
+    }
+
+    :global(body.dark-mode) .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.72);
+    }
+
+    :global(body.dark-mode) .modal-content,
+    :global(body.dark-mode) .modal-header,
+    :global(body.dark-mode) .form-actions {
+        background-color: #2f2f2f;
+        color: #f3f4f6;
+        border-color: #4a4a4a;
+    }
+
+    :global(body.dark-mode) .modal-header h2,
+    :global(body.dark-mode) label,
+    :global(body.dark-mode) .field-hint {
+        color: #e5e7eb;
+    }
+
+    :global(body.dark-mode) input,
+    :global(body.dark-mode) select,
+    :global(body.dark-mode) .brand-suggestions {
+        background: #3a3a3a;
+        color: #f3f4f6;
+        border-color: #565656;
+    }
+
+    :global(body.dark-mode) .brand-option:hover,
+    :global(body.dark-mode) .brand-option.highlighted {
+        background: #4a4a4a;
+    }
+
     .cars-container {
         max-width: 1200px;
         margin: 0 auto;
@@ -775,19 +850,23 @@
 
     .parking-status {
         font-weight: 500;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
+        padding: 0.35rem 0.65rem;
+        border-radius: 6px;
         display: inline-block;
+        font-size: 0.95rem;
+        line-height: 1.2;
     }
 
     .parked {
-        background-color: #d4edda;
-        color: #155724;
+        background-color: #ffe8cc;
+        color: #7c4700;
+        border: 1px solid #ffd8a8;
     }
 
     .not-parked {
-        background-color: #f8f9fa;
-        color: #6c757d;
+        background-color: #f1f3f5;
+        color: #495057;
+        border: 1px solid #dee2e6;
     }
 
     .car-actions {

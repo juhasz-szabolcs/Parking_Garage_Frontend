@@ -13,6 +13,8 @@
     let navAvatarUrl = null;
     let navAvatarLoadError = false;
     let lastAvatarEmail = '';
+    let isDarkMode = false;
+    let isProfileMenuOpen = false;
 
     // List of public routes that don't require authentication
     const publicRoutes = ['/login', '/register', '/'];
@@ -34,6 +36,10 @@
             }
         }
         isInitialized = true;
+
+        const savedTheme = localStorage.getItem('theme');
+        isDarkMode = savedTheme === 'dark';
+        applyTheme(isDarkMode);
     });
 
     // Watch for route changes and check authentication
@@ -65,6 +71,26 @@
         isMenuOpen = !isMenuOpen;
     }
 
+    function toggleProfileMenu(event) {
+        event?.stopPropagation();
+        isProfileMenuOpen = !isProfileMenuOpen;
+    }
+
+    function applyTheme(darkMode) {
+        if (typeof document === 'undefined') {
+            return;
+        }
+
+        document.body.classList.toggle('dark-mode', darkMode);
+        document.body.classList.toggle('light-mode', !darkMode);
+    }
+
+    function toggleTheme() {
+        isDarkMode = !isDarkMode;
+        applyTheme(isDarkMode);
+        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    }
+
     async function updateNavAvatar(email) {
         const normalizedEmail = String(email || '').trim().toLowerCase();
 
@@ -80,6 +106,7 @@
     // Bezárjuk a menüt, ha átnavigálunk
     $: if ($page) {
         isMenuOpen = false;
+        isProfileMenuOpen = false;
     }
 
     $: if ($isAuthenticated && $user?.email) {
@@ -142,7 +169,7 @@
                         <span>Parkoló</span>
                     </a>
                     {#if !$user.isAdmin}
-                        <div class="profile-menu">
+                        <div class="profile-menu" class:open={isProfileMenuOpen}>
                             <a href="/profile" class="nav-link profile-link {$page.url.pathname === '/profile' ? 'active' : ''}" on:click={toggleMenu}>
                                 {#if navAvatarUrl && !navAvatarLoadError}
                                     <img
@@ -156,10 +183,19 @@
                                 {/if}
                                 <span>Profil</span>
                             </a>
-                            <button class="profile-menu-toggle" aria-label="Profil menü">
+                            <button
+                                class="profile-menu-toggle"
+                                aria-label="Profil menü"
+                                aria-expanded={isProfileMenuOpen}
+                                on:click={toggleProfileMenu}
+                            >
                                 <i class="bi bi-caret-down-fill"></i>
                             </button>
                             <div class="profile-dropdown">
+                                <button class="dropdown-theme-button" on:click={() => { toggleTheme(); isProfileMenuOpen = false; }}>
+                                    <i class={isDarkMode ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill'}></i>
+                                    <span>{isDarkMode ? 'Vilagos mod' : 'Sotet mod'}</span>
+                                </button>
                                 <button class="dropdown-logout-button" on:click={handleLogout}>
                                     <i class="bi bi-box-arrow-right"></i>
                                     <span>Kijelentkezés</span>
@@ -218,7 +254,119 @@
         padding: 0;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         background-color: #f5f5f5;
+        color: #1f2937;
         min-height: 100vh;
+        transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    :global(body.dark-mode) {
+        background-color: #232323;
+        color: #f3f4f6;
+    }
+
+    :global(body.dark-mode .navbar) {
+        background-color: #2b2b2b;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    :global(body.dark-mode .profile-header) {
+        background: linear-gradient(135deg, #4a4a4a, #303030) !important;
+    }
+
+    :global(body.dark-mode .nav-brand) {
+        border-bottom-color: #4a4a4a;
+    }
+
+    :global(body.dark-mode .nav-link),
+    :global(body.dark-mode .nav-button),
+    :global(body.dark-mode .brand-link),
+    :global(body.dark-mode .profile-menu-toggle),
+    :global(body.dark-mode .user-info) {
+        color: #e5e7eb;
+    }
+
+    :global(body.dark-mode .brand-link i),
+    :global(body.dark-mode .loading i) {
+        color: #d1d5db;
+    }
+
+    :global(body.dark-mode .nav-link:hover),
+    :global(body.dark-mode .nav-button:hover),
+    :global(body.dark-mode .profile-menu-toggle:hover) {
+        color: #e5e7eb;
+        background-color: #4a4a4a;
+    }
+
+    :global(body.dark-mode .nav-link.active) {
+        color: #f3f4f6;
+        background-color: #595959;
+    }
+
+    :global(body.dark-mode .profile-dropdown) {
+        background-color: #2d2d2d;
+        border-color: #4a4a4a;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    :global(body.dark-mode main) {
+        color: #e5e7eb;
+    }
+
+    :global(body.dark-mode footer) {
+        background-color: #1f1f1f;
+        color: #e5e7eb;
+    }
+
+    :global(body.dark-mode .profile-card),
+    :global(body.dark-mode .info-section),
+    :global(body.dark-mode .car-card),
+    :global(body.dark-mode .stat-card),
+    :global(body.dark-mode .card),
+    :global(body.dark-mode .modal-content),
+    :global(body.dark-mode table),
+    :global(body.dark-mode .table-container) {
+        background-color: #2d2d2d !important;
+        color: #f3f4f6;
+        border-color: #4a4a4a !important;
+    }
+
+    :global(body.dark-mode .profile-content),
+    :global(body.dark-mode .info-item span),
+    :global(body.dark-mode .car-info h3),
+    :global(body.dark-mode .car-info p),
+    :global(body.dark-mode .info-section h2),
+    :global(body.dark-mode .profile-info .email),
+    :global(body.dark-mode .profile-info h1),
+    :global(body.dark-mode .loading),
+    :global(body.dark-mode .loading p) {
+        color: #f3f4f6 !important;
+    }
+
+    :global(body.dark-mode .info-item label) {
+        color: #cfcfcf !important;
+    }
+
+    :global(body.dark-mode .car-card) {
+        background-color: #373737 !important;
+    }
+
+    :global(body.dark-mode .status.not-parking) {
+        background-color: #4a4a4a !important;
+        color: #e5e7eb !important;
+    }
+
+    :global(body.dark-mode input),
+    :global(body.dark-mode select),
+    :global(body.dark-mode textarea),
+    :global(body.dark-mode button),
+    :global(body.dark-mode .form-control) {
+        background-color: #2f2f2f;
+        color: #f3f4f6;
+        border-color: #525252;
+    }
+
+    :global(body.dark-mode a) {
+        color: #d1d5db;
     }
 
     .navbar {
@@ -404,8 +552,9 @@
         z-index: 1200;
     }
 
-    .profile-menu:hover .profile-dropdown,
-    .profile-menu:focus-within .profile-dropdown {
+    .profile-menu-toggle:hover + .profile-dropdown,
+    .profile-dropdown:hover,
+    .profile-menu.open .profile-dropdown {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
@@ -426,6 +575,33 @@
         cursor: pointer;
     }
 
+    .dropdown-theme-button {
+        width: 100%;
+        border: none;
+        background: transparent;
+        color: #2c3e50;
+        font-size: 0.9rem;
+        font-weight: 500;
+        border-radius: 6px;
+        padding: 0.45rem 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        cursor: pointer;
+        margin-bottom: 0.2rem;
+    }
+
+    .dropdown-theme-button i {
+        margin-right: 0;
+        font-size: 0.95rem;
+        width: auto;
+    }
+
+    .dropdown-theme-button:hover {
+        color: #1f2937;
+        background-color: #e5e7eb;
+    }
+
     .dropdown-logout-button i {
         margin-right: 0;
         font-size: 0.95rem;
@@ -435,6 +611,15 @@
     .dropdown-logout-button:hover {
         color: #c0392b;
         background-color: #fee2e2;
+    }
+
+    :global(body.dark-mode) .dropdown-theme-button {
+        color: #e5e7eb;
+    }
+
+    :global(body.dark-mode) .dropdown-theme-button:hover {
+        color: #e5e7eb;
+        background-color: #374151;
     }
 
     @media (max-width: 768px) {
@@ -476,14 +661,20 @@
 
         .profile-dropdown {
             position: static;
-            opacity: 1;
-            visibility: visible;
-            transform: none;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-2px);
             box-shadow: none;
             border: none;
             padding: 0;
             margin-top: 0.25rem;
             grid-column: 1 / -1;
+        }
+
+        .profile-menu.open .profile-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: none;
         }
     }
 

@@ -138,9 +138,26 @@
 </div>
 
 <style>
+    :global(body.dark-mode) .status {
+        border: 1px solid #5a5a5a;
+        color: #f3f4f6;
+    }
+
+    :global(body.dark-mode) .status.parking {
+        background-color: #6a4a24;
+        color: #fff4e6;
+        border: 1px solid #8a6230;
+    }
+
+    :global(body.dark-mode) .status.not-parking {
+        background-color: #474747;
+        color: #f3f4f6;
+        border: 1px solid #5a5a5a;
+    }
+
     .profile-container {
         max-width: 1200px;
-        margin: 0.4 rem auto;
+        margin: 0.4rem auto;
         padding: 0 1rem;
     }
 
@@ -285,20 +302,24 @@
 
     .status {
         display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
+        padding: 0.35rem 0.8rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        line-height: 1.2;
+        font-weight: 500;
         margin-top: 0.5rem;
     }
 
     .status.parking {
-        background-color: #d4edda;
-        color: #155724;
+        background-color: #ffe8cc;
+        color: #7c4700;
+        border: 1px solid #ffd8a8;
     }
 
     .status.not-parking {
-        background-color: #f8f9fa;
-        color: #6c757d;
+        background-color: #f1f3f5;
+        color: #495057;
+        border: 1px solid #dee2e6;
     }
 
     @media (max-width: 768px) {

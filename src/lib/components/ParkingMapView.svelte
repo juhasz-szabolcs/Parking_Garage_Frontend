@@ -172,6 +172,43 @@
 </div>
 
 <style>
+    :global(body.dark-mode) .parking-container {
+        background-color: #232323;
+    }
+
+    :global(body.dark-mode) .parking-map-container {
+        background: #2d2d2d;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    :global(body.dark-mode) .parking-header h3,
+    :global(body.dark-mode) .stat-label,
+    :global(body.dark-mode) .legend-item span {
+        color: #f3f4f6;
+    }
+
+    :global(body.dark-mode) .parking-stats,
+    :global(body.dark-mode) .legend {
+        background: #373737;
+    }
+
+    :global(body.dark-mode) .floor-button {
+        background: #444;
+        color: #f3f4f6;
+    }
+
+    :global(body.dark-mode) .floor-button.active {
+        background: #e74c3c !important;
+        color: #ffffff !important;
+        border: 1px solid #ef6b5d;
+        box-shadow: 0 0 0 1px rgba(231, 76, 60, 0.35);
+    }
+
+    :global(body.dark-mode) .spot {
+        border-color: #525252;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    }
+
     .parking-container {
         width: 100%;
         height: calc(100vh - 100px);
