@@ -6,6 +6,7 @@
     import ParkingMap from "$lib/components/ParkingMap.svelte";
     import { getCarLogo, carBrandOptions } from "$lib/utils/carLogos";
     import { formatLicensePlate } from "$lib/utils/licensePlate";
+    import carModelsByBrand from "$lib/data/carModels.json";
 
     let cars = [];
     let ownedCars = [];
@@ -44,6 +45,10 @@
             ? carBrandOptions.filter((b) => b.toLowerCase().includes(query))
             : carBrandOptions;
     })();
+    $: matchedBrandForModels = carBrandOptions.find(
+        (brand) => brand.toLowerCase() === (newCar.brand || "").trim().toLowerCase()
+    ) || "";
+    $: selectedBrandModels = matchedBrandForModels ? (carModelsByBrand[matchedBrandForModels] || []) : [];
 
     function handleBrandFocus() {
         showBrandSuggestions = true;
@@ -51,6 +56,9 @@
     }
 
     function selectBrand(brand) {
+        if (newCar.brand !== brand) {
+            newCar.model = "";
+        }
         newCar.brand = brand;
         lastValidBrandInput = brand;
         showBrandSuggestions = false;
@@ -65,6 +73,7 @@
         if (!normalizedInput) {
             newCar.brand = "";
             lastValidBrandInput = "";
+            newCar.model = "";
             showBrandSuggestions = true;
             highlightedBrandIndex = -1;
             return;
@@ -206,12 +215,22 @@
             formLoading = false;
             return;
         }
+        const modelsForBrand = carModelsByBrand[matchedBrand] || [];
+        const matchedModel = modelsForBrand.find(
+            (model) => model.toLowerCase() === newCar.model.trim().toLowerCase()
+        );
+        if (!matchedModel) {
+            error = "Kérjük, válasszon a listában szereplő modellek közül!";
+            formLoading = false;
+            return;
+        }
         if (newCar.licensePlate.length > 7) {
             error = "A rendszám legfeljebb 7 karakter lehet!";
             formLoading = false;
             return;
         }
         newCar.brand = matchedBrand;
+        newCar.model = matchedModel;
 
         // Send to API
         const result = editingCarId
@@ -488,13 +507,14 @@
 
                     <div class="form-group">
                         <label for="model">Modell*</label>
-                        <input
-                            type="text"
-                            id="model"
-                            bind:value={newCar.model}
-                            placeholder="pl. Corolla"
-                            required
-                        />
+                        <select id="model" bind:value={newCar.model} required disabled={!matchedBrandForModels}>
+                            <option value="" disabled>
+                                {matchedBrandForModels ? "Válassz modellt" : "Előbb válassz márkát"}
+                            </option>
+                            {#each selectedBrandModels as model}
+                                <option value={model}>{model}</option>
+                            {/each}
+                        </select>
                     </div>
 
                     <div class="form-group">
