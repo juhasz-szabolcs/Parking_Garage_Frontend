@@ -10,8 +10,10 @@
     let cars = [];
     let ownedCars = [];
     let loading = true;
+    let actionInProgress = false;
     let error = "";
     let success = "";
+    let warning = "";
     let parkingSpots = [];
     // let activeParkings = new Map(); // Tárolja az aktív parkolásokat: carId -> parkingSpotId
 
@@ -187,17 +189,27 @@
     }
 
     async function handleStopParking(carId) {
+        actionInProgress = true;
+        error = "";
+        success = "";
+        warning = "";
         try {
             const result = await stopParking(carId);
             if (result.success) {
                 // Frissítjük az autók listáját
                 await loadCars();
+                success = "Parkolás sikeresen leállítva!";
+                if (result.data?.invoiceWarning) {
+                    warning = result.data.invoiceWarning;
+                }
             } else {
                 error = result.error || 'Hiba történt a parkolás leállítása során.';
             }
         } catch (error) {
             console.error('Error stopping parking:', error);
             error = 'Hiba történt a parkolás leállítása során.';
+        } finally {
+            actionInProgress = false;
         }
     }
 
@@ -233,13 +245,28 @@
     }
 
     async function handleDeleteCar(car) {
-        if (car.isParking) {
+        if (car.isParking && !$user?.isAdmin) {
             error = "Parkoló autó nem törölhető. Előbb állítsd le a parkolást.";
             return;
         }
 
         if (confirm('Biztosan törölni szeretnéd ezt az autót?')) {
+            actionInProgress = true;
+            error = "";
+            success = "";
+            warning = "";
             try {
+                if (car.isParking && $user?.isAdmin) {
+                    const stopResult = await stopParking(car.id);
+                    if (!stopResult.success) {
+                        error = stopResult.error || "Nem sikerült leállítani a parkolást, ezért a törlés megszakadt.";
+                        return;
+                    }
+                    if (stopResult.data?.invoiceWarning) {
+                        warning = stopResult.data.invoiceWarning;
+                    }
+                }
+
                 const result = await deleteCar(car.id);
                 if (result.success) {
                     // Frissítjük az autók listáját
@@ -247,6 +274,7 @@
                     success = "Autó sikeresen törölve!";
                     setTimeout(() => {
                         success = "";
+                        warning = "";
                     }, 1500);
                 } else {
                     error = result.error || 'Hiba történt az autó törlése során.';
@@ -254,6 +282,8 @@
             } catch (err) {
                 console.error('Error deleting car:', err);
                 error = 'Hiba történt az autó törlése során.';
+            } finally {
+                actionInProgress = false;
             }
         }
     }
@@ -271,6 +301,8 @@
         <div class="loading">Autók betöltése...</div>
     {:else if error && !showModal}
         <div class="error-message">{error}</div>
+    {:else if warning && !showModal}
+        <div class="warning-message">{warning}</div>
     {:else if cars.length === 0}
         <div class="empty-state">
             <p>Még nincsenek autói. Adjon hozzá egy autót a kezdéshez!</p>
@@ -297,19 +329,19 @@
                     </div>
                     <div class="car-actions">
                         {#if !car.isParking}
-                            <button class="park-button" id=car_{car.id} on:click={() => openParkingMap(car)}>
+                            <button class="park-button" id=car_{car.id} on:click={() => openParkingMap(car)} disabled={actionInProgress}>
                                 Parkolás indítása
                             </button>
                         {:else}
-                            <button class="stop-button" id=car_{car.id} on:click={() => handleStopParking(car.id)}>
+                            <button class="stop-button" id=car_{car.id} on:click={() => handleStopParking(car.id)} disabled={actionInProgress}>
                                 Parkolás leállítása
                             </button>
                         {/if}
                         <button
                             class="delete-button"
                             on:click={() => handleDeleteCar(car)}
-                            disabled={car.isParking}
-                            title={car.isParking ? 'Parkoló autó nem törölhető' : 'Autó törlése'}
+                            disabled={actionInProgress || (car.isParking && !$user?.isAdmin)}
+                            title={car.isParking && !$user?.isAdmin ? 'Parkoló autó nem törölhető' : 'Autó törlése'}
                         >
                             Törlés
                         </button>
@@ -507,6 +539,15 @@
         padding: 0.75rem;
         border-radius: 4px;
         margin-bottom: 1.5rem;
+    }
+
+    .warning-message {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 0.75rem;
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+        border: 1px solid #ffeeba;
     }
 
     .empty-state {

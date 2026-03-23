@@ -33,8 +33,8 @@
                     Kérjük, jelentkezzen be a parkolóház funkcióinak használatához.
                 </p>
                 <div class="buttons">
-                    <a href="/login" class="button primary">Bejelentkezés</a>
-                    <a href="/register" class="button secondary">Regisztráció</a>
+                    <a href="/login" class="button primary" id="home-login-button">Bejelentkezés</a>
+                    <a href="/register" class="button secondary" id="home-register-button">Regisztráció</a>
                 </div>
             {:else}
                 <p>
@@ -46,7 +46,7 @@
                 <div class="buttons">
                     <!-- <a href="/dashboard" class="button primary">Parkolás kezelése</a> -->
                     {#if !$user?.isAdmin}
-                        <a href="/cars" class="button secondary" id="cars-link">Autóim</a>
+                        <a href="/cars" class="button secondary" id="home-cars-button">Autóim</a>
                     {/if}
                 </div>
             {/if}
