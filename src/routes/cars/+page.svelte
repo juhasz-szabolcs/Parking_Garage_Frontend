@@ -1,6 +1,6 @@
 <script>
     // import { onMount } from "svelte";
-    import { getUserData, createCar, startParking, stopParking, deleteCar } from "$lib/api";
+    import { getUserData, createCar, updateCar, startParking, stopParking, deleteCar } from "$lib/api";
     import { isAuthenticated, user } from "$lib/store";
     import { goto } from "$app/navigation";
     import ParkingMap from "$lib/components/ParkingMap.svelte";
@@ -19,6 +19,7 @@
 
     // New car form state
     let showModal = false;
+    let editingCarId = null;
     let newCar = {
         brand: "",
         model: "",
@@ -117,6 +118,7 @@
 
     function openAddCarModal() {
         // Reset form
+        editingCarId = null;
         newCar = {
             brand: "",
             model: "",
@@ -127,8 +129,22 @@
         showModal = true;
     }
 
+    function openEditCarModal(car) {
+        editingCarId = car.id;
+        newCar = {
+            brand: car.brand || "",
+            model: car.model || "",
+            year: car.year || new Date().getFullYear(),
+            licensePlate: car.licensePlate || "",
+        };
+        error = "";
+        success = "";
+        showModal = true;
+    }
+
     function closeModal() {
         showModal = false;
+        editingCarId = null;
     }
 
     async function submitCarForm() {
@@ -149,10 +165,14 @@
         }
 
         // Send to API
-        const result = await createCar(newCar);
+        const result = editingCarId
+            ? await updateCar(editingCarId, newCar)
+            : await createCar(newCar);
 
         if (result.success) {
-            success = "Autó sikeresen hozzáadva!";
+            success = editingCarId
+                ? "Autó sikeresen módosítva!"
+                : "Autó sikeresen hozzáadva!";
             await loadCars(); // Reload cars list
             setTimeout(() => {
                 success = "";
@@ -205,8 +225,8 @@
             } else {
                 error = result.error || 'Hiba történt a parkolás leállítása során.';
             }
-        } catch (error) {
-            console.error('Error stopping parking:', error);
+        } catch (err) {
+            console.error('Error stopping parking:', err);
             error = 'Hiba történt a parkolás leállítása során.';
         } finally {
             actionInProgress = false;
@@ -312,11 +332,23 @@
             {#each cars as car (car.id)}
                 <div class="car-card">
                     <div class="car-header">
-                        <img src={getCarLogo(car.brand)} alt={car.brand} class="car-logo" />
+                        <div class="car-logo-wrap">
+                            <img src={getCarLogo(car.brand)} alt={car.brand} class="car-logo" />
+                        </div>
                         <div class="car-title">
                             <h3>{car.brand}</h3>
                             <h4>{car.model}</h4>
                         </div>
+                        <button
+                            class="edit-icon-button"
+                            type="button"
+                            on:click={() => openEditCarModal(car)}
+                            disabled={actionInProgress}
+                            title="Autó szerkesztése"
+                            aria-label="Autó szerkesztése"
+                        >
+                            <i class="bi bi-pencil"></i>
+                        </button>
                     </div>
                     <div class="car-details">
                         <p><strong>Rendszám:</strong> {formatLicensePlate(car.licensePlate)}</p>
@@ -356,7 +388,7 @@
         <div class="modal-overlay" on:click={closeModal}>
             <div class="modal-content" on:click|stopPropagation>
                 <div class="modal-header">
-                    <h2>Új autó hozzáadása</h2>
+                    <h2>{editingCarId ? "Autó szerkesztése" : "Új autó hozzáadása"}</h2>
                     <button class="close-button" on:click={closeModal}
                         >&times;</button
                     >
@@ -456,7 +488,7 @@
                             class="submit-button"
                             disabled={formLoading}
                         >
-                            {formLoading ? "Mentés..." : "Mentés"}
+                            {formLoading ? "Mentés..." : editingCarId ? "Módosítás mentése" : "Mentés"}
                         </button>
                     </div>
                 </form>
@@ -591,11 +623,46 @@
         gap: 1rem;
     }
 
+    .car-logo-wrap {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+    }
+
     .car-logo {
         width: 50px;
         height: 50px;
         object-fit: contain;
         flex-shrink: 0;
+    }
+
+    .edit-icon-button {
+        flex-shrink: 0;
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: none;
+        background-color: #17a2b8;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        transition: background-color 0.2s, transform 0.15s;
+    }
+
+    .edit-icon-button:hover:not(:disabled) {
+        background-color: #138496;
+        transform: translateY(-1px);
+    }
+
+    .edit-icon-button:disabled {
+        background-color: #adb5bd;
+        cursor: not-allowed;
     }
 
     .car-title {
@@ -716,6 +783,29 @@
     }
 
     .delete-button:disabled {
+        background-color: #adb5bd;
+        cursor: not-allowed;
+    }
+
+    .edit-button {
+        padding: 0.5rem 1rem;
+        background-color: #17a2b8;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .edit-button:hover {
+        background-color: #138496;
+    }
+
+    .edit-button:disabled {
         background-color: #adb5bd;
         cursor: not-allowed;
     }

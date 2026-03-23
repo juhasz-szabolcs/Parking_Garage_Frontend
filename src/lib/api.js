@@ -170,6 +170,19 @@ export async function createCar(car) {
     }
 }
 
+export async function updateCar(carId, car) {
+    try {
+        const response = await apiCall(`/api/cars/${carId}`, {
+            method: 'PUT',
+            data: car
+        });
+        return { success: true, data: response };
+    } catch (error) {
+        console.error('Update car error:', error.response?.data || error);
+        return { success: false, error: error.response?.data || 'Failed to update car' };
+    }
+}
+
 // Parkolás indítása
 export async function startParking(carId, parkingSpotId) {
     try {
