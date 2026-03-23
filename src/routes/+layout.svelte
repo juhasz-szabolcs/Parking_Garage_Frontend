@@ -4,11 +4,15 @@
     import { goto } from '$app/navigation';
     import { logout } from '$lib/api';
     import { onMount } from 'svelte';
+    import { getGravatarUrl } from '$lib/utils/gravatar';
     import 'bootstrap-icons/font/bootstrap-icons.css';
     import Nav from "$lib/components/Nav.svelte";
 
     let isMenuOpen = false;
     let isInitialized = false;
+    let navAvatarUrl = null;
+    let navAvatarLoadError = false;
+    let lastAvatarEmail = '';
 
     // List of public routes that don't require authentication
     const publicRoutes = ['/login', '/register', '/'];
@@ -61,9 +65,29 @@
         isMenuOpen = !isMenuOpen;
     }
 
+    async function updateNavAvatar(email) {
+        const normalizedEmail = String(email || '').trim().toLowerCase();
+
+        if (!normalizedEmail || normalizedEmail === lastAvatarEmail) {
+            return;
+        }
+
+        lastAvatarEmail = normalizedEmail;
+        navAvatarLoadError = false;
+        navAvatarUrl = getGravatarUrl(normalizedEmail, 48);
+    }
+
     // Bezárjuk a menüt, ha átnavigálunk
     $: if ($page) {
         isMenuOpen = false;
+    }
+
+    $: if ($isAuthenticated && $user?.email) {
+        updateNavAvatar($user.email);
+    } else {
+        navAvatarUrl = null;
+        navAvatarLoadError = false;
+        lastAvatarEmail = '';
     }
 </script>
 
@@ -119,7 +143,16 @@
                     </a>
                     {#if !$user.isAdmin}
                         <a href="/profile" class="nav-link {$page.url.pathname === '/profile' ? 'active' : ''}" on:click={toggleMenu}>
-                            <i class="bi bi-person-circle"></i>
+                            {#if navAvatarUrl && !navAvatarLoadError}
+                                <img
+                                    src={navAvatarUrl}
+                                    alt="Profilkep"
+                                    class="nav-avatar"
+                                    on:error={() => (navAvatarLoadError = true)}
+                                />
+                            {:else}
+                                <i class="bi bi-person-circle"></i>
+                            {/if}
                             <span>Profil</span>
                         </a>
                     {/if}
@@ -301,6 +334,16 @@
         margin-right: 0.5rem;
         font-size: 1.5rem;
         color: #3498db;
+    }
+
+    .nav-avatar {
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 0.75rem;
+        border: 1px solid #dee2e6;
+        flex-shrink: 0;
     }
 
     @media (max-width: 768px) {

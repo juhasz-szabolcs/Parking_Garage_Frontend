@@ -4,10 +4,13 @@
     import { getUserData } from '$lib/api';
     import { goto } from '$app/navigation';
     import { formatLicensePlate } from '$lib/utils/licensePlate';
+    import { getGravatarUrl } from '$lib/utils/gravatar';
 
     let userData = null;
     let loading = true;
     let error = null;
+    let profileImageUrl = null;
+    let profileImageLoadError = false;
 
     onMount(async () => {
         // Ellenőrizzük a bejelentkezési állapotot
@@ -48,6 +51,8 @@
             
             if (result.success) {
                 userData = result.data;
+                profileImageLoadError = false;
+                profileImageUrl = await getGravatarUrl(userData.email, 200);
             } else {
                 error = 'Nem sikerült betölteni a felhasználó adatait.';
             }
@@ -69,7 +74,16 @@
         <div class="profile-card">
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <i class="fas fa-user-circle"></i>
+                    {#if profileImageUrl && !profileImageLoadError}
+                        <img
+                            src={profileImageUrl}
+                            alt="Profilkep"
+                            class="avatar-image"
+                            on:error={() => (profileImageLoadError = true)}
+                        />
+                    {:else}
+                        <i class="fas fa-user-circle"></i>
+                    {/if}
                 </div>
                 <div class="profile-info">
                     <h1>{userData.lastName} {userData.firstName}</h1>
@@ -158,12 +172,27 @@
         color: white;
         display: flex;
         align-items: center;
-        gap: 2rem;
+        gap: 1rem;
     }
 
     .profile-avatar {
         font-size: 5rem;
         color: rgba(255, 255, 255, 0.9);
+        width: 136px;
+        height: 136px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .avatar-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.5);
     }
 
     .profile-info h1 {
@@ -174,6 +203,12 @@
     .profile-info .email {
         margin: 0.5rem 0 0;
         opacity: 0.9;
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
     }
 
     .profile-content {
@@ -271,9 +306,12 @@
             flex-direction: column;
             text-align: center;
             padding: 1.5rem;
+            gap: 0.75rem;
         }
 
         .profile-avatar {
+            width: 120px;
+            height: 120px;
             font-size: 4rem;
         }
 
