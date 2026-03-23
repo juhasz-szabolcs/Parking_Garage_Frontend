@@ -142,19 +142,30 @@
                         <span>Parkoló</span>
                     </a>
                     {#if !$user.isAdmin}
-                        <a href="/profile" class="nav-link {$page.url.pathname === '/profile' ? 'active' : ''}" on:click={toggleMenu}>
-                            {#if navAvatarUrl && !navAvatarLoadError}
-                                <img
-                                    src={navAvatarUrl}
-                                    alt="Profilkep"
-                                    class="nav-avatar"
-                                    on:error={() => (navAvatarLoadError = true)}
-                                />
-                            {:else}
-                                <i class="bi bi-person-circle"></i>
-                            {/if}
-                            <span>Profil</span>
-                        </a>
+                        <div class="profile-menu">
+                            <a href="/profile" class="nav-link profile-link {$page.url.pathname === '/profile' ? 'active' : ''}" on:click={toggleMenu}>
+                                {#if navAvatarUrl && !navAvatarLoadError}
+                                    <img
+                                        src={navAvatarUrl}
+                                        alt="Profilkep"
+                                        class="nav-avatar"
+                                        on:error={() => (navAvatarLoadError = true)}
+                                    />
+                                {:else}
+                                    <i class="bi bi-person-circle"></i>
+                                {/if}
+                                <span>Profil</span>
+                            </a>
+                            <button class="profile-menu-toggle" aria-label="Profil menü">
+                                <i class="bi bi-caret-down-fill"></i>
+                            </button>
+                            <div class="profile-dropdown">
+                                <button class="dropdown-logout-button" on:click={handleLogout}>
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span>Kijelentkezés</span>
+                                </button>
+                            </div>
+                        </div>
                     {/if}
                     <div class="nav-divider"></div>
                     <div class="user-info">
@@ -165,10 +176,12 @@
                             {/if}
                         </span>
                     </div>
-                    <button class="nav-button logout-button" on:click={handleLogout}>
-                        <i class="bi bi-box-arrow-right"></i>
-                        <span>Kijelentkezés</span>
-                    </button>
+                    {#if $user.isAdmin}
+                        <button class="nav-button logout-button" on:click={handleLogout}>
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Kijelentkezés</span>
+                        </button>
+                    {/if}
                 </div>
             {:else}
                 <div class="nav-links">
@@ -346,6 +359,84 @@
         flex-shrink: 0;
     }
 
+    .profile-menu {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .profile-link {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .profile-menu-toggle {
+        border: none;
+        background: transparent;
+        color: #2c3e50;
+        padding: 0 0.7rem;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-menu-toggle:hover {
+        color: #3498db;
+        background-color: #f8f9fa;
+    }
+
+    .profile-dropdown {
+        position: absolute;
+        top: calc(100% + 0.4rem);
+        right: 0;
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        min-width: 150px;
+        padding: 0.35rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-4px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+        z-index: 1200;
+    }
+
+    .profile-menu:hover .profile-dropdown,
+    .profile-menu:focus-within .profile-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .dropdown-logout-button {
+        width: 100%;
+        border: none;
+        background: transparent;
+        color: #e74c3c;
+        font-size: 0.9rem;
+        font-weight: 500;
+        border-radius: 6px;
+        padding: 0.45rem 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        cursor: pointer;
+    }
+
+    .dropdown-logout-button i {
+        margin-right: 0;
+        font-size: 0.95rem;
+        width: auto;
+    }
+
+    .dropdown-logout-button:hover {
+        color: #c0392b;
+        background-color: #fee2e2;
+    }
+
     @media (max-width: 768px) {
         .menu-toggle {
             display: flex;
@@ -375,6 +466,24 @@
 
         .nav-link {
             padding: 1rem;
+        }
+
+        .profile-menu {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr auto;
+        }
+
+        .profile-dropdown {
+            position: static;
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+            box-shadow: none;
+            border: none;
+            padding: 0;
+            margin-top: 0.25rem;
+            grid-column: 1 / -1;
         }
     }
 

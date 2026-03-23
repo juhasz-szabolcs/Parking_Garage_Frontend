@@ -140,7 +140,7 @@
 <style>
     .profile-container {
         max-width: 1200px;
-        margin: 2rem auto;
+        margin: 0.4 rem auto;
         padding: 0 1rem;
     }
 
@@ -168,7 +168,7 @@
 
     .profile-header {
         background: linear-gradient(135deg, #3498db, #2980b9);
-        padding: 2rem;
+        padding: 1rem;
         color: white;
         display: flex;
         align-items: center;
