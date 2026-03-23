@@ -37,6 +37,7 @@
     // Brand autocomplete state
     let showBrandSuggestions = false;
     let highlightedBrandIndex = -1;
+    let lastValidBrandInput = "";
     $: filteredBrandOptions = (() => {
         const query = (newCar.brand || "").toLowerCase().trim();
         return query
@@ -51,8 +52,39 @@
 
     function selectBrand(brand) {
         newCar.brand = brand;
+        lastValidBrandInput = brand;
         showBrandSuggestions = false;
         highlightedBrandIndex = -1;
+    }
+
+    function handleBrandInput(event) {
+        const rawValue = event.currentTarget.value ?? "";
+        const normalizedInput = rawValue.trim().toLowerCase();
+
+        // Üres mező engedett.
+        if (!normalizedInput) {
+            newCar.brand = "";
+            lastValidBrandInput = "";
+            showBrandSuggestions = true;
+            highlightedBrandIndex = -1;
+            return;
+        }
+
+        const hasMatchingBrand = carBrandOptions.some((brand) =>
+            brand.toLowerCase().includes(normalizedInput)
+        );
+
+        if (hasMatchingBrand) {
+            newCar.brand = rawValue;
+            lastValidBrandInput = rawValue;
+            showBrandSuggestions = true;
+            highlightedBrandIndex = -1;
+            return;
+        }
+
+        // Ha nincs egyezés a listában, visszaállítjuk az utolsó érvényes állapotot.
+        event.currentTarget.value = lastValidBrandInput;
+        newCar.brand = lastValidBrandInput;
     }
 
     function handleBrandKeydown(event) {
@@ -126,6 +158,7 @@
             year: new Date().getFullYear(),
             licensePlate: "",
         };
+        lastValidBrandInput = "";
         error = "";
         showModal = true;
     }
@@ -139,6 +172,7 @@
             year: car.year || new Date().getFullYear(),
             licensePlate: car.licensePlate || "",
         };
+        lastValidBrandInput = newCar.brand;
         error = "";
         success = "";
         showModal = true;
@@ -164,11 +198,20 @@
             formLoading = false;
             return;
         }
+        const matchedBrand = carBrandOptions.find(
+            (brand) => brand.toLowerCase() === newCar.brand.trim().toLowerCase()
+        );
+        if (!matchedBrand) {
+            error = "Kérjük, válasszon a listában szereplő márkák közül!";
+            formLoading = false;
+            return;
+        }
         if (newCar.licensePlate.length > 7) {
             error = "A rendszám legfeljebb 7 karakter lehet!";
             formLoading = false;
             return;
         }
+        newCar.brand = matchedBrand;
 
         // Send to API
         const result = editingCarId
@@ -418,6 +461,7 @@
                                 placeholder="pl. Toyota"
                                 required
                                 on:focus={handleBrandFocus}
+                                on:input={handleBrandInput}
                                 on:keydown={handleBrandKeydown}
                                 on:blur={() => setTimeout(() => showBrandSuggestions = false, 100)}
                                 autocomplete="off"
@@ -788,29 +832,6 @@
     }
 
     .delete-button:disabled {
-        background-color: #adb5bd;
-        cursor: not-allowed;
-    }
-
-    .edit-button {
-        padding: 0.5rem 1rem;
-        background-color: #17a2b8;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .edit-button:hover {
-        background-color: #138496;
-    }
-
-    .edit-button:disabled {
         background-color: #adb5bd;
         cursor: not-allowed;
     }
