@@ -5,7 +5,7 @@
     import { goto } from "$app/navigation";
     import ParkingMap from "$lib/components/ParkingMap.svelte";
     import { getCarLogo, carBrandOptions } from "$lib/utils/carLogos";
-    import { formatLicensePlate } from "$lib/utils/licensePlate";
+    import { formatLicensePlate, isValidHungarianLicensePlate, normalizeLicensePlate } from "$lib/utils/licensePlate";
     import carModelsByBrand from "$lib/data/carModels.json";
 
     let cars = [];
@@ -229,8 +229,14 @@
             formLoading = false;
             return;
         }
+        if (!isValidHungarianLicensePlate(newCar.licensePlate)) {
+            error = "Érvénytelen rendszám formátum. Elfogadott: AAA-123 vagy AA-AA 123.";
+            formLoading = false;
+            return;
+        }
         newCar.brand = matchedBrand;
         newCar.model = matchedModel;
+        newCar.licensePlate = normalizeLicensePlate(newCar.licensePlate);
 
         // Send to API
         const result = editingCarId

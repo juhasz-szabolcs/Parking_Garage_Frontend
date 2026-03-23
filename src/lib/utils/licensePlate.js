@@ -15,3 +15,17 @@ export function formatLicensePlate(licensePlate) {
 
     return String(licensePlate).toUpperCase().trim();
 }
+
+export function normalizeLicensePlate(licensePlate) {
+    if (!licensePlate) return '';
+    return String(licensePlate).toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
+export function isValidHungarianLicensePlate(licensePlate) {
+    const normalized = normalizeLicensePlate(licensePlate);
+    // 1990-es formatum: AAA123 (3 betu + 3 szam)
+    const oldFormat = /^[A-Z]{3}\d{3}$/;
+    // 2022-es formatum: AAAA123 (4 betu + 3 szam)
+    const newFormat = /^[A-Z]{4}\d{3}$/;
+    return oldFormat.test(normalized) || newFormat.test(normalized);
+}
