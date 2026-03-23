@@ -148,6 +148,9 @@
     }
 
     async function submitCarForm() {
+        // Dupla kattintás / dupla submit elleni védelem
+        if (formLoading) return;
+
         error = "";
         success = "";
         formLoading = true;
