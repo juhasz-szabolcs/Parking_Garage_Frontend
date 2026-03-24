@@ -38,7 +38,9 @@
                 </div>
             {:else}
                 <p>
-                    Üdvözöljük, {$user?.email?.split('@')[0]}!
+                    Üdvözöljük, {$user?.lastName && $user?.firstName
+                        ? `${$user.lastName} ${$user.firstName}`
+                        : $user?.email?.split('@')[0]}!
                 </p>
                 <p>
                     Használja a fenti menüt a navigációhoz.
