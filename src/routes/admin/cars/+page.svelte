@@ -182,6 +182,17 @@
 </div>
 
 <style>
+    :global(body.dark-mode) .car-card {
+        background: linear-gradient(135deg, #404040 0%, #313131 100%);
+        border: 1px solid #4a4a4a;
+    }
+
+    :global(body.dark-mode) .car-header h3,
+    :global(body.dark-mode) .car-card p,
+    :global(body.dark-mode) .car-card strong {
+        color: #f3f4f6;
+    }
+
     .container {
         max-width: 1200px;
         margin: 0 auto;

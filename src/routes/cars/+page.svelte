@@ -589,7 +589,7 @@
 
 <style>
     :global(body.dark-mode) .car-card {
-        background: #2f2f2f;
+        background: linear-gradient(135deg, #404040 0%, #313131 100%);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
         border: 1px solid #4a4a4a;
     }

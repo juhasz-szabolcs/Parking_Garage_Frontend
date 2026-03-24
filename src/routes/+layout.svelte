@@ -318,14 +318,13 @@
     }
 
     :global(body.dark-mode .profile-card),
-    :global(body.dark-mode .info-section),
     :global(body.dark-mode .car-card),
     :global(body.dark-mode .stat-card),
     :global(body.dark-mode .card),
     :global(body.dark-mode .modal-content),
     :global(body.dark-mode table),
     :global(body.dark-mode .table-container) {
-        background-color: #2d2d2d !important;
+        background: linear-gradient(135deg, #3c3c3c 0%, #2d2d2d 100%) !important;
         color: #f3f4f6;
         border-color: #4a4a4a !important;
     }
@@ -347,7 +346,13 @@
     }
 
     :global(body.dark-mode .car-card) {
-        background-color: #373737 !important;
+        background: linear-gradient(135deg, #404040 0%, #313131 100%) !important;
+    }
+
+    :global(body.dark-mode .info-section) {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
     }
 
     :global(body.dark-mode .status.not-parking) {

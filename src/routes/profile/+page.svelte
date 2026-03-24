@@ -143,6 +143,11 @@
         color: #f3f4f6;
     }
 
+    :global(body.dark-mode) .car-card {
+        background: linear-gradient(135deg, #404040 0%, #313131 100%);
+        border: 1px solid #4a4a4a;
+    }
+
     :global(body.dark-mode) .status.parking {
         background-color: #6a4a24;
         color: #fff4e6;
