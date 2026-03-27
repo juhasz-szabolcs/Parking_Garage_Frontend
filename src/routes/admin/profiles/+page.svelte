@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
     import { user, isAuthenticated } from "$lib/store";
     import { goto } from "$app/navigation";
     import { deleteCar } from "$lib/api";
@@ -29,8 +29,8 @@
         await loadUsers();
     });
 
-    async function loadUsers() {
-        loading = true;
+    async function loadUsers({ silent = false } = {}) {
+        if (!silent) loading = true;
         error = "";
 
         try {
@@ -49,13 +49,14 @@
             console.error("Error loading users:", error);
             error = "Hiba történt a felhasználók betöltése során";
         } finally {
-            loading = false;
+            if (!silent) loading = false;
         }
     }
 
     async function handleDeleteUser(userId) {
         if (confirm('Biztosan törölni szeretnéd ezt a felhasználót?')) {
             try {
+                const scrollY = window.scrollY;
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${userId}`, {
                     method: 'DELETE',
                     credentials: 'include'
@@ -66,7 +67,9 @@
                 }
 
                 if (response.status === 200) {
-                    await loadUsers();
+                    await loadUsers({ silent: true });
+                    await tick();
+                    window.scrollTo({ top: scrollY, behavior: 'instant' });
                     success = "Felhasználó sikeresen törölve!";
                     setTimeout(() => {
                         success = "";
@@ -84,9 +87,12 @@
     async function handleDeleteCar(carId) {
         if (confirm('Biztosan törölni szeretnéd ezt az autót?')) {
             try {
+                const scrollY = window.scrollY;
                 const result = await deleteCar(carId);
                 if (result.success) {
-                    await loadUsers();
+                    await loadUsers({ silent: true });
+                    await tick();
+                    window.scrollTo({ top: scrollY, behavior: 'instant' });
                     success = "Autó sikeresen törölve!";
                     setTimeout(() => {
                         success = "";
@@ -165,10 +171,15 @@
                         <!-- <p><strong>Regisztráció dátuma:</strong> {new Date(user.createdAt).toLocaleDateString('hu-HU')}</p> -->
                     </div>
                     {#if user.cars && user.cars.length > 0}
-                        <div class="cars-toggle" on:click={() => toggleUserCars(user.id)}>
+                        <button
+                            type="button"
+                            class="cars-toggle"
+                            on:click={() => toggleUserCars(user.id)}
+                            aria-expanded={expandedUsers.has(user.id)}
+                        >
                             <span>Autók megtekintése</span>
                             <i class="bi {expandedUsers.has(user.id) ? 'bi-chevron-down' : 'bi-chevron-right'}"></i>
-                        </div>
+                        </button>
                         {#if expandedUsers.has(user.id)}
                             <div class="cars-section">
                                 {#each user.cars as car}
@@ -183,7 +194,11 @@
                                                 <span class="parking-status {car.isParked ? 'parked' : 'not-parked'}">
                                                     {car.isParked ? 'Parkolóban' : 'Nincs parkolóban'}
                                                 </span>
-                                                <button class="delete-button" on:click={() => handleDeleteCar(car.id)}>
+                                                <button
+                                                    class="delete-button"
+                                                    on:click={() => handleDeleteCar(car.id)}
+                                                    aria-label="Autó törlése"
+                                                >
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
@@ -263,6 +278,9 @@
         cursor: pointer;
         margin-top: 1rem;
         transition: background-color 0.3s;
+        width: 100%;
+        border: none;
+        text-align: left;
     }
 
     .cars-toggle:hover {
