@@ -153,15 +153,7 @@
             {#each cars as car}
                 <div class="car-card">
                     <div class="car-header">
-                        <h3>{car.brand} {car.model}</h3>
-                        <button
-                            class="delete-button"
-                            on:click={() => handleDeleteCar(car)}
-                            disabled={actionInProgress}
-                            title={car.isParked ? 'Törlés előtt automatikusan leáll a parkolás' : 'Autó törlése'}
-                        >
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        <h3 title="{car.brand} {car.model}">{car.brand} {car.model}</h3>
                     </div>
                     <div class="car-details">
                         <p><strong>Rendszám:</strong> {formatLicensePlate(car.licensePlate)}</p>
@@ -169,6 +161,17 @@
                         <p><strong>Tulajdonos:</strong> {car.userName}</p>
                         <p><strong>Email:</strong> {car.userEmail}</p>
                         <p><strong>Parkoló állapot:</strong> {car.isParked ? 'Parkolóban' : 'Nincs parkolóban'}</p>
+                    </div>
+                    <div class="car-actions">
+                        <button
+                            class="delete-button"
+                            on:click={() => handleDeleteCar(car)}
+                            disabled={actionInProgress}
+                            title={car.isParked ? 'Törlés előtt automatikusan leáll a parkolás' : 'Autó törlése'}
+                        >
+                            <i class="bi bi-trash"></i>
+                            Törlés
+                        </button>
                     </div>
                     {#if car.isParked}
                         <button class="stop-button" on:click={() => handleStopParking(car.id)} disabled={actionInProgress}>
@@ -218,18 +221,36 @@
     }
 
     .car-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         margin-bottom: 1rem;
     }
 
     .car-header h3 {
         margin: 0;
         color: #2c3e50;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-word;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .car-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    :global(body.dark-mode) .car-actions {
+        border-top-color: rgba(255, 255, 255, 0.1);
     }
 
     .delete-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
         background: none;
         border: none;
         color: #dc3545;
@@ -237,6 +258,7 @@
         padding: 0.5rem;
         border-radius: 4px;
         transition: background-color 0.3s;
+        flex-shrink: 0;
     }
 
     .delete-button:hover {

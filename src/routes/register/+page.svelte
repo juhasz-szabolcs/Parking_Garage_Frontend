@@ -35,9 +35,7 @@
         lastName,
         phoneNumber,
         email,
-        passwordHash: password,
-        isAdmin: false,
-        cars: []
+        password
       };
       
       try {
